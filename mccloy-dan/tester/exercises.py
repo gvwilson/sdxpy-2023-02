@@ -18,7 +18,12 @@ the start, so the dictionary size doesn't change).
 """
 
 
+# Counting results
+# ================
+
+
 def sign(value):
+    """This function intentionally handles zero incorrectly."""
     if value < 0:
         return -1
     else:
@@ -38,7 +43,8 @@ def test_sign_zero():
 
 
 def test_sign_error():
-    assert sgn(1) == 1
+    """This test intentionally calls an undefined function `sgn`."""
+    assert sgn(1) == 1  # noqa F821
 
 
 test_sign_negative.skip = True
@@ -53,24 +59,40 @@ def classify(func):
     return "run"
 
 
+# Counting results, part 1
+# ------------------------
+
+def report_test_results(results):
+    summary = dict()
+    pad = max(len(x) for x in list(results) + ['summary'])
+    for key, val in results.items():
+        print(f"{key:>{pad}}: {val}")
+        summary[key] = len(val)
+    print(f"summary: {summary}")
+
+
 def run_tests(prefix):
+    from collections import defaultdict
+
     all_names = [n for n in globals() if n.startswith(prefix)]
+    results = defaultdict(list)
     for name in all_names:
         func = globals()[name]
         kind = classify(func)
         try:
             if kind == "skip":
-                print(f"skip: {name}")
+                results['skip'] += [name]
             else:
                 func()
-                print(f"pass: {name}")
+                results['pass'] += [name]
         except AssertionError as e:
             if kind == "fail":
-                print(f"pass (expected failure): {name}")
+                results['xfail'] += [name]
             else:
-                print(f"fail: {name} {str(e)}")
+                results['fail'] += [f"{name} ({str(e)})"]
         except Exception as e:
-            print(f"error: {name} {str(e)}")
+            results['error'] += [f"{name} ({str(e)})"]
+    report_test_results(results)
 
 
 if __name__ == "__main__":
