@@ -93,6 +93,16 @@ def test_reporting():
     assert actual.getvalue() == expected
 
 
+# Counting results, part 3
+# ------------------------
+"""
+If the reporting step were, say, generating an HTML report, then presumably it
+wouldn't be going to stdout, so its content wouldn't be captured for comparison
+with `expected`. Moreover, even if the HTML report *were* sent to stdout, the
+test would still fail because of how `expected` is defined.
+"""
+
+
 def run_tests(prefix):
     from collections import defaultdict
 
