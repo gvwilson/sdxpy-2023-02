@@ -65,10 +65,32 @@ def classify(func):
 def report_test_results(results):
     summary = dict()
     pad = max(len(x) for x in list(results) + ['summary'])
-    for key, val in results.items():
+    # sort by key so we can test accurate reporting while being agnostic about
+    # the order in which tests are run
+    sorted_results = dict(sorted(results.items()))
+    for key, val in sorted_results.items():
         print(f"{key:>{pad}}: {val}")
         summary[key] = len(val)
     print(f"summary: {summary}")
+
+
+# Counting results, part 2
+# ------------------------
+
+def test_reporting():
+    from contextlib import redirect_stdout
+    from io import StringIO
+
+    result_kinds = ['pass', 'fail', 'skip', 'xfail', 'error']
+    pad = max(len(x) for x in result_kinds + ['summary'])
+    fake_results = {kind: list() for kind in sorted(result_kinds)}
+    fake_summary = {kind: 0 for kind in fake_results}
+    expected = "\n".join(f"{kind:>{pad}}: []" for kind in fake_results)
+    expected += f"\n{'summary':<{pad}}: {repr(fake_summary)}\n"
+    actual = StringIO()
+    with redirect_stdout(actual):
+        report_test_results(fake_results)
+    assert actual.getvalue() == expected
 
 
 def run_tests(prefix):
