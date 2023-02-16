@@ -154,7 +154,8 @@ def run_tests(prefix):
             results['error'] += [f"{name} ({str(e)})"]
     # show results
     report_test_results(results)
+    return results
 
 
 if __name__ == "__main__":
-    run_tests("test_")
+    results = run_tests("test_")
