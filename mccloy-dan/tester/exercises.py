@@ -1,3 +1,23 @@
+"""
+Looping over `globals`
+======================
+In a fresh python interpreter, this:
+
+    for name in globals():
+        print(name)
+
+fails with a `RuntimeError` (dictionary changed size during iteration), because
+when running the first line, `globals()` is executed first, then the variable
+`name` is assigned to point to the first key in `globals()`. When that second
+step occurs, `name` is itself added to `globals()`, thereby changing the
+dictionary size. Pre-assigning something to the variable `name` (as in the
+second example) puts `name` into `globals()` *before* `globals()` is evaluated
+during loop initialization, so the loop runs fine (the *value* of `name`
+changes on each iteration, but the *existence of the key `name`* is there from
+the start, so the dictionary size doesn't change).
+"""
+
+
 def sign(value):
     if value < 0:
         return -1
