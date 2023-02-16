@@ -9,10 +9,8 @@ for name in globals():
     print(name)
 ```
 
----
 **Answer**
 This will print the name of every object within the global python environment (even system ones).
----
 
 What happens if you run:
 
@@ -24,10 +22,8 @@ for name in globals():
 
 Why?
 
----
 **Answer**
 Same thing as above, only now there's a `name` variable in the list. This is because the `print()` is linked to entries in `globals()`, regardless of what you previously were doing. `name` will get overwritten many times within the `for` loop as it iterates. Calling `name` at the end reveals it is now `_i4` for me, rather than its original assignment.
----
 
 ## Counting Results
 
