@@ -103,6 +103,14 @@ test would still fail because of how `expected` is defined.
 """
 
 
+# Failing on purpose
+# ==================
+
+def test_docstring():
+    """test:assert"""
+    raise AssertionError
+
+
 def run_tests(prefix):
     from collections import defaultdict
 
@@ -118,7 +126,9 @@ def run_tests(prefix):
                 func()
                 results['pass'] += [name]
         except AssertionError as e:
-            if kind == "fail":
+            if func.__doc__ == "test:assert":
+                results['pass'] += [name]
+            elif kind == "fail":
                 results['xfail'] += [name]
             else:
                 results['fail'] += [f"{name} ({str(e)})"]
