@@ -9,8 +9,8 @@ for name in globals():
     print(name)
 ```
 
-**Answer**
-This will print the name of every object within the global python environment (even system ones).
+<span style="color:dark blue">**Answer**
+This will print the name of every object within the global python environment (even system ones).</span>
 
 What happens if you run:
 
