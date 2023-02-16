@@ -111,11 +111,25 @@ def test_docstring():
     raise AssertionError
 
 
+# Setup and teardown
+# ==================
+
+def setup():
+    pass
+
+
+def teardown():
+    pass
+
+
 def run_tests(prefix):
     from collections import defaultdict
 
+    # find tests
     all_names = [n for n in globals() if n.startswith(prefix)]
+    # init results
     results = defaultdict(list)
+    # run tests
     for name in all_names:
         func = globals()[name]
         kind = classify(func)
@@ -123,8 +137,12 @@ def run_tests(prefix):
             if kind == "skip":
                 results['skip'] += [name]
             else:
+                if 'setup' in globals():
+                    setup()
                 func()
                 results['pass'] += [name]
+                if 'teardown' in globals():
+                    teardown()
         except AssertionError as e:
             if func.__doc__ == "test:assert":
                 results['pass'] += [name]
@@ -134,6 +152,7 @@ def run_tests(prefix):
                 results['fail'] += [f"{name} ({str(e)})"]
         except Exception as e:
             results['error'] += [f"{name} ({str(e)})"]
+    # show results
     report_test_results(results)
 
 
