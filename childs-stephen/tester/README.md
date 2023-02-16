@@ -9,6 +9,8 @@ for name in globals():
     print(name)
 ```
 
+Answer: You get a `RuntimeError` that the dictionary changed size during iteration. Because `name` is a global that gets added.
+
 What happens if you run:
 
 ```python
@@ -17,7 +19,11 @@ for name in globals():
     print(name)
 ```
 
+Answer: It prints out the list of global variables.
+
 Why?
+
+Because name is already defined before the loop, so it's not changing the length of the globals dictionary.
 
 ## Counting Results
 
