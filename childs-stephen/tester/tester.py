@@ -119,9 +119,11 @@ setup.within_setup = False
 
 
 def teardown():
-    if not setup.within_setup:
+    teardown.within_teardown = True
+    if not (setup.within_setup or teardown.within_teardown):
         print("\nRun teardown")
         teardown.has_been_called = True
+    teardown.within_teardown = False
 
 
 teardown.has_been_called = False
@@ -132,10 +134,12 @@ def test_setup_called():
 
 
 def test_teardown_called():
+    run_tests("test_teardown_")
     assert teardown.has_been_called
 
 
 test_teardown_called.fail = True
+teardown.within_teardown = False
 
 
 def test_pass_test():
