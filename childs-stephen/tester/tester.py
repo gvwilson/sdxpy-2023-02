@@ -102,7 +102,14 @@ def test2_error_test():
 
 
 def setup():
-    if not setup.has_been_called:
+    print(f"Has setup been called: {setup.has_been_called}")
+    print(f"Currently within setup: {setup.within_setup}")
+    print(f"Within teardown test: {test_teardown_called.within_teardown_test}")
+    if not (
+        setup.has_been_called
+        or setup.within_setup
+        or test_teardown_called.within_teardown_test
+    ):
         setup.has_been_called = True
         setup.within_setup = True
         print("Run setup\n")
@@ -119,8 +126,8 @@ setup.within_setup = False
 
 
 def teardown():
-    teardown.within_teardown = True
     if not (setup.within_setup or teardown.within_teardown):
+        teardown.within_teardown = True
         print("\nRun teardown")
         teardown.has_been_called = True
     teardown.within_teardown = False
@@ -134,8 +141,13 @@ def test_setup_called():
 
 
 def test_teardown_called():
-    run_tests("test_teardown_")
+    test_teardown_called.within_teardown_test = True
+    run_tests("teardown_test")
+    test_teardown_called.within_teardown_test = False
     assert teardown.has_been_called
+
+
+test_teardown_called.within_teardown_test = False
 
 
 test_teardown_called.fail = True
