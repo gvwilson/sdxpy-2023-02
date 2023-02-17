@@ -102,94 +102,71 @@ def test2_error_test():
 
 
 def setup():
-    setup.has_been_called = True
-    pass
+    if not setup.has_been_called:
+        setup.has_been_called = True
+        setup.within_setup = True
+        print("Run setup\n")
+        global mystdout
+        old_stdout = sys.stdout
+        sys.stdout = mystdout = StringIO()
+        run_tests("test2_")
+        sys.stdout = old_stdout
+        setup.within_setup = False
+
+
+setup.has_been_called = False
+setup.within_setup = False
 
 
 def teardown():
-    teardown.has_been_called = True
-    pass
+    if not setup.within_setup:
+        teardown.has_been_called = True
+
+
+teardown.has_been_called = False
 
 
 def test_setup_called():
-    run_tests("test2_")
     assert setup.has_been_called
 
 
 def test_teardown_called():
-    run_tests("test2_")
     assert teardown.has_been_called
 
 
 def test_pass_test():
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    run_tests("test2_")
-    sys.stdout = old_stdout
     assert "pass: test2_passing_test" in mystdout.getvalue()
 
 
 def test_fail_test():
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    run_tests("test2_")
-    sys.stdout = old_stdout
     assert "fail: test2_failing_test" in mystdout.getvalue()
 
 
 def test_skip_test():
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    run_tests("test2_")
-    sys.stdout = old_stdout
     assert "skip: test2_skipped_test" in mystdout.getvalue()
 
 
 def test_expected_fail_test():
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    run_tests("test2_")
-    sys.stdout = old_stdout
     assert "pass (expected failure): test2_expected_failing_test" in mystdout.getvalue()
 
 
 def test_error_in_test():
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    run_tests("test2_")
-    sys.stdout = old_stdout
     assert "error: test2_error_test division by zero" in mystdout.getvalue()
 
 
 def test_handle_assert():
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    run_tests("test2_")
-    sys.stdout = old_stdout
     assert "pass (assert): test2_raise_assert" in mystdout.getvalue()
 
 
 def test_handle_assert_skip():
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    run_tests("test2_")
-    sys.stdout = old_stdout
     assert "skip: test2_raise_assert_skip" in mystdout.getvalue()
 
 
 def test_handle_assert_fail():
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    run_tests("test2_")
-    sys.stdout = old_stdout
     assert "fail (assert): test2_raise_assert_fail" in mystdout.getvalue()
 
 
 def test_handle_assert_expected_fail():
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    run_tests("test2_")
-    sys.stdout = old_stdout
     assert (
         "pass (assert expected failure): test2_raise_assert_expected_fail"
         in mystdout.getvalue()
@@ -197,10 +174,6 @@ def test_handle_assert_expected_fail():
 
 
 def test_results_output():
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
-    run_tests("test2_")
-    sys.stdout = old_stdout
     assert "pass 4" in mystdout.getvalue()
     assert "fail 3" in mystdout.getvalue()
     assert "error 1" in mystdout.getvalue()
@@ -266,10 +239,5 @@ def run_tests(prefix):
     for result in results.keys():
         print(f"{result} {results[result]}")
 
-
-print("Run sample tests:")
-run_tests("test2_")
-
-print("\n\nRun actual tests:")
 
 run_tests("test_")
