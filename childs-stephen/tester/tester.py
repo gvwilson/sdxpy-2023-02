@@ -101,6 +101,26 @@ def test2_error_test():
     assert 12 / 0 == 0
 
 
+def setup():
+    setup.has_been_called = True
+    pass
+
+
+def teardown():
+    teardown.has_been_called = True
+    pass
+
+
+def test_setup_called():
+    run_tests("test2_")
+    assert setup.has_been_called
+
+
+def test_teardown_called():
+    run_tests("test2_")
+    assert teardown.has_been_called
+
+
 def test_pass_test():
     old_stdout = sys.stdout
     sys.stdout = mystdout = StringIO()
@@ -205,6 +225,8 @@ def classify(func):
 
 
 def run_tests(prefix):
+    if "setup" in globals():
+        setup()
     results = {"pass": 0, "fail": 0, "error": 0, "skip": 0}
     all_names = [n for n in globals() if n.startswith(prefix)]
     for name in all_names:
@@ -239,6 +261,8 @@ def run_tests(prefix):
         except Exception as e:
             print(f"error: {name} {str(e)}")
             results["error"] += 1
+    if "teardown" in globals():
+        teardown()
     for result in results.keys():
         print(f"{result} {results[result]}")
 
