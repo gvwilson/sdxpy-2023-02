@@ -25,8 +25,8 @@ for name in globals():
 Why?
 
 **Answer:**
-If you has not defined the variable *name* before looping the dictionary *globals()*, it would define (create) *name* at the first step of for looping, that could change the size of *global()* dictionary and cause error.
-So defining (creating) the variable *name* as None at the beginning could fix the size of dictionary and avoid this error.
+If you has not defined the variable **name** before looping the dictionary **globals()**, it would define (create) **name** at the first step of for looping, that could change the size of **global()** dictionary and cause error.
+So defining (creating) the variable **name** as *None* at the beginning could fix the size of dictionary and avoid this error.
 
 ## Counting Results
 
