@@ -35,7 +35,7 @@ So defining (creating) the variable **name** as *None* at the beginning could fi
     
     
 **Function and Tests:**
-```
+```python
 def sign(value):
     if value < 0:
         return -1
@@ -58,7 +58,7 @@ def test_sign_error():
 ```
 
 **Test framework:**
-```
+```python
 def classify(func):
     if hasattr(func, "skip") and func.skip:
         return "skip"
@@ -110,7 +110,7 @@ error: 1
 
 2.  Write unit tests to check that your answer to part 1 works correctly.
 
-```
+```python
 def check_test_frame():
     results = run_tests("test_")
     
@@ -125,7 +125,7 @@ check_test_frame()
 3.  Think of another plausible way to interpret part 1
     that *wouldn't* pass the tests you wrote for part 2.
     
-```
+```python
 def run_tests(prefix):
     all_names = [n for n in globals() if n.startswith(prefix)]
     results = {"pass": 1, "fail": 2, "error": 3}  # Modified line
@@ -170,7 +170,7 @@ Tests whose docstring don't contain `"test:assert"`
 should behave as before.
 
 ---
-```
+```python
 TEST_ASSERT = "test:assert"
 
 def test_sign_negative():
@@ -230,3 +230,28 @@ Modify the testing tool in this chapter so that
 if a file of tests contains a function called `setup`
 then the tool calls it exactly once before running each test in the file.
 Add a similar way to register a `teardown` function.
+
+```python
+def run_tests(prefix):
+    if "setup" in globals():  # check setup function
+        setup()
+    all_names = [n for n in globals() if n.startswith(prefix)]
+    for name in all_names:
+        func = globals()[name]
+        try:
+            func()
+            print(f"pass: {name}")
+        except AssertionError as e:
+            if TEST_ASSERT in func.__doc__:
+                print(f"pass (expected assert): {name}")
+            else:
+                print(f"fail: {name} {str(e)}")
+        except Exception as e:
+            doc = f"/{func.__doc__}" if func.__doc__ else ""
+            print(f"error: {name}{doc} {str(e)}")
+            
+    if "teardown" in globals(): # check teardown function:
+        teardown
+
+run_tests("test_")
+```
