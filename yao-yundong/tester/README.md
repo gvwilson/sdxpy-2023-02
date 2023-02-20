@@ -96,7 +96,7 @@ check_test_frame()
 ```
 def run_tests(prefix):
     all_names = [n for n in globals() if n.startswith(prefix)]
-    results = {"pass": 1, "fail": 2, "error": 3}
+    results = {"pass": 1, "fail": 2, "error": 3}  # Modified line
     for name in all_names:
         func = globals()[name]
         kind = classify(func)
