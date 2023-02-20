@@ -251,7 +251,7 @@ def run_tests(prefix):
             print(f"error: {name}{doc} {str(e)}")
             
     if "teardown" in globals(): # check teardown function:
-        teardown
+        teardown()
 
 run_tests("test_")
 ```
