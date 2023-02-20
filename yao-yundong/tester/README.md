@@ -170,7 +170,50 @@ Tests whose docstring don't contain `"test:assert"`
 should behave as before.
 
 ---
+```
+TEST_ASSERT = "test:assert"
 
+def test_sign_negative():
+    "test:skip"
+    assert sign(-3) == -1
+
+def test_sign_positive():
+    assert sign(19) == 1
+
+def test_sign_zero():
+    "test:assert"
+    assert sign(0) == 0
+
+def test_sign_error():
+    """Expect an error."""
+    assert sgn(1) == 1
+    
+def run_tests(prefix):
+    all_names = [n for n in globals() if n.startswith(prefix)]
+    for name in all_names:
+        func = globals()[name]
+        try:
+            func()
+            print(f"pass: {name}")
+        except AssertionError as e:
+            if TEST_ASSERT in func.__doc__:
+                print(f"pass (expected assert): {name}")
+            else:
+                print(f"fail: {name} {str(e)}")
+        except Exception as e:
+            doc = f"/{func.__doc__}" if func.__doc__ else ""
+            print(f"error: {name}{doc} {str(e)}")
+
+run_tests("test_")
+```
+
+**Output:**
+```
+pass: test_sign_negative
+pass: test_sign_positive
+pass (expected assert): test_sign_zero
+error: test_sign_error/Expect an error. name 'sgn' is not defined
+```
 class: exercise
 
 ## Setup and Teardown
