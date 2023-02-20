@@ -19,6 +19,10 @@ for name in globals():
 
 Why?
 
+The first for loop produces 
+```RuntimeError: dictionary changed size during iteration```
+while the second for loop prints each item in the name space. The first error occurs because defining "name" as the variable holding each item from the dictionary creates a new item in the "globals" dictionary, which holds every variable the current session knows about. The RuntimeError occurs because this is the same dictionary we are iterating over in the for loop. The second for loop avoids this error because "name" is defined before the for loop begins.
+
 ## Counting Results
 
 1.  Modify the test framework so that it reports which tests passed, failed, or had errors
