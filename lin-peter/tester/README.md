@@ -8,6 +8,14 @@ What happens if you run:
 for name in globals():
     print(name)
 ```
+You get:
+```commandline
+__name__
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+RuntimeError: dictionary changed size during iteration
+```
+
 
 What happens if you run:
 
@@ -16,8 +24,27 @@ name = None
 for name in globals():
     print(name)
 ```
-
+You get:
+```commandline
+__name__
+__doc__
+__package__
+__loader__
+__spec__
+__annotations__
+__builtins__
+name
+```
 Why?
+
+- Python `globals()` method returns a dictionary with all global variables.
+- Without declaring what `name` variable is before iterating over the key-value pairs in `globals()`, the `name` 
+variable in for loop gets assigned dynamically and triggers the dictionary size change error when the for loop is executed.
+- With `name` variable declared before iterating over the key-value pairs in `globals()`, the `name` 
+variable in for loop behaves like a placeholder and gets assigned dynamically. 
+However, the `name` variable at the `globals()` is already declared so it does not affect the `name` variable in the for loop.
+
+
 
 ## Counting Results
 
