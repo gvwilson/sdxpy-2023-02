@@ -9,10 +9,13 @@ def test_sign_positive():
 
 
 def test_sign_zero():
+    """test:assert"""
     assert sign(0) == 0
 
 
 # Misspelled 'sign'
 def test_sign_error():
     assert sgn(1) == 1
+
+
 test_sign_error.skip = True
