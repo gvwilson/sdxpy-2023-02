@@ -39,7 +39,10 @@ Alex: run_test code is in counting_setup_excercises
 2. Write unit tests to check that your answer to part 1 works correctly.
 
     Alex: I've done this by introducing another function run_tests_stats_meta_test to hold test suite
-
+    Actually, I had initially tried to put sample test functions into the same suite as test functions
+    but gave up, because of recursions and other problems. For now I decided to call usual test functions and tester
+    framework functions using different invocation techniques. Failed to test run_test with run_test :(
+    May be Greg hasn't required it and I fell victim of my overinterpretation of requirements.
 3. Think of another plausible way to interpret part 1
     that *wouldn't* pass the tests you wrote for part 2.
 
