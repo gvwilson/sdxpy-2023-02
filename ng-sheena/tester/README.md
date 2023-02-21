@@ -9,6 +9,15 @@ for name in globals():
     print(name)
 ```
 
+Output:
+```python
+__name__
+Traceback (most recent call last):
+  File "/Users/peterlin/Sheena/Projects/Python/GregSoftwareDesign/GregSoftwareDesign-2023/ng-sheena/tester/test.py", line 1, in <module>
+    for name in globals():
+RuntimeError: dictionary changed size during iteration
+```
+
 What happens if you run:
 
 ```python
@@ -17,7 +26,35 @@ for name in globals():
     print(name)
 ```
 
+Output:
+```python
+__name__
+__doc__
+__package__
+__loader__
+__spec__
+__annotations__
+__builtins__
+__file__
+__cached__
+name
+```
+
 Why?
+```python
+The globals() method returns a dictionary of current global variables and symbols.
+
+First code:
+When we begin iterating, the variable "name" is declared and added to the globals()
+dictionary. This is why it produces error as the dictionary changes its size due to
+the variable "name" during iteration.
+
+Second code:
+We defined the variable "name" before iterating the globals() dictionary.
+In this case, the size of the dictionary will not change during iteration and
+we are able to iterate the entire dictionary without any error.
+
+```
 
 ## Counting Results
 
