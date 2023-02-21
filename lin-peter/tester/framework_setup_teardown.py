@@ -10,13 +10,17 @@ def run_test():
     results = {"pass": 0, "fail": 0, "error": 0, "skip": 0}
 
     for (i, name) in enumerate(test_files):
-        m = SourceFileLoader(f"m{i}", name).load_module()
+        func_collections = SourceFileLoader(f"func_collections{i}", name).load_module()
 
-        for name_entry in dir(m):
+        if "setup" in dir(func_collections) and "teardown" in dir(func_collections):
+            setup_func = getattr(func_collections, "setup")
+            setup_func()
+
+        for name_entry in dir(func_collections):
             if not name_entry.startswith("test_"):
                 continue
 
-            func = getattr(m, name_entry)
+            func = getattr(func_collections, name_entry)
 
             if hasattr(func, "skip"):
                 results["skip"] += 1
@@ -37,6 +41,10 @@ def run_test():
             except Exception:
                 results["error"] += 1
                 print(f"{name_entry} error")
+
+        if "setup" in dir(func_collections) and "teardown" in dir(func_collections):
+            teardown_func = getattr(func_collections, "teardown")
+            teardown_func()
 
     results["total"] = results["pass"] + results["fail"] + results["skip"] + results["error"]
     print("Summary:")
