@@ -32,12 +32,13 @@ def run_test():
             except Exception:
                 results["error"] += 1
                 print(f"{name_entry} error")
-        results["total"] = results["pass"] + results["fail"] + results["skip"] + results["error"]
-        print("Summary:")
-        for key, value in results.items():
-            print(key, value)
 
-        return results
+    results["total"] = results["pass"] + results["fail"] + results["skip"] + results["error"]
+    print("Summary:")
+    for key, value in results.items():
+        print(key, value)
+
+    return results
 
 
 run_test()
