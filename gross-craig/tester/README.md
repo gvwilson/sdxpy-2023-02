@@ -43,10 +43,12 @@ I can't quite figure out though why I can append to a list in that I'm looping o
 
 ### Solution:
 
-The code for (1) and (2) are in `tester.py`.
+The code for (1) is in `tester.py` (in addition to subsequent modifications).
+The code for (2) is in `test_tester.py` and should be run using `pytest` via `pytest test_tester.py`.
 
-As for (3), we could consider a test that had multiple assert statements.
-The whole test could be considered failing if only one assert failed, but the summary could count each assertion's pass, fail, or error separately.
+As for (3), we could consider a test that had multiple assert statements (like `fixture_test_negative_wrong` in `test_tester.test_summary_pass_fail_error`).
+Currently, the whole test is considered failing if only one assert failed.
+But the summary could count each of the tests separate assertions' passes, fails, or errors separately.
 
 ## Failing on Purpose
 
@@ -67,7 +69,7 @@ should behave as before.
 ### Solution
 
 The code is contained in `tester.py`.
-In particular the `test_negative_wrong_test_assert` test passes, despite the same test without `"test:assert"` as its docstring (`test_negative_wrong`) fails.
+In particular the `test_negative_wrong_test_assert` test passes, despite the same test without `"test:assert"` as its docstring (`test_negative_wrong`) failing.
 
 ## Setup and Teardown
 

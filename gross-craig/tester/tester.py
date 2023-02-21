@@ -53,26 +53,35 @@ def assert_test(func):
     return func.__doc__ == "test:assert"
 
 
-def pass_test(name, results):
-    print(f"pass: {name}")
-    results["pass"] += 1
+def record_test(result, name, results, *extras):
+    results[result] += 1
+    return f"{result}: {name} {' '.join(extras)}\n"
 
 
-def fail_test(name, results):
-    print(f"fail: {name}")
-    results["fail"] += 1
+def generate_summary(results):
+    summary = "--- Summary ---\n"
+    summary += f"{results['pass']}/{results['total']} tests passed\n"
+    summary += f"{results['fail']}/{results['total']} tests failed\n"
+    summary += f"{results['error']}/{results['total']} tests had errors"
+    return summary
 
 
-def run_tests(prefix):
+def run_tests(prefix, **extra_tests):
+    '''Runs and records all tests defined in globals() or extra_tests
+    starting with prefix'''
+
     results = {"pass": 0,
                "fail": 0,
                "error": 0,
                "total": 0}
 
-    if "setup" in globals():
-        globals()["setup"]()
+    all_tests = globals() | extra_tests
 
-    for (name, test) in globals().items():
+    if "setup" in all_tests:
+        all_tests["setup"]()
+
+    out_string = ""
+    for (name, test) in all_tests.items():
         if not name.startswith(prefix):
             continue
 
@@ -81,27 +90,26 @@ def run_tests(prefix):
         try:
             test()
             if assert_test(test):
-                fail_test(name, results)
+                out_string += record_test("fail", name, results)
             else:
-                pass_test(name, results)
+                out_string += record_test("pass", name, results)
 
         except AssertionError as e:
             if assert_test(test):
-                pass_test(name, results)
+                out_string += record_test("pass", name, results)
             else:
-                fail_test(name, results)
+                out_string += record_test("fail", name, results)
 
         except Exception as e:
-            print(f"error: {name} {str(e)}")
-            results["error"] += 1
+            out_string += record_test("error", name, results, str(e))
 
-    if "teardown" in globals():
-        globals()["teardown"]()
+    out_string += generate_summary(results)
+    print(out_string)
 
-    print("\n--- Summary ---")
-    print(f"{results['pass']}/{results['total']} tests passed")
-    print(f"{results['fail']}/{results['total']} tests failed")
-    print(f"{results['error']}/{results['total']} tests had errors")
+    if "teardown" in all_tests:
+        all_tests["teardown"]()
+
+    return out_string
 
 
 if __name__ == "__main__":
