@@ -5,11 +5,13 @@ from importlib.machinery import SourceFileLoader
 def run_test():
     # root_dir argument is supported only in python 3.10+
     test_files = glob("**/test_*.py", root_dir=".", recursive=True)
+
+    # add a skip category in results to break verifier
+    results = {"pass": 0, "fail": 0, "error": 0, "skip": 0}
+
     for (i, name) in enumerate(test_files):
         m = SourceFileLoader(f"m{i}", name).load_module()
 
-        # add a skip category in results to break verifier
-        results = {"pass": 0, "fail": 0, "error": 0, "skip": 0}
 
         for name_entry in dir(m):
             if not name_entry.startswith("test_"):
