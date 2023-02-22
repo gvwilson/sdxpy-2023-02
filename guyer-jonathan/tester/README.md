@@ -52,6 +52,10 @@ The for loop (and, hence, the loop variable `name`) is in the global scope, so `
 3.  Think of another plausible way to interpret part 1
     that *wouldn't* pass the tests you wrote for part 2.
 
+**ANS:**
+
+Print results without returning anything
+
 ## Failing on Purpose
 
 Putting assertions into code to check that it is behaving correctly
