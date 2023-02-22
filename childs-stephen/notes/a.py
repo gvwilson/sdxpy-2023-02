@@ -19,19 +19,19 @@ def run_mul(env, args):
     return run(env, left) * run(env, right)
 
 
+# could loop over globals to get all functions starting with run_
+FUNCS = {"add": run_add, "get": run_get, "mul": run_mul}
+
+
 # dispatch
 def run(env, expr):
     if isinstance(expr, int):
         return expr
     op = expr[0]
     args = expr[1:]
-    if op == "add":
-        return run_add(env, args)
-    if op == "get":
-        return run_get(env, args)
-    if op == "mul":
-        return run_mul(env, args)
-    assert False, f"Unknown operation {op}"
+    assert op in FUNCS, f"Unknown operation {op}"
+    func = FUNCS[op]
+    return func(args)
 
 
 # reiko + (alex * 3)
