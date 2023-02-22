@@ -1,3 +1,9 @@
+def sign(value):
+    if value < 0:
+        return -1
+    else:
+        return 1
+
 def test_sign_negative():
     assert sign(-3) == -1
 test_sign_negative.skip = True
@@ -16,9 +22,9 @@ def meta_test_results():
     skipped, passed, failed, errored = run_tests()
 
     assert skipped == ["test_sign_negative"]
-    assert passed == []
+    assert passed == ["test_sign_positive", "test_sign_zero"]
     assert failed == []
-    assert errored == ["test_sign_positive", "test_sign_zero", "test_sign_error"]
+    assert errored == ["test_sign_error"]
 
 def run_tests():
     skipped = []
@@ -40,9 +46,10 @@ def run_tests():
         except AssertionError as e:
             if hasattr(test, "fail"):
                 print(f"pass (expected failure): {name}")
+                passed.append(name)
             else:
                 print(f"fail: {name} {str(e)}")
-            failed.append(name)
+                failed.append(name)
         except Exception as e:
             print(f"error: {name} {str(e)}")
             errored.append(name)
