@@ -114,16 +114,18 @@ def test_docstring():
 # Setup and teardown
 # ==================
 
-def setup():
-    pass
-
-
-def teardown():
-    pass
-
-
 def run_tests(prefix):
     from collections import defaultdict
+
+    # cache setup/teardown
+    def default_setup():
+        pass
+
+    def default_teardown():
+        pass
+
+    setup = globals().get("setup", default_setup)
+    teardown = globals().get("teardown", default_teardown)
 
     # find tests
     all_names = [n for n in globals() if n.startswith(prefix)]
@@ -137,12 +139,10 @@ def run_tests(prefix):
             if kind == "skip":
                 results['skip'] += [name]
             else:
-                if 'setup' in globals():
-                    setup()
+                setup()
                 func()
                 results['pass'] += [name]
-                if 'teardown' in globals():
-                    teardown()
+                teardown()
         except AssertionError as e:
             if func.__doc__ == "test:assert":
                 results['pass'] += [name]
