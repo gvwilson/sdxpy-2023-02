@@ -28,7 +28,7 @@ def run_seq(env, args):
 
 def run_set(env, args):
     name = args[0]
-    value = run(args[1])
+    value = run(env, args[1])
     env[name] = value
     return value
 
