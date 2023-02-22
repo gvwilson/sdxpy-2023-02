@@ -19,6 +19,12 @@ def run_mul(env, args):
     return run(env, left) * run(env, right)
 
 
+def run_set(env, args):
+    name = args[0]
+    value = run(args[1])
+    env[name] = value
+
+
 # could loop over globals to get all functions starting with run_
 FUNCS = {"add": run_add, "get": run_get, "mul": run_mul}
 
@@ -39,8 +45,13 @@ def run(env, expr):
 
 # print(run(["add", 1, 2]))
 
-stuff = {"reiko": 1, "alex": 3}
+stuff = {"reiko": 1, "alex": 2}
 
-program = ["add", ["get", "reiko"], ["mul", ["get", "alex"], 3]]
+program = [
+    "seq",
+    ["set", "reiko", 1],
+    ["set", "alex", 2],
+    ["add", ["get", "reiko"], ["mul", ["get", "alex"], 3]],
+]
 
 print(run(stuff, program))
