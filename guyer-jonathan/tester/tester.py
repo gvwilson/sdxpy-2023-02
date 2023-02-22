@@ -22,14 +22,6 @@ test_sign_zero.fail = True
 def test_sign_error():
     assert sgn(1) == 1
 
-def meta_test_results():
-    skipped, passed, failed, errored = run_tests()
-
-    assert skipped == ["test_sign_negative"]
-    assert passed == ["test_sign_positive", "test_sign_zero"]
-    assert failed == []
-    assert errored == ["test_sign_error"]
-
 def run_tests():
     skipped = []
     passed = []
@@ -68,6 +60,14 @@ def run_tests():
     print(f"{len(errored)} tests errored: {errored}")
 
     return skipped, passed, failed, errored
+
+def meta_test_results():
+    skipped, passed, failed, errored = run_tests()
+
+    assert skipped == ["test_sign_negative"]
+    assert passed == ["test_sign_positive", "test_sign_zero"]
+    assert failed == []
+    assert errored == ["test_sign_error"]
 
 if __name__ == "__main__":
     run_tests()
