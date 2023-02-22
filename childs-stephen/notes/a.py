@@ -33,8 +33,29 @@ def run_set(env, args):
     return value
 
 
+# ["if", [...cond...], [...iftrue...], [...iffalse..]]
+# lazy evaluation
+# eager evaluation -- run the expression in args[1], args[2] before eval cond.
+# lazy evaluation -- allows using if for testing if it is save to evaluate an expression
+def run_if(env, args):
+    cond = args[0]
+    if_true = args[1]
+    if_false = args[2]
+    if run(env, cond):
+        return run(env, if_true)
+    else:
+        return run(env, if_false)
+
+
 # could loop over globals to get all functions starting with run_
-FUNCS = {"add": run_add, "get": run_get, "mul": run_mul, "set": run_set, "seq": run_seq}
+FUNCS = {
+    "add": run_add,
+    "get": run_get,
+    "mul": run_mul,
+    "set": run_set,
+    "seq": run_seq,
+    "if": run_if,
+}
 
 
 # dispatch
@@ -63,3 +84,6 @@ program = [
 ]
 
 print(run(stuff, program))
+
+mckenzie = ["if", 0, 100, -100]
+print(run({}, mckenzie))
