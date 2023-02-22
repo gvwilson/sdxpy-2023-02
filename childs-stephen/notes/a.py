@@ -19,14 +19,22 @@ def run_mul(env, args):
     return run(env, left) * run(env, right)
 
 
+def run_seq(env, args):
+    result = None
+    for expression in args:
+        result = run(env, expression)
+    return result
+
+
 def run_set(env, args):
     name = args[0]
     value = run(args[1])
     env[name] = value
+    return value
 
 
 # could loop over globals to get all functions starting with run_
-FUNCS = {"add": run_add, "get": run_get, "mul": run_mul}
+FUNCS = {"add": run_add, "get": run_get, "mul": run_mul, "set": run_set, "seq": run_seq}
 
 
 # dispatch
