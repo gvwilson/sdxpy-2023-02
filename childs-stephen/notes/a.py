@@ -31,13 +31,12 @@ def run(env, expr):
     args = expr[1:]
     assert op in FUNCS, f"Unknown operation {op}"
     func = FUNCS[op]
-    return func(args)
+    return func(env, args)
 
 
 # reiko + (alex * 3)
 # program = ["add", 1, ["mul", 2, 3]]
 
-print(run(program))
 # print(run(["add", 1, 2]))
 
 stuff = {"reiko": 1, "alex": 3}
