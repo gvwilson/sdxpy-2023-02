@@ -13,22 +13,38 @@ def test_sign_error():
     assert sgn(1) == 1
 
 def run_tests():
+    skipped = []
+    passed = []
+    failed = []
+    errored = []
+
     for (name, test) in globals().items():
         if not name.startswith("test_"):
             continue
         if hasattr(test, "skip"):
             print(f"skip: {name}")
+            skipped.append(name)
             continue
         try:
             test()
             print(f"pass: {name}")
+            passed.append(name)
         except AssertionError as e:
             if hasattr(test, "fail"):
                 print(f"pass (expected failure): {name}")
             else:
                 print(f"fail: {name} {str(e)}")
+            failed.append(name)
         except Exception as e:
             print(f"error: {name} {str(e)}")
+            errored.append(name)
+
+    print(f"{len(skipped)} tests skipped: {skipped}")
+    print(f"{len(passed)} tests passed: {passed}")
+    print(f"{len(failed)} tests failed: {failed}")
+    print(f"{len(errored)} tests errored: {errored}")
+
+    return skipped, passed, failed, errored
 
 if __name__ == "__main__":
     run_tests()
