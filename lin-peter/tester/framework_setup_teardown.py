@@ -46,7 +46,7 @@ def run_test():
             teardown_func = getattr(func_collections, "teardown")
             teardown_func()
 
-    results["total"] = results["pass"] + results["fail"] + results["skip"] + results["error"]
+    results["total"] = sum(results.values())
     print("Summary:")
     for key, value in results.items():
         print(key, value)
