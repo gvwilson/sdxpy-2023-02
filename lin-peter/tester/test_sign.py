@@ -6,11 +6,11 @@ import csv
 def setup():
     mock_input_stream = [num for num in range(1, 4, 1)]
     mock_output_stream = [1]*3
-    if not os.path.isfile(r"mock_input.csv"):
-        with open(r"mock_input.csv", "w") as file:
+    if not os.path.isfile("mock_input.csv"):
+        with open("mock_input.csv", "w") as file:
             file.write(",".join(str(item) for item in mock_input_stream))
     if not os.path.isfile(r"mock_output.csv"):
-        with open(r"mock_output.csv", "w") as file:
+        with open("mock_output.csv", "w") as file:
             file.write(",".join(str(item) for item in mock_output_stream))
     print("setup completed")
 
