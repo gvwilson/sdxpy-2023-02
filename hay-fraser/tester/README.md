@@ -118,26 +118,25 @@ def run_tests(prefix):
     for name in all_names:
         func = globals()[name]
         kind = classify(func)
-        if help(func) == "test:assert":
-            try:
-                func()
-                print(f"fail (expected assertion error but did not return): {name} {str(e)}")
-                    fail += 1
-            except AssertionError as e:
-                print(f"pass (assertion error expected and returned): {name}")
-                passed += 1
         else:    
             try:
                 if kind == "skip":
                     print(f"skip: {name}")
                 else:
                     func()
-                    print(f"pass: {name}")
-                    passed += 1
+                    if help(func) == "test:assert":
+                        print(f"fail (expected assertion error but did not return): {name} {str(e)}")
+                        fail += 1
+                    else:
+                        print(f"pass: {name}")
+                        passed += 1
             except AssertionError as e:
-                if kind == "fail":
+                if help(func) == "test:assert":
+                    print(f"pass (assertion error expected and returned): {name}")
+                    passed += 1
+                elif kind == "fail":
                     print(f"pass (expected failure): {name}")
-                    fail += 1  # Though unsure if this should count if it's expected?
+                    passed += 1
                 else:
                     print(f"fail: {name} {str(e)}")
                     fail += 1
