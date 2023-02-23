@@ -35,7 +35,8 @@ def setup():
 def teardown():
     continue
     
-def run_tests(path_to_tests):
+def run_tests():
+#def run_tests(path_to_tests):
     ##couldn't get this working with module namespace when imported from a file
     #import(path_to_tests) as my_tests
     
