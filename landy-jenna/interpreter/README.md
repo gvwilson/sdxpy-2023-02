@@ -11,7 +11,8 @@
 
 Implement fixed-size one-dimensional arrays:
 
-1.  `["array", "new", 10]` creates an array of 10 elements.
+1.  `["array", 10]` creates an array of 10 elements.
+    (If you want to assign it to a variable you could use `["set", "var", ["array", 10]]`.)
 2.  Other instructions that you design get and set array elements by index.
 
 ## While Loops
