@@ -49,19 +49,18 @@ def run_if(env, args):
 
 # could loop over globals to get all functions starting with run_
 FUNCS = {
-    "add": run_add,
-    "get": run_get,
-    "mul": run_mul,
-    "set": run_set,
-    "seq": run_seq,
-    "if": run_if,
+    name.replace("run_", ""): func
+    for (name, func) in globals().items()
+    if name.startswith("run_")
 }
 
 
 # dispatch
 def run(env, expr):
+    # integers evaluate to themselves
     if isinstance(expr, int):
         return expr
+    assert isinstance(expr, list)
     op = expr[0]
     args = expr[1:]
     assert op in FUNCS, f"Unknown operation {op}"
