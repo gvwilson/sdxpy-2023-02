@@ -47,6 +47,14 @@ def run_if(env, args):
         return run(env, if_false)
 
 
+def run_def(env, args):
+    assert len(args) == 3
+    name = args[0]
+    params = args[1]
+    body = args[2]
+    run_set(env, name, ["func", params, body])
+
+
 # could loop over globals to get all functions starting with run_
 FUNCS = {
     name.replace("run_", ""): func
@@ -86,3 +94,8 @@ print(run(stuff, program))
 
 mckenzie = ["if", 0, 100, -100]
 print(run({}, mckenzie))
+
+stuff2 = {}
+program2 = ["seq", ["def", "f1", [], [1]], ["add", 1, 2]]
+run(stuff2, program2)
+print(stuff2)
