@@ -52,7 +52,29 @@ def run_def(env, args):
     name = args[0]
     params = args[1]
     body = args[2]
-    run_set(env, name, ["func", params, body])
+    run_set(env, [name, ["func", params, body]])
+
+
+def run_call(env, args):
+    # Set up the call
+    assert len(args) >= 1
+    name = args[0]
+    # evaluates all the arguments to the function
+    values = [run(env, a) for a in args[1:]]
+
+    # Find the function.
+    func = run_get(env, name)
+    assert isinstance(func, list) and (func[0] == "func")
+    params, body = func[1], func[2]
+    assert len(values) == len(params)
+
+    # Run in new environment
+    env.append(dict(zip(params, values)))
+    result = run(env, body)
+    env.pop
+
+    # Report
+    return result
 
 
 # could loop over globals to get all functions starting with run_
@@ -99,3 +121,13 @@ stuff2 = {}
 program2 = ["seq", ["def", "f1", [], [1]], ["add", 1, 2]]
 run(stuff2, program2)
 print(stuff2)
+
+stuff3 = {}
+program3 = [
+    "seq",
+    ["def", "addone", ["num"], ["add", "num", 1]],
+    ["set", "reiko", 1],
+    ["call", "addone", ["reiko"]],
+]
+run(stuff3, program3)
+print(stuff3)
