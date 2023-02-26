@@ -1,5 +1,6 @@
 import json
 import sys
+from collections import ChainMap
 
 
 def do_add(env, args):
@@ -89,8 +90,8 @@ OPS = {
     if name.startswith("do_")
 }
 
-
-tll_env = {}
+# use python's built-in ChainMap to unify globals and OPS
+tll_env = ChainMap(OPS, globals())
 
 
 def do(env, expr):
