@@ -40,6 +40,13 @@ def do_abs(env, args):
     return abs(val)
 
 
+def do_comment(env, args):
+    """Ignore instructions.
+    ["comment" "text"] => None
+    """
+    return None
+
+
 def do_print(env, args):
     assert len(args) == 1
     # if args[0] is an object in env
@@ -55,6 +62,14 @@ def do_array(env, args):
     array_created = [None]*args[0]
     env["array_size"+str(args[0])] = array_created
     return array_created
+
+
+# ["array_set", "name_of_array", "index", "value_to_be_added_to_index"]
+def do_array_set(env, args):
+    assert len(args) == 3
+    assert args[0] in env  # make sure that the array is present
+    assert isinstance(int(args[1]), int)
+    env[args[0]][args[1]] = args[2]
 
 
 def env_get(env, name):
