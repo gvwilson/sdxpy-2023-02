@@ -72,6 +72,14 @@ def do_array_set(env, args):
     env[args[0]][args[1]] = args[2]
 
 
+# ["array_get", "name_of_array", "index"]
+def do_array_get(env, args):
+    assert len(args) == 2
+    assert args[0] in env  # make sure that the array is present
+    assert isinstance(int(args[1]), int)
+    return env[args[0]][args[1]]
+
+
 def env_get(env, name):
     assert isinstance(name, str)
     if name in env[-1]:
