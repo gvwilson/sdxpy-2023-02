@@ -1,3 +1,7 @@
+import json
+import sys
+
+
 def do_add(env, args):
     assert len(args) == 2
     left = do(env, args[0])
@@ -44,12 +48,20 @@ def env_get(env, name):
     assert False, f"Unknown variable {name}"
 
 
+def env_set(env, name, value):
+    assert isinstance(name, str)
+    if name not in env:
+        env[name]: value
+    else:
+        raise TypeError(f"object {name} already exists in {env}")
+
+
 def do_def(env, args):
     assert len(args) == 3
     name = args[0]
     params = args[1]
     body = args[2]
-    # env_set(env, name, ["func", params, body])
+    env_set(env, name, ["func", params, body])
     return None
 
 
@@ -78,6 +90,9 @@ OPS = {
 }
 
 
+tll_env = {}
+
+
 def do(env, expr):
     # Integers evaluate to themselves.
     if isinstance(expr, int):
@@ -87,3 +102,15 @@ def do(env, expr):
     assert expr[0] in OPS, f"Unknown operation {expr[0]}"
     func = OPS[expr[0]]
     return func(env, expr[1:])
+
+
+def main():
+    assert len(sys.argv) == 2, "Usage: expr.py filename"
+    with open(sys.argv[1], "r") as reader:
+        program = json.load(reader)
+    result = do(program)
+    print(f"=> {result}")
+
+
+if __name__ == "__main__":
+    main()
