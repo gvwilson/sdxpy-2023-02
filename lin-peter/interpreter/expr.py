@@ -48,12 +48,12 @@ def env_get(env, name):
     assert False, f"Unknown variable {name}"
 
 
-def env_set(env, name, value):
-    assert isinstance(name, str)
-    if name not in env:
-        env[name]: value
+def env_set(env, var_name, var_value):
+    assert isinstance(var_name, str)
+    if var_name not in env:
+        env[var_name]: var_value
     else:
-        raise TypeError(f"object {name} already exists in {env}")
+        raise TypeError(f"object {var_name} already exists in {env}")
 
 
 def do_def(env, args):
@@ -108,7 +108,7 @@ def main():
     assert len(sys.argv) == 2, "Usage: expr.py filename"
     with open(sys.argv[1], "r") as reader:
         program = json.load(reader)
-    result = do(program)
+    result = do(tll_env, program)
     print(f"=> {result}")
 
 
