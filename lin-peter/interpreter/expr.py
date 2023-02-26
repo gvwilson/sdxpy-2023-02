@@ -124,6 +124,16 @@ def do_call(env, args):
     return result
 
 
+def do_if(env, args):
+    """Make a choice: only one sub-expression is evaluated.
+    ["if" C A B] => A if C else B
+    """
+    assert len(args) == 3
+    cond = do(env, args[0])
+    choice = args[1] if cond else args[2]
+    return do(env, choice)
+
+
 OPS = {
     name.replace("do_", ""): func
     for (name, func) in globals().items()
