@@ -1,0 +1,5 @@
+[
+    "seq",
+    ["set", "alpha", ["array", 5]],
+    ["print", "alpha"]
+]

@@ -40,6 +40,23 @@ def do_abs(env, args):
     return abs(val)
 
 
+def do_print(env, args):
+    assert len(args) == 1
+    # if args[0] is an object in env
+    if args[0] in env:
+        return env[args[0]]
+    # print args[0] like any string
+    else: return args[0]
+
+
+def do_array(env, args):
+    assert len(args) == 1
+    assert isinstance(int(args[0]), int)
+    array_created = [None]*args[0]
+    env["array_size"+str(args[0])] = array_created
+    return array_created
+
+
 def env_get(env, name):
     assert isinstance(name, str)
     if name in env[-1]:
