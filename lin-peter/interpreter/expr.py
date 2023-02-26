@@ -82,17 +82,15 @@ def do_array_get(env, args):
 
 def env_get(env, name):
     assert isinstance(name, str)
-    if name in env[-1]:
-        return env[-1][name]
-    if name in env[0]:
-        return env[0][name]
+    if name in env:
+        return env[name]
     assert False, f"Unknown variable {name}"
 
 
 def env_set(env, var_name, var_value):
     assert isinstance(var_name, str)
     if var_name not in env:
-        env[var_name]: var_value
+        env[var_name] = var_value
     else:
         raise TypeError(f"object {var_name} already exists in {env}")
 
