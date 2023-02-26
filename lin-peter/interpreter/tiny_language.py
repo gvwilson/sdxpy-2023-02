@@ -1,7 +1,7 @@
-def do_add(args):
+def do_add(env, args):
     assert len(args) == 2
-    left = do(args[0])
-    right = do(args[1])
+    left = do(env, args[0])
+    right = do(env, args[1])
     return left + right
 
 
