@@ -92,3 +92,13 @@ print(do({}, another_program))
 # x = y = 2
 
 # ["if", z != 0, 1/z, None]
+
+
+
+# function definition
+
+print(do({}, ["def", "same", ["num"], ["get", "num"]]))
+
+print(do({}, ["func", ["num"], ["get", "num"]]))
+
+print(do({}, ["call", "same", 3]))
