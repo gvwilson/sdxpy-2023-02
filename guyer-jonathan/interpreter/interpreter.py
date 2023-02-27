@@ -58,6 +58,41 @@ def do_if(env, args):
     else:
         return if_false
 
+# function definition
+
+def env_get(env, name):
+    assert isinstance(name, str)
+    if name in env[-1]:
+        return env[-1][name]
+    if name in env[0]:
+        return env[0][name]
+    assert False, f"Unknown variable {name}"
+    
+def do_def(env, args):
+    assert len(args) == 3
+    name = args[0]
+    params = args[1]
+    body = args[2]
+    env_set(env, name, ["func", params, body])
+    return None
+
+def do_call(env, args):
+    # Set up the call.
+    assert len(args) >= 1
+    name = args[0]
+    values = [do(env, a) for a in args[1:]]
+    # Find the function.
+    func = env_get(env, name)
+    assert isinstance(func, list) and (func[0] == "func")
+    params, body = func[1], func[2]
+    assert len(values) == len(params)
+    # Run in new environment.
+    env.append(dict(zip(params, values)))
+    result = do(env, body)
+    env.pop()
+    # Report.
+    return result
+
 OPS = {
     name.replace("do_", ""): func
     for (name, func) in globals().items()
