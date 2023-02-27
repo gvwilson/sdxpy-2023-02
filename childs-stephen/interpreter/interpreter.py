@@ -70,8 +70,10 @@ def run_call(env, args):
 
     # Run in new environment
     env.append(dict(zip(params, values)))
+    print(f"Env in function: {env}")
     result = run(env, body)
-    env.pop
+    env.pop()
+    print(f"Env after function: {env}")
 
     # Report
     return result
