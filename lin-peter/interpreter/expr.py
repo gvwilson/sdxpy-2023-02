@@ -51,16 +51,17 @@ def do_print(env, args):
     assert len(args) == 1
     # if args[0] is an object in env
     if args[0] in env:
-        return env[args[0]]
+        print(env[args[0]])
     # print args[0] like any string
-    else: return args[0]
+    else:
+        print(args[0])
 
 
 def do_array(env, args):
     assert len(args) == 1
     assert isinstance(int(args[0]), int)
-    array_created = [None]*args[0]
-    env["array_size"+str(args[0])] = array_created
+    array_created = [None] * args[0]
+    env["array_size" + str(args[0])] = array_created
     return array_created
 
 
@@ -104,24 +105,6 @@ def do_def(env, args):
     return None
 
 
-def do_call(env, args):
-    # Set up the call.
-    assert len(args) >= 1
-    name = args[0]
-    values = [do(env, a) for a in args[1:]]
-    # Find the function.
-    func = env_get(env, name)
-    assert isinstance(func, list) and (func[0] == "func")
-    params, body = func[1], func[2]
-    assert len(values) == len(params)
-    # Run in new environment.
-    env.append(dict(zip(params, values)))
-    result = do(env, body)
-    env.pop()
-    # Report.
-    return result
-
-
 def do_if(env, args):
     """Make a choice: only one sub-expression is evaluated.
     ["if" C A B] => A if C else B
@@ -130,6 +113,27 @@ def do_if(env, args):
     cond = do(env, args[0])
     choice = args[1] if cond else args[2]
     return do(env, choice)
+
+
+# from Greg's implementation
+def do_leq(env, args):
+    """Less than or equal.
+    ["leq" A B] => A <= B
+    """
+    assert len(args) == 2
+    return do(env, args[0]) <= do(env, args[1])
+
+
+# ["while", "condition_to_eval", "perform_operation"]
+def do_while(env, args):
+    assert len(args) == 2
+    condition = do(env, args[0])
+    while condition:
+        # perform operation
+        result = do(env, args[1])
+        # re-evaluate condition
+        condition = do(env, args[0])
+    return result
 
 
 OPS = {
@@ -146,8 +150,8 @@ def do(env, expr):
     # Integers evaluate to themselves.
     if isinstance(expr, int):
         return expr
-    # Lists trigger function calls.
-    assert isinstance(expr, list)
+    # debug print to show call stack
+    # print(expr[0])
     assert expr[0] in OPS, f"Unknown operation {expr[0]}"
     func = OPS[expr[0]]
     return func(env, expr[1:])
