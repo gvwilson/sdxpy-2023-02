@@ -237,6 +237,23 @@ program5 = [
             ["set", "counter", ["add", ["get", "counter"], 1]],
         ],
     ],
+    ["set", "counter", 0],
+    [
+        "repeat",
+        10,
+        [
+            "seq",
+            [
+                "print",
+                [
+                    "array_get",
+                    "a",
+                    ["get", "counter"],
+                ],
+            ],
+            ["set", "counter", ["add", ["get", "counter"], 1]],
+        ],
+    ],
     ["print", ["get", "a"]],
 ]
 
