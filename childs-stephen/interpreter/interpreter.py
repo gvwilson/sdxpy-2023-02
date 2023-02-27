@@ -52,6 +52,16 @@ def run_while(env, args):
         run(env, loop)
 
 
+# recursive version
+def run_while2(env, args):
+    cond = args[0]
+    loop = args[1]
+    run_if(
+        env,
+        cond,
+    )
+
+
 def run_print(env, args):
     result = []
     for expression in args:
@@ -311,4 +321,4 @@ program7 = [
     ],
 ]
 
-run(program7)
+run(stuff7, program7)
