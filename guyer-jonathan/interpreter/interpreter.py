@@ -60,14 +60,6 @@ def do_if(env, args):
 
 # function definition
 
-def env_get(env, name):
-    assert isinstance(name, str)
-    if name in env[-1]:
-        return env[-1][name]
-    if name in env[0]:
-        return env[0][name]
-    assert False, f"Unknown variable {name}"
-    
 def do_def(env, args):
     assert len(args) == 3
     name = args[0]
@@ -111,6 +103,24 @@ def do(env, expr):
 
 
 # function definition
+
+def env_get(env, name):
+    assert isinstance(name, str)
+    if name in env[-1]:
+        return env[-1][name]
+    if name in env[0]:
+        return env[0][name]
+    assert False, f"Unknown variable {name}"
+
+def env_set(env, name, value):
+    assert isinstance(name, str)
+
+    # set value on top of stack?
+    if len(env) == 0:
+        env.append({})
+    env[-1][name] = value
+
+    return value
 
 program = [
     "seq",
