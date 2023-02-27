@@ -109,6 +109,9 @@ def do(env, expr):
     func = OPS[op]
     return func(env, args)
 
+
+# function definition
+
 program = [
     "seq",
     ["set", "firas", 1],
@@ -119,21 +122,21 @@ program = [
      ["get", "jenna"]] # 3
     ]
 ]
-print(do({}, program))
+print(do([{}], program))
 
 another_program = ["if", False, "yes", "no"]
-print(do({}, another_program))
+print(do([{}], another_program))
 
 # x = y = 2
 
 # ["if", z != 0, 1/z, None]
 
+function_program = [
+    "seq",
+    ["def", "same", ["num"],
+     ["get", "num"]
+    ],
+    ["call", "same", 3]
+]
 
-
-# function definition
-
-print(do({}, ["def", "same", ["num"], ["get", "num"]]))
-
-print(do({}, ["func", ["num"], ["get", "num"]]))
-
-print(do({}, ["call", "same", 3]))
+print(do([{}], function_program))
