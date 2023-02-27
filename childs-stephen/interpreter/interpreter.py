@@ -129,7 +129,7 @@ print(stuff2)
 stuff3 = [{}]
 program3 = [
     "seq",
-    ["def", "addone", ["num"], ["add", "num", 1]],
+    ["def", "addone", ["num"], ["add", ["get", "num"], 1]],
     ["set", "reiko", 1],
     ["call", "addone", 2],
 ]
