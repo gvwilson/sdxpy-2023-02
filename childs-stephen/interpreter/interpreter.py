@@ -11,7 +11,7 @@ def run_add(env, args):
 # getenv - get value of environment variable
 def run_get(env, args):
     name = args[0]
-    return env[name]
+    return env[0][name]
 
 
 def run_mul(env, args):
@@ -29,7 +29,7 @@ def run_seq(env, args):
 def run_set(env, args):
     name = args[0]
     value = run(env, args[1])
-    env[name] = value
+    env[0][name] = value
     return value
 
 
@@ -107,7 +107,7 @@ def run(env, expr):
 
 # print(run(["add", 1, 2]))
 
-stuff = {"reiko": 1, "alex": 2}
+stuff = [{"reiko": 1, "alex": 2}]
 
 program = [
     "seq",
@@ -121,12 +121,12 @@ print(run(stuff, program))
 mckenzie = ["if", 0, 100, -100]
 print(run({}, mckenzie))
 
-stuff2 = {}
+stuff2 = [{}]
 program2 = ["seq", ["def", "f1", [], [1]], ["add", 1, 2]]
 run(stuff2, program2)
 print(stuff2)
 
-stuff3 = {}
+stuff3 = [{}]
 program3 = [
     "seq",
     ["def", "addone", ["num"], ["add", "num", 1]],
