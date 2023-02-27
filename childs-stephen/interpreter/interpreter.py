@@ -239,3 +239,6 @@ program5 = [
     ],
     ["print", ["get", "a"]],
 ]
+
+print(run(program5))
+print(stuff5)
