@@ -61,7 +61,7 @@ def run_arr(env, args):
 # name = name of the array, 2 = index, 1 = value to set
 def run_array_set(env, args):
     name = args[0]
-    index = args[1]
+    index = run(env, args[1])
     value = run(env, args[2])
     array = env[-1][name]
     assert array[0] == "arr"
@@ -234,11 +234,11 @@ program5 = [
                 ["get", "counter"],
                 ["call", "double", ["get", "counter"]],
             ],
-            ["set", "counter", ["add", ["get", "counter"]], 1],
+            ["set", "counter", ["add", ["get", "counter"], 1]],
         ],
     ],
     ["print", ["get", "a"]],
 ]
 
-print(run(program5))
+print(run(stuff5, program5))
 print(stuff5)
