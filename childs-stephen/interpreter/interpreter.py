@@ -20,6 +20,16 @@ def run_mul(env, args):
     return run(env, left) * run(env, right)
 
 
+def run_lt(env, args):
+    left, right = args[0], args[1]
+    return run(env, left) < run(env, right)
+
+
+def run_gt(env, args):
+    left, right = args[0], args[1]
+    return run(env, left) > run(env, right)
+
+
 def run_seq(env, args):
     result = None
     for expression in args:
@@ -32,6 +42,14 @@ def run_repeat(env, args):
     for i in range(args[0]):
         result = run(env, args[1])
     return result
+
+
+# ["while", cond, loop]
+def run_while(env, args):
+    cond = args[0]
+    loop = args[1]
+    while run(env, cond):
+        run(env, loop)
 
 
 def run_print(env, args):
@@ -262,7 +280,7 @@ program5 = [
 print(run(stuff5, program5))
 print(stuff5)
 
-print("*** PROGRAM FIVE ***")
+print("*** PROGRAM SIX ***")
 
 stuff6 = ChainMap()
 program6 = [
@@ -275,3 +293,22 @@ program6 = [
 
 run(stuff6, program6)
 print(stuff6)
+
+print("*** PROGRAM SEVEN ***")
+
+stuff7 = ChainMap()
+program7 = [
+    "seq",
+    ["set", "counter", 0],
+    [
+        "while",
+        ["lt", ["get", "counter"], 10],
+        [
+            "seq",
+            ["print", ["get", "counter"]],
+            ["set", "counter", ["add", ["get", "counter"], 1]],
+        ],
+    ],
+]
+
+run(program7)
