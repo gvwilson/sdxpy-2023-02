@@ -74,7 +74,7 @@ def run_array_set(env, args):
 # get value at index 2 of array name
 def run_array_get(env, args):
     name = args[0]
-    index = args[1]
+    index = run(env, args[1])
     array = env[-1][name]
     assert array[0] == "arr"
     assert index < len(array) - 1
