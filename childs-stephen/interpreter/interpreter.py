@@ -11,7 +11,7 @@ def run_add(env, args):
 # getenv - get value of environment variable
 def run_get(env, args):
     name = args[0]
-    return env[0][name]
+    return env[-1][name]
 
 
 def run_mul(env, args):
@@ -29,7 +29,7 @@ def run_seq(env, args):
 def run_set(env, args):
     name = args[0]
     value = run(env, args[1])
-    env[0][name] = value
+    env[-1][name] = value
     return value
 
 
