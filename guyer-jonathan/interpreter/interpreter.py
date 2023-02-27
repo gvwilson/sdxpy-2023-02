@@ -12,15 +12,16 @@ def do_abs(env, args):
 # ["get", "name"]
 def do_get(env, args):
     assert len(args) == 1
-    assert isinstance(args[0], str)
-    assert args[0] in env, f"Unknown variable {args[0]}"
-    return env[args[0]]
+    name = args[0]
+    assert isinstance(name, str)
+    return env_get(env, name)
 # ["set", "name", …expression…]
 def do_set(env, args):
     assert len(args) == 2
-    assert isinstance(args[0], str)
+    name = args[0]
+    assert isinstance(name, str)
     value = do(env, args[1])
-    env[args[0]] = value
+    env_set(env, name, value)
     return value
 
 def do_mul(env, args):
