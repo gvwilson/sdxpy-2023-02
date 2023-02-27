@@ -26,6 +26,20 @@ def run_seq(env, args):
     return result
 
 
+def run_repeat(env, args):
+    result = None
+    for i in range(args[0]):
+        result = run(env, args[1])
+    return result
+
+
+def run_print(env, args):
+    result = []
+    for expression in args:
+        result.append(run(env, expression))
+    print(result)
+
+
 def run_set(env, args):
     name = args[0]
     value = run(env, args[1])
@@ -109,6 +123,8 @@ def run(env, expr):
 
 # print(run(["add", 1, 2]))
 
+print("*** PROGRAM ONE ***")
+
 stuff = [{"reiko": 1, "alex": 2}]
 
 program = [
@@ -120,13 +136,19 @@ program = [
 
 print(run(stuff, program))
 
+print("*** PROGRAM MCKENZIE ***")
+
 mckenzie = ["if", 0, 100, -100]
 print(run({}, mckenzie))
 
+print("*** PROGRAM TWO ***")
+
 stuff2 = [{}]
 program2 = ["seq", ["def", "f1", [], [1]], ["add", 1, 2]]
-run(stuff2, program2)
+print(run(stuff2, program2))
 print(stuff2)
+
+print("*** PROGRAM THREE ***")
 
 stuff3 = [{}]
 program3 = [
@@ -135,5 +157,23 @@ program3 = [
     ["set", "reiko", 1],
     ["call", "addone", 2],
 ]
-run(stuff3, program3)
+print(run(stuff3, program3))
 print(stuff3)
+
+print("*** PROGRAM FOUR ***")
+
+stuff4 = [{}]
+program4 = [
+    "seq",
+    ["def", "double", ["num"], ["add", ["get", "num"], ["get", "num"]]],
+    ["set", "a", 1],
+    [
+        "repeat",
+        4,
+        [
+            "seq",
+            ["set", "a", ["call", "double", ["get", "a"]]],
+            ["print", ["get", "a"]],
+        ],
+    ],
+]
