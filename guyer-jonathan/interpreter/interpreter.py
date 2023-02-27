@@ -116,10 +116,13 @@ def env_get(env, name):
 def env_set(env, name, value):
     assert isinstance(name, str)
 
-    # set value on top of stack?
-    if len(env) == 0:
-        env.append({})
-    env[-1][name] = value
+
+    if name in env[-1]:
+        env[-1][name] = value
+    elif name in env[0]:
+        env[0][name] = value
+    else:
+        env[-1][name] = value
 
     return value
 
