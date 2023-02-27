@@ -177,3 +177,6 @@ program4 = [
         ],
     ],
 ]
+
+print(run(stuff4, program4))
+print(stuff4)
