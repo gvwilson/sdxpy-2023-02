@@ -1,5 +1,6 @@
 # 1 + (2 * 3)
 # Lisp == Lots of Irritating Single Parenthsis
+from collections import ChainMap
 
 
 def run_add(env, args):
@@ -11,7 +12,7 @@ def run_add(env, args):
 # getenv - get value of environment variable
 def run_get(env, args):
     name = args[0]
-    return env[-1][name]
+    return env[name]
 
 
 def run_mul(env, args):
@@ -43,7 +44,7 @@ def run_print(env, args):
 def run_set(env, args):
     name = args[0]
     value = run(env, args[1])
-    env[-1][name] = value
+    env[name] = value
     return value
 
 
@@ -63,7 +64,7 @@ def run_array_set(env, args):
     name = args[0]
     index = run(env, args[1])
     value = run(env, args[2])
-    array = env[-1][name]
+    array = env[name]
     assert array[0] == "arr"
     assert index < len(array) - 1  # keeping track of array designation.
     array[index + 1] = value  # index 0 of the python list is the word array.
@@ -75,7 +76,7 @@ def run_array_set(env, args):
 def run_array_get(env, args):
     name = args[0]
     index = run(env, args[1])
-    array = env[-1][name]
+    array = env[name]
     assert array[0] == "arr"
     assert index < len(array) - 1
     return array[index + 1]
@@ -117,11 +118,12 @@ def run_call(env, args):
     assert len(values) == len(params)
 
     # Run in new environment
-    env.append(dict(zip(params, values)))
-    print(f"Env in function: {env}")
-    result = run(env, body)
-    env.pop()
-    print(f"Env after function: {env}")
+    child_env = env.new_child(m=dict(zip(params, values)))
+    # env.append(dict(zip(params, values)))
+    # print(f"Env in function: {env}")
+    result = run(child_env, body)
+    # env.pop()
+    # print(f"Env after function: {env}")
 
     # Report
     return result
@@ -159,7 +161,7 @@ def run(env, expr):
 
 print("*** PROGRAM ONE ***")
 
-stuff = [{"reiko": 1, "alex": 2}]
+stuff = ChainMap({"reiko": 1, "alex": 2})
 
 program = [
     "seq",
@@ -177,14 +179,14 @@ print(run({}, mckenzie))
 
 print("*** PROGRAM TWO ***")
 
-stuff2 = [{}]
+stuff2 = ChainMap()
 program2 = ["seq", ["def", "f1", [], [1]], ["add", 1, 2]]
 print(run(stuff2, program2))
 print(stuff2)
 
 print("*** PROGRAM THREE ***")
 
-stuff3 = [{}]
+stuff3 = ChainMap()
 program3 = [
     "seq",
     ["def", "addone", ["num"], ["add", ["get", "num"], 1]],
@@ -196,7 +198,7 @@ print(stuff3)
 
 print("*** PROGRAM FOUR ***")
 
-stuff4 = [{}]
+stuff4 = ChainMap()
 program4 = [
     "seq",
     ["def", "double", ["num"], ["add", ["get", "num"], ["get", "num"]]],
@@ -217,7 +219,7 @@ print(stuff4)
 
 print("*** PROGRAM FIVE ***")
 
-stuff5 = [{}]
+stuff5 = ChainMap()
 program5 = [
     "seq",
     ["def", "double", ["num"], ["add", ["get", "num"], ["get", "num"]]],
@@ -259,3 +261,17 @@ program5 = [
 
 print(run(stuff5, program5))
 print(stuff5)
+
+print("*** PROGRAM FIVE ***")
+
+stuff6 = ChainMap()
+program6 = [
+    "seq",
+    ["set", "two", 2],
+    ["def", "chaintest", ["num"], ["add", ["get", "num"], ["get", "two"]]],
+    ["set", "answer", ["call", "chaintest", 1]],
+    ["print", ["get", "answer"]],
+]
+
+run(stuff6, program6)
+print(stuff6)
