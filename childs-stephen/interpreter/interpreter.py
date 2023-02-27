@@ -47,6 +47,40 @@ def run_set(env, args):
     return value
 
 
+# ["array", 10]
+def run_array(env, args):
+    size = args[0]
+    return ["arr"] + [None] * size
+
+
+def run_arr(env, args):
+    return args
+
+
+# ["array_set", "name", 2, 1]
+# name = name of the array, 2 = index, 1 = value to set
+def run_array_set(env, args):
+    name = args[0]
+    index = args[1]
+    value = run(env, args[2])
+    array = env[-1][name]
+    assert array[0] == "arr"
+    assert index < len(array) - 1  # keeping track of array designation.
+    array[index + 1] = value  # index 0 of the python list is the word array.
+    return value  # consistent with set
+
+
+# ["array_get", "name", 2]
+# get value at index 2 of array name
+def run_array_get(env, args):
+    name = args[0]
+    index = args[1]
+    array = env[-1][name]
+    assert array[0] == "arr"
+    assert index < len(array) - 1
+    return array[index + 1]
+
+
 # ["if", [...cond...], [...iftrue...], [...iffalse..]]
 # lazy evaluation
 # eager evaluation -- run the expression in args[1], args[2] before eval cond.
@@ -180,3 +214,28 @@ program4 = [
 
 print(run(stuff4, program4))
 print(stuff4)
+
+print("*** PROGRAM FIVE ***")
+
+stuff5 = [{}]
+program5 = [
+    "seq",
+    ["def", "double", ["num"], ["add", ["get", "num"], ["get", "num"]]],
+    ["set", "a", ["array", 10]],
+    ["set", "counter", 0],
+    [
+        "repeat",
+        10,
+        [
+            "seq",
+            [
+                "array_set",
+                "a",
+                ["get", "counter"],
+                ["call", "double", ["get", "counter"]],
+            ],
+            ["set", "counter", ["add", ["get", "counter"]], 1],
+        ],
+    ],
+    ["print", ["get", "a"]],
+]
