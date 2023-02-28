@@ -5,11 +5,11 @@
     and then how to call one.
     
 **Answer:**
-    Both of env and aug are required as input to define and call a function in our little language. 
+Both of env and aug are required as input to define and call a function in our little language. 
     
-    There should be 3 parts of aug to define a function, first one is the name of function, the second is parameters the function will take (which could be None), the third is the body (instruction) of the function. 
+There should be 3 parts of aug to define a function, first one is the name of function, the second is parameters the function will take (which could be None), the third is the body (instruction) of the function. 
     
-    There should be at least one part of aug to call a function, which is the function name in global environment. If the function takes parameters, they should be included as the rest parts of aug.
+There should be at least one part of aug to call a function, which is the function name in global environment. If the function takes parameters, they should be included as the rest parts of aug.
     
 
 2.  Look at the documentation for Python's `ChainMap` class
