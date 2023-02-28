@@ -153,6 +153,40 @@ def test_function():
 
     assert do(ChainMap(), program) == 3
 
+def test_array_create():
+    program = ["array", 10]
+    
+    array = do(ChainMap(), program)
+    
+    assert type(array) == list
+    assert len(array) == 10
+
+def test_array_assign():
+    program = [
+        "seq",
+        ["set", "var", 
+         ["array", 10]
+        ],
+        ["get", "var"]
+    ]
+    
+    array = do(ChainMap(), program)
+    
+    assert type(array) == list
+    assert len(array) == 10
+
+def test_array_get_and_set():
+    program = [
+        "seq",
+        ["set", "var", 
+         ["array", 10]
+        ],
+        ["array_set", "var", 2, 7],
+        ["array_get", "var", 2]
+    ]
+    
+    assert do(ChainMap(), program) == 7
+
 def run_tests():
     results = {
         "skipped": [], 
