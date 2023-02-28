@@ -32,6 +32,24 @@ def do_mul(env, args):
     right = do(env, args[1])
     return left * right
 
+def do_eq(env, args):
+    assert len(args) == 2
+    left = do(env, args[0])
+    right = do(env, args[1])
+    return left == right
+
+def do_gt(env, args):
+    assert len(args) == 2
+    left = do(env, args[0])
+    right = do(env, args[1])
+    return left > right
+
+def do_lt(env, args):
+    assert len(args) == 2
+    left = do(env, args[0])
+    right = do(env, args[1])
+    return left < right
+
 def do_seq(env, args):
     assert len(args) > 0
     result = None
@@ -225,6 +243,23 @@ def test_array_get_and_set():
     ]
     
     assert do(ChainMap(), program) == 7
+    
+def test_while():
+    program = [
+        "seq",
+        ["set", "condition", 10],
+        "while",
+        ["gt", ["get", "condition"], 0],
+        [
+            "seq",
+            ["set", "condition",
+             ["sub", ["get", "condition"], 1]
+            ]
+        ],
+        ["get", "condition"]
+    ]
+    
+    assert do(ChainMap(), program) == 0
 
 def run_tests():
     results = {
