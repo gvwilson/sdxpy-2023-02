@@ -121,31 +121,35 @@ def env_set(env, name, value):
 
     return value
 
-program = [
-    "seq",
-    ["set", "firas", 1],
-    ["set", "jenna", 3],
-    ["add", 
-    ["get", "firas"], # 1
-    ["mul", 2, 
-     ["get", "jenna"]] # 3
+def test():
+    program = [
+        "seq",
+        ["set", "firas", 1],
+        ["set", "jenna", 3],
+        ["add", 
+        ["get", "firas"], # 1
+        ["mul", 2, 
+         ["get", "jenna"]] # 3
+        ]
     ]
-]
-print(do(ChainMap(), program))
+    print(do(ChainMap(), program))
 
-another_program = ["if", False, "yes", "no"]
-print(do(ChainMap(), another_program))
+    another_program = ["if", False, "yes", "no"]
+    print(do(ChainMap(), another_program))
 
-# x = y = 2
+    # x = y = 2
 
-# ["if", z != 0, 1/z, None]
+    # ["if", z != 0, 1/z, None]
 
-function_program = [
-    "seq",
-    ["def", "same", ["num"],
-     ["get", "num"]
-    ],
-    ["call", "same", 3]
-]
+    function_program = [
+        "seq",
+        ["def", "same", ["num"],
+         ["get", "num"]
+        ],
+        ["call", "same", 3]
+    ]
 
-print(do(ChainMap(), function_program))
+    print(do(ChainMap(), function_program))
+
+if __name__ == "__main__":
+    test()
