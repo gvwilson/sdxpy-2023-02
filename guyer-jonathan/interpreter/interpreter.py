@@ -1,3 +1,5 @@
+from collections import ChainMap
+
 def do_add(env, args):
     assert len(args) == 2
     left = do(env, args[0])
@@ -80,9 +82,11 @@ def do_call(env, args):
     params, body = func[1], func[2]
     assert len(values) == len(params)
     # Run in new environment.
-    env.append(dict(zip(params, values)))
-    result = do(env, body)
-    env.pop()
+    call_context = env.new_child()
+    for param, value in zip(params, values):
+        call_context[param] = value
+    result = do(call_context, body)
+
     # Report.
     return result
 
@@ -107,22 +111,13 @@ def do(env, expr):
 
 def env_get(env, name):
     assert isinstance(name, str)
-    if name in env[-1]:
-        return env[-1][name]
-    if name in env[0]:
-        return env[0][name]
-    assert False, f"Unknown variable {name}"
+    
+    return env[name]
 
 def env_set(env, name, value):
     assert isinstance(name, str)
 
-
-    if name in env[-1]:
-        env[-1][name] = value
-    elif name in env[0]:
-        env[0][name] = value
-    else:
-        env[-1][name] = value
+    env[name] = value
 
     return value
 
@@ -136,10 +131,10 @@ program = [
      ["get", "jenna"]] # 3
     ]
 ]
-print(do([{}], program))
+print(do(ChainMap(), program))
 
 another_program = ["if", False, "yes", "no"]
-print(do([{}], another_program))
+print(do(ChainMap(), another_program))
 
 # x = y = 2
 
@@ -153,4 +148,4 @@ function_program = [
     ["call", "same", 3]
 ]
 
-print(do([{}], function_program))
+print(do(ChainMap(), function_program))
