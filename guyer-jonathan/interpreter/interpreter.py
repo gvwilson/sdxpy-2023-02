@@ -121,7 +121,7 @@ def do_array(env, args):
     return [None] * size
 
 def do_array_get(env, args):
-    # ["array_get", "var", index]
+    # ["array_get", "var", …index…]
     
     assert len(args) == 2
     name = args[0]
@@ -133,7 +133,7 @@ def do_array_get(env, args):
     return array[index]
 
 def do_array_set(env, args):
-    # ["array_set", "var", index, value],
+    # ["array_set", "var", …index…, …value…],
 
     assert len(args) == 3
     name = args[0]
@@ -146,6 +146,23 @@ def do_array_set(env, args):
     array[index] = value
     
     return value
+
+# while
+
+# Python while
+def do_while(env, args):
+    # ["while", …condition…, …body…]
+    assert len(args) == 2
+    condition = args[0]
+    body = args[1]
+    
+    while do(env, condition):
+        do(env, body)
+
+# # recursive
+# def do_while(env, args):
+#     # ["while", …condition…, …body…]
+#     pass
 
 OPS = {
     name.replace("do_", ""): func
@@ -177,6 +194,8 @@ def env_set(env, name, value):
     env[name] = value
 
     return value
+
+# tests
 
 def test_seq():
     program = [
@@ -248,13 +267,11 @@ def test_while():
     program = [
         "seq",
         ["set", "condition", 10],
-        "while",
-        ["gt", ["get", "condition"], 0],
-        [
-            "seq",
-            ["set", "condition",
-             ["sub", ["get", "condition"], 1]
-            ]
+        ["while",
+         ["gt", ["get", "condition"], 0],
+         ["set", "condition",
+          ["add", ["get", "condition"], -1]
+         ]
         ],
         ["get", "condition"]
     ]
