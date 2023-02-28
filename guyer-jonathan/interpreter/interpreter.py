@@ -272,14 +272,14 @@ def test_array_get_and_set():
 def test_while():
     program = [
         "seq",
-        ["set", "condition", 10],
+        ["set", "counter", 10],
         ["while",
-         ["gt", ["get", "condition"], 0],
-         ["set", "condition",
-          ["add", ["get", "condition"], -1]
+         ["gt", ["get", "counter"], 0],
+         ["set", "counter",
+          ["add", ["get", "counter"], -1]
          ]
         ],
-        ["get", "condition"]
+        ["get", "counter"]
     ]
     
     assert do(ChainMap(), program) == 0
