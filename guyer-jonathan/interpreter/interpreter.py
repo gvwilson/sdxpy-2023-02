@@ -93,12 +93,41 @@ def do_call(env, args):
 # arrays
 
 def do_array(env, args):
+    # ["array", size]
+    
     assert len(args) == 1
     size = args[0]
     assert isinstance(size, int)
     
     # initialize empty array
     return [None] * size
+
+def do_array_get(env, args):
+    # ["array_get", "var", index]
+    
+    assert len(args) == 2
+    name = args[0]
+    index = args[1]
+    assert isinstance(index, int)
+    
+    array = do_get(env, [name])
+    
+    return array[index]
+
+def do_array_set(env, args):
+    # ["array_set", "var", index, value],
+
+    assert len(args) == 3
+    name = args[0]
+    index = args[1]
+    value = args[2]
+    assert isinstance(index, int)
+    
+    array = do_get(env, [name])
+    
+    array[index] = value
+    
+    return value
 
 OPS = {
     name.replace("do_", ""): func
