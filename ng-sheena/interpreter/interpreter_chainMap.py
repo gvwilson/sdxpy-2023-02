@@ -4,21 +4,31 @@ import json
 from collections import ChainMap
 
 def do_add(env, args):
+    """Add two expressions.
+    """
     assert len(args) == 2
     left = do(env, args[0])
     right = do(env, args[1])
     return left + right
 
 def do_abs(env, args):
+    """Return the absolute value.
+    """
     assert len(args) == 1
     val = do(env, args[0])
     return abs(val)
 
 def do_get(env, args):
+    """Return the stored value of the variable
+    in global environment.
+    """
     assert len(args) == 1
     return env_get(env, args[0])
 
 def do_set(env, args):
+    """Store the value of the variable in
+    global environment and return it.
+    """
     assert len(args) == 2
     name = args[0]
     value = do(env, args[1])
@@ -26,17 +36,21 @@ def do_set(env, args):
     return value
 
 def do_seq(env, args):
+    """Control the seqence of expressions one by one.
+    """
     assert len(args) > 0
     for item in args:
         result = do(env, item)
     return result
 
+# from Greg's implementation
 def do_comment(env, args):
     """Ignore instructions.
     ["comment" "text"] => None
     """
     return None
 
+# from Greg's implementation
 def do_if(env, args):
     """Make a choice: only one sub-expression is evaluated.
     ["if" C A B] => A if C else B
@@ -46,14 +60,19 @@ def do_if(env, args):
     choice = args[1] if cond else args[2]
     return do(env, choice)
 
+# from Greg's implementation
 def do_print(env, args):
     """Print values.
     ["print" ...values...] => None # print each value
     """
-    args = [do(env, a) for a in args]
-    print(*args)
+    if args[0] in env:
+        print(env[args[0]])
+    else:
+        args = [do(env, a) for a in args]
+        print(*args)
     return None
 
+# from Greg's implementation
 def do_repeat(env, args):
     """Repeat instructions some number of times.
     ["repeat" N expr] => expr # last one of N
@@ -61,6 +80,51 @@ def do_repeat(env, args):
     assert len(args) == 2
     count = do(env, args[0])
     for i in range(count):
+        result = do(env, args[1])
+    return result
+
+def do_array(env, args):
+    """Create an array of a specific size and return it.
+    ["array", "size"]
+    """
+    assert len(args) == 1
+    size = do(env, args[0])
+    array = [None] * size
+    return array
+
+def do_array_get(env, args):
+    """Get the array element by index.
+    ["array_set", "name_of_array", "index"]
+    """
+    assert len(args) == 2
+    assert isinstance(env_get(env, args[0]), list)
+    index = do(env, args[1])
+    return env[args[0]][index]
+
+def do_array_set(env, args):
+    """Set array element by index.
+    ["array_set", "name_of_array", "index", "value_to_be_added_to_index"]
+    """
+    assert len(args) == 3
+    assert isinstance(env_get(env, args[0]), list)
+    index = do(env, args[1])
+    val = args[2]
+    env[args[0]][index] = val
+
+# from Greg's implementation
+def do_leq(env, args):
+    """Less than or equal.
+    ["leq" A B] => A <= B
+    """
+    assert len(args) == 2
+    return do(env, args[0]) <= do(env, args[1])
+
+def do_while(env, args):
+    """Run while loop.
+    ["while", "condition", "operation"]
+    """
+    assert len(args) == 2
+    while do(env, args[0]):
         result = do(env, args[1])
     return result
 
