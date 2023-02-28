@@ -15,6 +15,27 @@ There should be at least one part of aug to call a function, which is the functi
 2.  Look at the documentation for Python's `ChainMap` class
     and modify the implementation from the slides to use that
     to manage environments.
+    
+ ```python
+from collections import ChainMap
+import sys
+
+def env_get(env, name):
+    assert isinstance(name, str)
+    if name in env:
+        return env[name]
+    assert False, f"Unknown variable {name}"
+    
+def env_set(env, name, value):
+    assert isinstance(name, str)
+    env[name] = value
+
+
+def main():
+    chain = ChainMap()
+    result = do(chain, operations)
+    print(f"=> {result}")
+ ```
 
 ## Arrays
 
