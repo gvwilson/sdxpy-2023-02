@@ -59,6 +59,8 @@ def run_while2(env, args):
     run_if(
         env,
         cond,
+        ["while2", loop]
+        None
     )
 
 
@@ -312,6 +314,25 @@ program7 = [
     ["set", "counter", 0],
     [
         "while",
+        ["lt", ["get", "counter"], 10],
+        [
+            "seq",
+            ["print", ["get", "counter"]],
+            ["set", "counter", ["add", ["get", "counter"], 1]],
+        ],
+    ],
+]
+
+run(stuff7, program7)
+
+print("*** PROGRAM EIGHT ***")
+
+stuff8 = ChainMap()
+program8 = [
+    "seq",
+    ["set", "counter", 0],
+    [
+        "while2",
         ["lt", ["get", "counter"], 10],
         [
             "seq",
