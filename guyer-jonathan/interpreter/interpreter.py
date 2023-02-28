@@ -121,7 +121,7 @@ def env_set(env, name, value):
 
     return value
 
-def test():
+def test_seq():
     program = [
         "seq",
         ["set", "firas", 1],
@@ -132,16 +132,18 @@ def test():
          ["get", "jenna"]] # 3
         ]
     ]
-    print(do(ChainMap(), program))
+    assert do(ChainMap(), program) == 7
 
-    another_program = ["if", False, "yes", "no"]
-    print(do(ChainMap(), another_program))
+def test_if_false():
+    program = ["if", False, "yes", "no"]
+    assert do(ChainMap(), program) == "no"
 
-    # x = y = 2
+def test_if_true():
+    program = ["if", True, "yes", "no"]
+    assert do(ChainMap(), program) == "yes"
 
-    # ["if", z != 0, 1/z, None]
-
-    function_program = [
+def test_function():
+    program = [
         "seq",
         ["def", "same", ["num"],
          ["get", "num"]
@@ -149,7 +151,36 @@ def test():
         ["call", "same", 3]
     ]
 
-    print(do(ChainMap(), function_program))
+    assert do(ChainMap(), program) == 3
 
+def run_tests():
+    results = {
+        "skipped": [], 
+        "passed": [],
+        "failed": [],
+        "errored": []
+    }
+
+    for (name, test) in globals().items():
+        if not name.startswith("test_"):
+            continue
+        if hasattr(test, "skip"):
+            results["skipped"].append(name)
+            continue
+        try:
+            test()
+            results["passed"].append(name)
+        except AssertionError as e:
+            if test.__doc__ == "test:assert":
+                results["passed"].append(name)
+            elif hasattr(test, "fail"):
+                results["passed"].append(name)
+            else:
+                results["failed"].append(name)
+        except Exception as e:
+            results["errored"].append(name)
+
+    return results
+    
 if __name__ == "__main__":
-    test()
+    print(run_tests())
