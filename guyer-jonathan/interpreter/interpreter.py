@@ -149,20 +149,26 @@ def do_array_set(env, args):
 
 # while
 
-# Python while
+# # Python while
+# def do_while(env, args):
+#     # ["while", …condition…, …body…]
+#     assert len(args) == 2
+#     condition = args[0]
+#     body = args[1]
+    
+#     while do(env, condition):
+#         do(env, body)
+
+# recursive
 def do_while(env, args):
     # ["while", …condition…, …body…]
     assert len(args) == 2
     condition = args[0]
     body = args[1]
     
-    while do(env, condition):
+    if do(env, condition):
         do(env, body)
-
-# # recursive
-# def do_while(env, args):
-#     # ["while", …condition…, …body…]
-#     pass
+        do_while(env, args)
 
 OPS = {
     name.replace("do_", ""): func
