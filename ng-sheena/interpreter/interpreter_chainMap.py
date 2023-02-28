@@ -66,20 +66,13 @@ def do_repeat(env, args):
 
 def env_get(env, name):
     assert isinstance(name, str)
-    if name in env[-1]:
-        return env[-1][name]
-    if name in env[0]:
-        return env[0][name]
+    if name in env:
+        return env[name]
     assert False, f"Unknown variable {name}"
 
 def env_set(env, name, value):
     assert isinstance(name, str)
-    if name in env[-1]:
-        env[-1][name] = value
-    elif name in env[0]:
-        env[0][name] = value
-    else:
-        env[-1][name] = value
+    env[name] = value
 
 def do_def(env, args):
     """Define a new function.
@@ -108,10 +101,9 @@ def do_call(env, args):
     assert len(values) == len(params)
 
     # Run in new environment.
-    #env.append(dict(zip(params, values)))
-    env[0] = env[0].new_child(dict(zip(params, values)))
+    env.maps.append(dict(zip(params, values)))
     result = do(env, body)
-    #env.pop()
+    env.maps.pop()
 
     # Report.
     return result
@@ -138,7 +130,7 @@ def main():
     with open(sys.argv[1], "r") as reader:
         program = json.load(reader)
     all_env = ChainMap()
-    result = do([all_env], program)
+    result = do(all_env, program)
     print(f"=> {result}")
 
 if __name__ == "__main__":
