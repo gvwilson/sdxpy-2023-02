@@ -90,6 +90,16 @@ def do_call(env, args):
     # Report.
     return result
 
+# arrays
+
+def do_array(env, args):
+    assert len(args) == 1
+    size = args[0]
+    assert isinstance(size, int)
+    
+    # initialize empty array
+    return [None] * size
+
 OPS = {
     name.replace("do_", ""): func
     for (name, func) in globals().items()
@@ -158,7 +168,7 @@ def test_array_create():
     
     array = do(ChainMap(), program)
     
-    assert type(array) == list
+    assert isinstance(array, list)
     assert len(array) == 10
 
 def test_array_assign():
@@ -172,7 +182,7 @@ def test_array_assign():
     
     array = do(ChainMap(), program)
     
-    assert type(array) == list
+    assert isinstance(array, list)
     assert len(array) == 10
 
 def test_array_get_and_set():
