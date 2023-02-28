@@ -184,7 +184,8 @@ def run(env, expr):
 
 # print(run(["add", 1, 2]))
 
-print("*** PROGRAM ONE ***")
+print("\n*** PROGRAM ONE ***\n")
+print("Add two variables.\n\n")
 
 stuff = ChainMap({"reiko": 1, "alex": 2})
 
@@ -197,19 +198,22 @@ program = [
 
 print(run(stuff, program))
 
-print("*** PROGRAM MCKENZIE ***")
+print("\n*** PROGRAM MCKENZIE ***\n")
+print("if statement\n\n")
 
 mckenzie = ["if", 0, 100, -100]
 print(run({}, mckenzie))
 
-print("*** PROGRAM TWO ***")
+print("\n*** PROGRAM TWO ***\n")
+print("define function\n\n")
 
 stuff2 = ChainMap()
 program2 = ["seq", ["def", "f1", [], [1]], ["add", 1, 2]]
 print(run(stuff2, program2))
 print(stuff2)
 
-print("*** PROGRAM THREE ***")
+print("\n*** PROGRAM THREE ***\n")
+print("call function\n\n")
 
 stuff3 = ChainMap()
 program3 = [
@@ -221,7 +225,8 @@ program3 = [
 print(run(stuff3, program3))
 print(stuff3)
 
-print("*** PROGRAM FOUR ***")
+print("\n*** PROGRAM FOUR ***\n")
+print("Repeat and call double.\n\n")
 
 stuff4 = ChainMap()
 program4 = [
@@ -242,7 +247,8 @@ program4 = [
 print(run(stuff4, program4))
 print(stuff4)
 
-print("*** PROGRAM FIVE ***")
+print("\n*** PROGRAM FIVE ***\n")
+print("Array set and get.\n\n")
 
 stuff5 = ChainMap()
 program5 = [
@@ -287,7 +293,8 @@ program5 = [
 print(run(stuff5, program5))
 print(stuff5)
 
-print("*** PROGRAM SIX ***")
+print("\n*** PROGRAM SIX ***\n")
+print("Test using ChainMap to handle environments.\n\n")
 
 stuff6 = ChainMap()
 program6 = [
@@ -301,7 +308,8 @@ program6 = [
 run(stuff6, program6)
 print(stuff6)
 
-print("*** PROGRAM SEVEN ***")
+print("\n*** PROGRAM SEVEN ***\n")
+print("While loop using Python while.\n\n")
 
 stuff7 = ChainMap()
 program7 = [
@@ -320,7 +328,8 @@ program7 = [
 
 run(stuff7, program7)
 
-print("*** PROGRAM EIGHT ***")
+print("\n*** PROGRAM EIGHT ***\n")
+print("While loop using recursion.\n\n")
 
 stuff8 = ChainMap()
 program8 = [
