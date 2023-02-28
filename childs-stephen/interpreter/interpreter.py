@@ -56,12 +56,7 @@ def run_while(env, args):
 def run_while2(env, args):
     cond = args[0]
     loop = args[1]
-    run_if(
-        env,
-        cond,
-        ["while2", loop]
-        None
-    )
+    run_if(env, [cond, ["seq", loop, ["while2", cond, loop]], 0])
 
 
 def run_print(env, args):
@@ -342,4 +337,4 @@ program8 = [
     ],
 ]
 
-run(stuff7, program7)
+run(stuff8, program8)
