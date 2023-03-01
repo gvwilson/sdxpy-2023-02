@@ -16,6 +16,31 @@ def do_add(env, args):
     return left + right
 
 
+def do_array(env, args):
+    assert len(args) == 1 and isinstance(args[0], int)
+    return [None] * args[0]
+
+
+def do_array_get(env, args):
+    """Get an array value by index."""
+    assert len(args) == 2
+    array = do_get(env, args[:1])
+    index = do(env, args[1])
+    assert isinstance(index, int)
+    return array[index]
+
+
+def do_array_set(env, args):
+    """Set an array value at an index."""
+    assert len(args) == 3
+    array = do_get(env, args[:1])
+    index = do(env, args[1])
+    value = do(env, args[2])
+    assert isinstance(index, int)
+    array[index] = value
+    return value
+
+
 def do_call(env, args):
     """Call a function.
     ["call" name ...expr...] => env[name](*expr)
@@ -108,11 +133,10 @@ def do_set(env, args):
 
 def do(env, expr):
     # Integers evaluate to themselves.
-    if isinstance(expr, int):
+    if not isinstance(expr, list):
         return expr
 
     # Lists trigger function calls.
-    assert isinstance(expr, list)
     assert expr[0] in OPS, f"Unknown operation {expr[0]}"
     func = OPS[expr[0]]
     return func(env, expr[1:])

@@ -1,6 +1,12 @@
 [
     "seq",
+    ["set", "my_arr", ["array", 2]],
     ["set", "alpha", 1],
     ["set", "beta", 2],
-    ["add", ["get", "alpha"], ["get", "beta"]]
+    ["array_set", "my_arr", 0, 3],
+    ["array_set", "my_arr", 1, 4],
+    ["add",
+     ["add", ["get", "alpha"], ["get", "beta"]],
+     ["mul", ["array_get", "my_arr", 0], ["array_get", "my_arr", 1]]
+    ]
 ]
