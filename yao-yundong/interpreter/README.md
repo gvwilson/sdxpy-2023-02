@@ -43,7 +43,66 @@ Implement fixed-size one-dimensional arrays:
 
 1.  `["array", 10]` creates an array of 10 elements.
     (If you want to assign it to a variable you could use `["set", "var", ["array", 10]]`.)
+    
 2.  Other instructions that you design get and set array elements by index.
+
+```python
+def do_array(env, args):
+    assert len(args) == 1
+    assert isinstance(args[0], int)
+    return [None] * args[0]
+
+def do_get(env, args):
+    """Get the value of a variable from the most recent environment
+    or the global environment.
+    ["get" name] => env{name}
+    """
+    assert len(args) == 1 or len(args) == 2
+    if len(args) == 1:
+        return env_get(env, args[0])
+    else:
+        index = args[0]
+        return env_get(env, args[1][index])
+        
+ def do_set(env, args):
+    """Assign to a variable.
+    ["seq" name expr] => expr # and env{name} = expr
+    """
+    assert len(args) == 2 or len(args) == 3
+    
+    name = args[0]
+    
+    if len(args) == 2:       
+        value = do(env, args[1])
+        env_set(env, name, value)
+    else:
+        assert name in env
+        index = args[1]
+        value = do(env, args[2])
+        env_set(env, name, value, index)
+
+def env_get(env, name, index=None):
+    assert isinstance(name, str)
+    if name in env:
+        if not index:
+            return env[name]
+        else:
+            assert isinstance(index, int)
+            assert name in env
+            assert 0 < index < len(env[name])
+            return env[name][index]
+    assert False, f"Unknown variable {name}"
+    
+def env_set(env, name, value, index=None):
+    assert isinstance(name, str)
+    if not index:
+        env[name] = value
+    else:
+        assert isinstance(index, int)
+        assert name in env
+        assert 0 < index < len(env[name])
+        env[name][index] = value
+```
 
 ## While Loops
 
