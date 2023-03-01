@@ -48,6 +48,9 @@ Implement fixed-size one-dimensional arrays:
 
 ```python
 def do_array(env, args):
+    """Create fixed-size array.
+    ["array", 3] => [None, None, None]
+    """
     assert len(args) == 1
     assert isinstance(args[0], int)
     return [None] * args[0]
@@ -108,3 +111,17 @@ def env_set(env, name, value, index=None):
 
 Implement a `while` loop instruction.
 Your implementation can use either a Python `while` loop or recursion.
+
+```python
+def do_while(env, args):
+    """While loop.
+    ["while", A, B] => while A then B
+    """   
+    assert len(args) == 2
+    cond = args[0]
+    loop = args[1]
+    while do(env, cond):        
+        value = do(env, loop)
+        
+    return value
+```
