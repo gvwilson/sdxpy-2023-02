@@ -1,5 +1,6 @@
 import json
 import sys
+from collections import ChainMap
 
 
 def do_abs(env, args):
@@ -29,9 +30,8 @@ def do_call(env, args):
     params, body = func[1], func[2]
     assert len(values) == len(params)
     # Run in new environment.
-    env.append(dict(zip(params, values)))
+    env = env.new_child(dict(zip(params, values)))
     result = do(env, body)
-    env.pop()
     # Report.
     return result
 
@@ -120,28 +120,24 @@ def do(env, expr):
 
 def env_get(env, name):
     assert isinstance(name, str)
-    if name in env[-1]:
-        return env[-1][name]
-    if name in env[0]:
-        return env[0][name]
+    if name in env:
+        return env[name]
     assert False, f"Unknown variable {name}"
 
 
 def env_set(env, name, value):
     assert isinstance(name, str)
-    if name in env[-1]:
-        env[-1][name] = value
-    elif name in env[0]:
-        env[0][name] = value
+    if name in env:
+        env[name] = value
     else:
-        env[-1][name] = value
+        env[name] = value
 
 
 def main():
     assert len(sys.argv) == 2, "Usage: expr.py filename"
     with open(sys.argv[1], "r") as reader:
         program = json.load(reader)
-    result = do([{}], program)
+    result = do(ChainMap(), program)
     print(f"=> {result}")
 
 
