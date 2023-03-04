@@ -95,6 +95,7 @@ def parse_comparison(comparison):
         "deleted": [],
         "added": []
     }
+    rename_targets = []
     for file, hashes in comparison.items():
         old_hash, new_hash = hashes
         if old_hash is None:
@@ -102,6 +103,7 @@ def parse_comparison(comparison):
         elif new_hash is None:
             matches = find_hash(comparison, old_hash)
             if matches:
+                rename_targets.append(matches[0])
                 report["renamed"].append([file, matches[0]])
             else:
                 report["deleted"].append(file)
@@ -109,6 +111,11 @@ def parse_comparison(comparison):
             report["same"].append(file)
         else:  # old_hash != new_hash
             report["changed"].append(file)
+
+    # renames should not be considered added files
+    for target in rename_targets:
+        if target in report["added"]:
+            report["added"].remove(target)
     return report
 
 
@@ -171,11 +178,3 @@ def compare_manifests(curr_path, prev_path):
     report = parse_comparison(comparison)
     print_comparison_report(report)
     return report
-
-
-if __name__ == "__main__":
-    compare_manifests("0000000001.csv", "0000000000.csv")
-    print("---")
-    compare_manifests("0000000002.csv", "0000000001.csv")
-    print("---")
-    compare_manifests("0000000002.csv", "0000000000.csv")
