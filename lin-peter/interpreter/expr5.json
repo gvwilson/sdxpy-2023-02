@@ -1,0 +1,13 @@
+[
+    "seq",
+    ["set", "alpha", 6],
+    [
+        "while",
+        ["leq", ["get", "alpha"], 10],
+        [
+            "seq",
+            ["set", "alpha", ["add", ["get", "alpha"], 1]],
+            ["print", "alpha"]
+        ]
+    ]
+]
