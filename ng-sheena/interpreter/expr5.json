@@ -1,0 +1,7 @@
+[
+    "seq",
+    ["set", "a", ["array", 10]],
+    ["array_set", "a", 2, 5000],
+    ["set", "b", ["array_get", "a", 2]],
+    ["print", "b"]
+]
