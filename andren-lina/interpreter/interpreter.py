@@ -30,6 +30,11 @@ def do_seq(env, args):
         result = do(env, item)
     return result
 
+OPS = {
+        name.replace("do_", ""): func
+        for (name, func) in globals().items()
+        if name.startswith("do_")
+}
 
 def do(env, expr):
     # Integers evaluate to themselves
@@ -38,14 +43,6 @@ def do(env, expr):
 
     # Lists trigger function calls.
     assert isinstance(expr, list)
-    if expr[0] == "abs":
-        return do_abs(expr[1:])
-    if expr[0] == "add":
-        return do_add(expr[1:])
-    if expr[0] == "get":
-        return do_get(env, expr[1:])
-    if expr[0] == "seq":
-        return do_seq(env, expr[1:])
-    if expr[0] == "set":
-        return do_set(env, expr[1:])
-    assert False, f"Unknown operation {expr[0]}"\
+    assert expr[0] in OPS, f"Unknown operation {expr[0]}"
+    func = OPS[expr[0]]
+    return func(env, expr[1:])
