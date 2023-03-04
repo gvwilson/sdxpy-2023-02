@@ -2,6 +2,7 @@
 
 import sys
 import json
+from collections import ChainMap
 
 # language operations
 
@@ -19,14 +20,13 @@ def do_abs(env, args):
 def do_get(env, args):
     assert len(args) == 1
     assert isinstance(args[0], str)
-    assert args[0] in env, f"Unknown variable {args[0]}"
-    return env[args[0]]
+    return env_get(env, args[0]) 
 
 def do_set(env, args):
     assert len(args) == 2
     assert isinstance(args[0], str)
     value = do(env, args[1])
-    env[args[0]] = value
+    env_set[args[0]] = value
     return value
 
 def do_seq(env, args):
@@ -63,17 +63,41 @@ def do_call(env, args):
     # Report.
     return result
 
+def do_array(env, args):
+    assert len(args) == 1
+    array = None * args[0]
+    return array
+
+def do_array_get(env, args):
+    assert len(args) == 2
+    assert isinstance(args[0], str)
+    name, position = args[0], args[1]
+    array = do_get(env, name)
+    return array[position]
+
+def do_array_set(env, args):
+    assert len(args) == 3
+    assert isinstance(args[0], str)
+    name , position, value = args[0], args[1], args[2]
+    array = do_get(env, name)
+    array[position] = value
+    do_set(env,[name,array])
+    return array
+
+
+# environment handling
+
 def env_get(env, name):
     assert isinstance(name, str)
     if name in env[-1]:
-        return env[1][name]
+        return env[-1][name]
     if name in env[0]:
         return env[0][name]
     assert False, f"Unknown variable {name}"
 
 def env_set(env, name, value):
     assert isinstance(name, str)
-    env[name] = value
+    env[-1][name] = value
     
 
 # dictionary of all operations defined
