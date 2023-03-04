@@ -33,7 +33,7 @@ A more efficient data structure could be used (potentially sorted on
 it.
 
 One choice that did need to be made is what happens when a file is renamed
-(e.g., `mv d.txt b.txt` and then a new file with that name is created (e.g.,
+(e.g., `mv d.txt b.txt`) and then a new file with that name is created (e.g.,
 `touch d.txt`) (see `test_backup.test_compare_delete_add_change` for
 details).
 I think that something like
@@ -56,6 +56,14 @@ that takes the name of a file as a command-line argument
 and displays the history of that file
 by tracing it back in time through the available manifests.
 Again, you can test your program using made-up manifest files.
+
+
+### Solution
+The code is implemented in `file_history` and tested via the tests `test_backup.test_file_history*`.
+Much of the code was reused from `compare_manifests` and therefore moved into the common module `manifest_utils`.
+All manifests are loaded and joined so the hashes for each file are lined up in arrays.
+These hashes are then searched for changes to be reported.
+
 
 ## Finding duplicate files
 

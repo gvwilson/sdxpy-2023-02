@@ -1,73 +1,5 @@
-import csv
-
-
-def read_manifest(manifest_path):
-    """Read a manifest written as a csv into a dictionary.
-    The manifest is assumed to be a csv in the form:
-
-    filename,hash
-    a.txt,abc123
-    b.txt,def456
-
-    and so on.
-
-
-    Parameters
-    ----------
-    manifest_path : Filename of existing manifest
-
-    Returns
-    -------
-    A dictionary with filenames as keys and hashes as values
-
-    """
-    with open(manifest_path, newline='') as manifest_file:
-        reader = csv.DictReader(manifest_file)
-        manifest_dict = {row["filename"]: row["hash"] for row in reader}
-    return manifest_dict
-
-
-def join_manifests(curr, prev):
-    """Outer join dictionaries representing manifests
-
-    Parameters
-    ----------
-    curr : A dictionary with filenames as keys pointing to hash values
-    prev : Same as curr, but representing previous state of files
-
-    Returns
-    -------
-    A dictionary with all filenames as keys pointing to a list of length two.
-    The first item is the previous hash and the second item is the current
-    hash. If either hash does not exist, the value in the list is None
-
-    """
-    all_files = {*curr.keys(), *prev.keys()}
-    comparison = {file:
-                  [prev.get(file, None),
-                   curr.get(file, None)] for file in all_files}
-    return comparison
-
-
-def find_hash(comparison, hash_val, col=1):
-    """Search a comparison dictionary for a specified hash
-
-    Parameters
-    ----------
-    comparison : A comparison dictionary (see join_manifests for details)
-    hash : The hash to search for
-    col : The element of each hash list to search
-
-    Returns
-    -------
-    The filenames matching the hash as a (possibly empty) list
-
-    """
-    matches = []
-    for file, hashes in comparison.items():
-        if hash_val == hashes[col]:
-            matches.append(file)
-    return matches
+from manifest_utils import (read_manifest, join_manifests, find_hash,
+                            RESULT_TEMPLATE)
 
 
 def parse_comparison(comparison):
@@ -119,20 +51,6 @@ def parse_comparison(comparison):
     return report
 
 
-RESULT_TEMPLATE = {
-    "same":
-        lambda file: f"{file}: unchanged",
-    "changed":
-        lambda file: f"{file}: changed",
-    "renamed":
-        lambda files: f"{files[0]}: renamed to {files[1]}",
-    "deleted":
-        lambda file: f"{file}: deleted",
-    "added":
-        lambda file: f"{file}: added",
-    }
-
-
 def print_comparison_report(report):
     """Print the results of comparing two manifests
 
@@ -174,7 +92,7 @@ def compare_manifests(curr_path, prev_path):
     """
     curr = read_manifest(curr_path)
     prev = read_manifest(prev_path)
-    comparison = join_manifests(curr, prev)
+    comparison = join_manifests(prev, curr)
     report = parse_comparison(comparison)
     print_comparison_report(report)
     return report

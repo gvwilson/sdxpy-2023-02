@@ -1,11 +1,13 @@
 import pytest
 import csv
+import manifest_utils
 import compare_manifests
+import file_history
 
 
 @pytest.fixture()
 def csv_manifests(tmp_path):
-    """Save three sample manifest csv to the tmp_path directory
+    """Save sample manifest csv to the tmp_path directory
 
     Parameters
     ----------
@@ -13,7 +15,7 @@ def csv_manifests(tmp_path):
 
     Returns
     -------
-    list of paths
+    list of paths of sample manifests
 
     """
     manifests = {}
@@ -48,13 +50,13 @@ def csv_manifests(tmp_path):
     for path, manifest in manifests.items():
         with open(path, 'w', newline='') as file:
             file.write("\n".join(manifest))
-    yield list(manifests.keys())
+    yield sorted(manifests.keys())
     for path in manifests.keys():
         path.unlink()
 
 
 def test_read_manifests(csv_manifests):
-    manifest_dict = compare_manifests.read_manifest(csv_manifests[4])
+    manifest_dict = manifest_utils.read_manifest(csv_manifests[4])
     assert len(manifest_dict.keys()) == 3
     assert "a.txt" in manifest_dict.keys()
     assert manifest_dict["a.txt"] == "abc123"
@@ -62,6 +64,32 @@ def test_read_manifests(csv_manifests):
     assert manifest_dict["b.txt"] == "def456"
     assert "c.txt" in manifest_dict.keys()
     assert manifest_dict["c.txt"] == "ghi789"
+
+
+def test_join_two_manifests(csv_manifests):
+    prev = manifest_utils.read_manifest(csv_manifests[4])
+    curr = manifest_utils.read_manifest(csv_manifests[5])
+    comparison = manifest_utils.join_manifests(prev, curr)
+    assert len(comparison) == 5
+    assert comparison["a.txt"] == ["abc123", "abc123"]
+    assert comparison["b.txt"] == ["def456", None]
+    assert comparison["c.txt"] == ["ghi789", None]
+    assert comparison["d.txt"] == [None, "def456"]
+    assert comparison["e.txt"] == [None, "jkl101"]
+
+
+def test_join_three_manifests(csv_manifests):
+    manifests = []
+    manifests.append(manifest_utils.read_manifest(csv_manifests[4]))
+    manifests.append(manifest_utils.read_manifest(csv_manifests[5]))
+    manifests.append(manifest_utils.read_manifest(csv_manifests[6]))
+    comparison = manifest_utils.join_manifests(*manifests)
+    assert len(comparison) == 5
+    assert comparison["a.txt"] == ["abc123", "abc123", None]
+    assert comparison["b.txt"] == ["def456", None, "def456"]
+    assert comparison["c.txt"] == ["ghi789", None, None]
+    assert comparison["d.txt"] == [None, "def456", "mno112"]
+    assert comparison["e.txt"] == [None, "jkl101", "jkl101"]
 
 
 def test_compare_add(csv_manifests, capsys):
@@ -148,6 +176,82 @@ def test_compare_delete_add_change(csv_manifests, capsys):
             "a.txt: deleted",
             "b.txt: added",
             "d.txt: changed",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_get_manifest_paths(csv_manifests, tmp_path):
+    manifest_paths = manifest_utils.get_manifest_paths(tmp_path.as_posix())
+    assert csv_manifests == manifest_paths
+
+
+def test_file_history_a(csv_manifests, tmp_path, capsys):
+    file_history.main("a.txt", tmp_path.as_posix())
+    out = capsys.readouterr().out
+    expected_out = [
+            "a.txt: added in 0000000000",
+            "a.txt: changed in 0000000002",
+            "a.txt: deleted in 0000000003",
+            "a.txt: added in 0000000004",
+            "a.txt: deleted in 0000000006",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_file_history_b(csv_manifests, tmp_path, capsys):
+    file_history.main("b.txt", tmp_path.as_posix())
+    out = capsys.readouterr().out
+    expected_out = [
+            "b.txt: added in 0000000001",
+            "b.txt: renamed to a.txt in 0000000002",
+            "b.txt: added in 0000000003",
+            "b.txt: changed in 0000000004",
+            "b.txt: renamed to d.txt in 0000000005",
+            "b.txt: added in 0000000006",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_file_history_c(csv_manifests, tmp_path, capsys):
+    file_history.main("c.txt", tmp_path.as_posix())
+    out = capsys.readouterr().out
+    expected_out = [
+            "c.txt: added in 0000000004",
+            "c.txt: deleted in 0000000005",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_file_history_d(csv_manifests, tmp_path, capsys):
+    file_history.main("d.txt", tmp_path.as_posix())
+    out = capsys.readouterr().out
+    expected_out = [
+            "d.txt: added in 0000000005",
+            "d.txt: changed in 0000000006",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_file_history_e(csv_manifests, tmp_path, capsys):
+    file_history.main("e.txt", tmp_path.as_posix())
+    out = capsys.readouterr().out
+    expected_out = [
+            "e.txt: added in 0000000005",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_file_history_f(csv_manifests, tmp_path, capsys):
+    file_history.main("f.txt", tmp_path.as_posix())
+    out = capsys.readouterr().out
+    expected_out = [
+            "File f.txt not found",
             ""  # prints have extra newline
             ]
     assert out == "\n".join(expected_out)
