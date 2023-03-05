@@ -3,6 +3,18 @@
 1.  Work through the explanation in the slides (and chapter)
     of how to define a function in our little language
     and then how to call one.
+    
+**ANS**
+
+In order to define a function, we must store under a unique identifier for the function:
+- the expected arguments for the function, 
+- and the actions to take when the function is called
+
+In order to call a function, we must:
+- locate the stored function definition by name,
+- assign values to the expected arguments,
+- perform the stored actions, in a local context with the assigned argument values
+
 2.  Look at the documentation for Python's `ChainMap` class
     and modify the implementation from the slides to use that
     to manage environments.

@@ -9,6 +9,12 @@ for name in globals():
     print(name)
 ```
 
+**ANS:**
+
+```python
+RuntimeError: dictionary changed size during iteration
+```
+
 What happens if you run:
 
 ```python
@@ -17,7 +23,24 @@ for name in globals():
     print(name)
 ```
 
+**ANS:**
+
+```python
+__name__
+__doc__
+__package__
+__loader__
+__spec__
+__annotations__
+__builtins__
+name
+```
+
 Why?
+
+**ANS:**
+
+The for loop (and, hence, the loop variable `name`) is in the global scope, so `name` is added to `globals()` while the loop is iterating in the first case. In the second case, `name` already declared in the global scope, so `globals()` is not changed by the loop.
 
 ## Counting Results
 
@@ -28,6 +51,10 @@ Why?
 
 3.  Think of another plausible way to interpret part 1
     that *wouldn't* pass the tests you wrote for part 2.
+
+**ANS:**
+
+Print results without returning anything
 
 ## Failing on Purpose
 
