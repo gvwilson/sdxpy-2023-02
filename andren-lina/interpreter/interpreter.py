@@ -26,7 +26,7 @@ def do_set(env, args):
     assert len(args) == 2
     assert isinstance(args[0], str)
     value = do(env, args[1])
-    env_set[args[0]] = value
+    env_set(env, args[0], value)
     return value
 
 def do_seq(env, args):
@@ -56,16 +56,16 @@ def do_call(env, args):
     assert len(values) == len(params)
 
     # Run in new environment.
-    env.append(dict(zip(params, values)))
+    env = env.newchild(dict(zip(params, values))) #changed to use chainmap
     result = do(env, body)
-    env.pop()
+    env = env.parents # changed to use chainmap
 
     # Report.
     return result
 
 def do_array(env, args):
     assert len(args) == 1
-    array = None * args[0]
+    array = [ None ] * args[0]
     return array
 
 def do_array_get(env, args):
@@ -89,24 +89,31 @@ def do_array_set(env, args):
 
 def env_get(env, name):
     assert isinstance(name, str)
-    if name in env[-1]:
-        return env[-1][name]
-    if name in env[0]:
-        return env[0][name]
+    if name in env.maps[-1]: # kollar i chainmap sist
+        return env.maps[-1][name]
+    if name in env.maps[0]: # och först
+        return env.maps[0][name]
     assert False, f"Unknown variable {name}"
 
 def env_set(env, name, value):
     assert isinstance(name, str)
-    env[-1][name] = value
+    env[name] = value # lägg till i den sista i chainmap-en
     
 
 # dictionary of all operations defined
+
+#Change this to adding to a chain map? and change environment functions to work for chain map. finally, main must send empty chainmap. is that it? No, also need to update do_call
+
+# Changed: main function
+# Changed: environment functions
+# Changed: do_call
 
 OPS = {
         name.replace("do_", ""): func
         for (name, func) in globals().items()
         if name.startswith("do_")
 }
+
 
 def do(env, expr):
     # Integers evaluate to themselves
@@ -124,7 +131,8 @@ def main():
     assert len(sys.argv) == 2, "Usage: expr.py filename"
     with open(sys.argv[1], "r") as reader:
         program = json.load(reader)
-    result = do({}, program)
+    env = ChainMap()
+    result = do(env, program)
     print(f"=> {result}")
 
 if __name__ == "__main__":
