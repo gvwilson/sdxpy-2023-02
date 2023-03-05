@@ -56,7 +56,7 @@ def do_call(env, args):
     assert len(values) == len(params)
 
     # Run in new environment.
-    env = env.newchild(dict(zip(params, values))) #changed to use chainmap
+    env = env.new_child(dict(zip(params, values))) #changed to use chainmap
     result = do(env, body)
     env = env.parents # changed to use chainmap
 
@@ -84,6 +84,23 @@ def do_array_set(env, args):
     do_set(env,[name,array])
     return array
 
+def do_print(env, args):
+    result = do(env,args[0])
+    print(result)
+    return None
+
+def do_repeat(env,args):
+    assert len(args) == 2
+    assert isinstance(args[0], int)
+    for i in range(args[0]):
+        do(env, args[1])
+    return None
+
+def do_while(env,args):
+    assert len(args) == 2
+    while do(env,args[0]):
+        do(env, args[1])
+    return None
 
 # environment handling
 
