@@ -3,6 +3,7 @@ import csv
 import manifest_utils
 import compare_manifests
 import file_history
+import finddup
 
 
 @pytest.fixture()
@@ -52,6 +53,35 @@ def csv_manifests(tmp_path):
             file.write("\n".join(manifest))
     yield sorted(manifests.keys())
     for path in manifests.keys():
+        path.unlink()
+
+
+@pytest.fixture()
+def text_files(tmp_path):
+    """Save sample text_files to the tmp_path directory
+
+    Parameters
+    ----------
+    tmp_path : temporary directory fixture from pytest
+
+    Returns
+    -------
+    list of paths of sample text files
+
+    """
+    text_files = {}
+    text_files[tmp_path / "a.txt"] = ["a"]
+    text_files[tmp_path / "b.txt"] = ["b"]
+    text_files[tmp_path / "c.txt"] = ["a"]
+    text_files[tmp_path / "d.txt"] = ["a"]
+    text_files[tmp_path / "e.txt"] = ["b"]
+    text_files[tmp_path / "f.txt"] = ["c"]
+    text_files[tmp_path / "g.txt"] = ["c"]
+    for path, text_file in text_files.items():
+        with open(path, 'w', newline='') as file:
+            file.write("\n".join(text_file))
+    yield sorted(text_files.keys())
+    for path in text_files.keys():
         path.unlink()
 
 
@@ -252,6 +282,129 @@ def test_file_history_f(csv_manifests, tmp_path, capsys):
     out = capsys.readouterr().out
     expected_out = [
             "File f.txt not found",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_duplicate_one_file(text_files, capsys):
+    finddup.main(text_files[0])
+    out = capsys.readouterr().out
+    expected_out = [
+            "duplicates:",
+            "\ta.txt",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_duplicate_missing_file(capsys):
+    filename = "does_not_exist"
+    finddup.main(filename)
+    out = capsys.readouterr().out
+    expected_out = [
+            ""  # pytest doesn't capture log output in the same way
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_duplicate_two_files_no_duplicate(text_files, capsys):
+    finddup.main(text_files[0], text_files[1])
+    out = capsys.readouterr().out
+    expected_out = [
+            "duplicates:",
+            "\ta.txt",
+            "duplicates:",
+            "\tb.txt",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_duplicate_two_files_all_duplicate(text_files, capsys):
+    finddup.main(text_files[0], text_files[2])
+    out = capsys.readouterr().out
+    expected_out = [
+            "duplicates:",
+            "\ta.txt",
+            "\tc.txt",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_duplicate_three_files_two_groups(text_files, capsys):
+    finddup.main(text_files[0], text_files[1], text_files[2])
+    out = capsys.readouterr().out
+    expected_out = [
+            "duplicates:",
+            "\ta.txt",
+            "\tc.txt",
+            "duplicates:",
+            "\tb.txt",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_duplicate_three_files_two_groups_reordered(text_files, capsys):
+    finddup.main(text_files[1], text_files[2], text_files[0])
+    out = capsys.readouterr().out
+    expected_out = [
+            "duplicates:",
+            "\ta.txt",
+            "\tc.txt",
+            "duplicates:",
+            "\tb.txt",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_duplicate_four_files_two_unequal_groups(text_files, capsys):
+    finddup.main(text_files[0], text_files[1], text_files[2], text_files[3])
+    out = capsys.readouterr().out
+    expected_out = [
+            "duplicates:",
+            "\ta.txt",
+            "\tc.txt",
+            "\td.txt",
+            "duplicates:",
+            "\tb.txt",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_duplicate_four_files_two_equal_groups(text_files, capsys):
+    finddup.main(text_files[0], text_files[1], text_files[2], text_files[4])
+    out = capsys.readouterr().out
+    expected_out = [
+            "duplicates:",
+            "\ta.txt",
+            "\tc.txt",
+            "duplicates:",
+            "\tb.txt",
+            "\te.txt",
+            ""  # prints have extra newline
+            ]
+    assert out == "\n".join(expected_out)
+
+
+def test_duplicate_all_files(text_files, capsys):
+    finddup.main(*text_files)
+    out = capsys.readouterr().out
+    expected_out = [
+            "duplicates:",
+            "\ta.txt",
+            "\tc.txt",
+            "\td.txt",
+            "duplicates:",
+            "\tb.txt",
+            "\te.txt",
+            "duplicates:",
+            "\tf.txt",
+            "\tg.txt",
             ""  # prints have extra newline
             ]
     assert out == "\n".join(expected_out)
