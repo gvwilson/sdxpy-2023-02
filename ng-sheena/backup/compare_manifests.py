@@ -28,7 +28,7 @@ def show_hash_change(manifests):
         if len(hash_value) >= 2:
             files_hash_changed.append(file_name)
 
-    print("file content changed: \n", files_hash_changed)
+    return files_hash_changed
 
 # Which files have the same hashes but different names
 # (i.e., they have been renamed).
@@ -43,7 +43,7 @@ def show_file_name_change(manifests):
         if len(file_name) >= 2:
             file_name_changed.append(file_name)
 
-    print("file name changed: \n", file_name_changed)
+    return file_name_changed
 
 # Which files are in the first hash but neither their names nor their hashes are in the second
 # (i.e., they have been deleted).
@@ -55,7 +55,7 @@ def show_file_deleted(manifests):
         if file_name not in manifest2 and hash_value not in manifest2.values():
             file_deletion_list.append(file_name)
 
-    print("files deleted: \n", file_deletion_list)
+    return file_deletion_list
 
 # Which files are in the second hash but neither their names nor their hashes are in the first
 # (i.e., they have been added).
@@ -67,17 +67,22 @@ def show_file_added(manifests):
         if file_name not in manifest1 and hash_value not in manifest1.values():
             new_file_list.append(file_name)
 
-    print("files added: \n", new_file_list)
+    return new_file_list
 
-def main():
+def populate_manifest():
     for my_manifest, my_dict in manifests.items():
         my_dict = read_manifest(my_manifest, my_dict)
         manifests[my_manifest] = my_dict
+    return manifests
 
-    show_hash_change(manifests)
-    show_file_name_change(manifests)
-    show_file_deleted(manifests)
-    show_file_added(manifests)
+def main():
+    manifests = populate_manifest()
+
+    print("file content changed: \n", show_hash_change(manifests))
+    print("file name changed: \n", show_file_name_change(manifests))
+    print("files added: \n", show_file_added(manifests))
+    print("files deleted: \n", show_file_deleted(manifests))
+
 
 if __name__ == "__main__":
     main()
