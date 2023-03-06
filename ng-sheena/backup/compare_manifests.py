@@ -41,7 +41,7 @@ def show_file_name_change(manifests):
     file_name_changed = []
     for hash_value, file_name in name_change_map.items():
         if len(file_name) >= 2:
-            file_name_changed.append(file_name)
+            file_name_changed.extend(file_name)
 
     return file_name_changed
 
