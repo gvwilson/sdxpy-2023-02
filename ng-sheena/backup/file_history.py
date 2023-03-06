@@ -24,14 +24,16 @@ summary_dict = {
     "deleted": deleted,
 }
 
+print(summary_dict)
 
 target_dict = {}
 for change, file_name_list in summary_dict.items():
     if target_file in file_name_list:
         target_dict[change] = list(manifests.keys())
 
-print(
-    f"change history for {target_file}: \n"
-    f"{target_dict}"
-)
+print(f"change history for {target_file}: \n")
+
+for change, manifests in target_dict.items():
+    print(f"{change}: {target_file} is in {manifests}")
+
 
