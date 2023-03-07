@@ -34,7 +34,8 @@ def group_files(hash_list):
 
 
 def print_groups(dupe_dict):
-    return [(v) for k, v in dupe_dict.items()]
+    groups = [(v) for k, v in dupe_dict.items()]
+    return [i for i in groups if len(i) > 1]
 
 
 if __name__ == "__main__":
