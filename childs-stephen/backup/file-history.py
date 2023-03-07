@@ -1,5 +1,6 @@
 from pathlib import Path
 from csv import reader
+import sys
 
 manifests = [
     Path("test", "0305.csv"),
@@ -92,9 +93,11 @@ def file_history(manifest_data, filename):
 
 if __name__ == "__main__":
     manifest_data = read_all_manifests(manifests)
-    print("File history new.txt")
-    print(file_history(manifest_data, "new.txt"))
-    print("File history top.txt")
-    print(file_history(manifest_data, "top.txt"))
-    print("File history renamed.txt")
-    print(file_history(manifest_data, "renamed.txt"))
+    # print("File history new.txt")
+    # print(file_history(manifest_data, "new.txt"))
+    # print("File history top.txt")
+    # print(file_history(manifest_data, "top.txt"))
+    # print("File history renamed.txt")
+    # print(file_history(manifest_data, "renamed.txt"))
+    file = sys.argv[1]
+    print(file_history(manifest_data, file))
