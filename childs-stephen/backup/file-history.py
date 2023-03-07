@@ -92,9 +92,9 @@ def file_history(manifest_data, filename):
 
 if __name__ == "__main__":
     manifest_data = read_all_manifests(manifests)
-    # print("File history new.txt")
-    # print(file_history(manifest_data, "new.txt"))
-    # print("File history top.txt")
-    # print(file_history(manifest_data, "top.txt"))
+    print("File history new.txt")
+    print(file_history(manifest_data, "new.txt"))
+    print("File history top.txt")
+    print(file_history(manifest_data, "top.txt"))
     print("File history renamed.txt")
     print(file_history(manifest_data, "renamed.txt"))
