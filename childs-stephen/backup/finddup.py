@@ -1,6 +1,7 @@
 import hashlib
 from glob import glob
 from pathlib import Path
+from collections import defaultdict
 
 BUFFER_SIZE = 4 * 1024
 
@@ -25,5 +26,16 @@ def hash_all(root):
     return result
 
 
+def group_files(hash_list):
+    result = defaultdict(list)
+    for f, h in hash_list:
+        result[h].append(f)
+    return result
+
+
+def print_groups(dupe_dict):
+    return [(v) for k, v in dupe_dict.items()]
+
+
 if __name__ == "__main__":
-    print(hash_all("test/"))
+    print(print_groups(group_files(hash_all("test/"))))
