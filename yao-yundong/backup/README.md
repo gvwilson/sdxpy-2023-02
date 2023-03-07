@@ -18,6 +18,19 @@ Write a program `compare-manifests.py` that reads two manifest files and reports
 
 You can test your program by hand-writing a few manifest CSV files with made-up hashes.
 
+**input:**
+```
+python compare-manifests.py manifest1.csv manifest2.csv 
+```
+
+**output:**
+```
+changed => ['Baked']
+renamed => ['Lovely']
+deleted => ['Wonderful']
+added => ['Wonder']
+```
+
 ## File history
 
 Write a program called `file_history.py`
@@ -25,6 +38,19 @@ that takes the name of a file as a command-line argument
 and displays the history of that file
 by tracing it back in time through the available manifests.
 Again, you can test your program using made-up manifest files.
+
+**input:**
+```
+python file_history.py wonder 
+```
+
+**output:*
+```
+['Wonder', 'ghi7890', 'added', 'Sat Mar  4 10:34:05 2023']
+['Wonder', 'ghi789011', 'changed', 'Sun Mar  5 17:13:38 2023']
+['wonder', 'ghi789011', 'renamed', 'Sun Mar  5 17:13:47 2023']
+```
+
 
 ## Finding duplicate files
 
@@ -36,3 +62,5 @@ not just two.
 
 You can test your program by creating a few directories with test files in them
 rather than using pyfakefs.
+
+test_finddup.py is created by pyfakefs to test the finddup.py.
