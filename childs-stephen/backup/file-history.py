@@ -28,13 +28,13 @@ def file_history(manifest_data, filename):
     num_manifiests = len(manifest_data)
     last_index = num_manifiests - 1
     stop_early = False
-    for i in range(last_index, 1, -1):
+    for i in range(last_index, 0, -1):
         if current_filename in manifest_data[i].keys():
             # in previous state
+            new_content = manifest_data[i][current_filename]
             if current_filename in manifest_data[i - 1].keys():
                 # contents changed
                 old_content = manifest_data[i - 1][current_filename]
-                new_content = manifest_data[i][current_filename]
                 if old_content != new_content:
                     result.append(
                         {
@@ -82,18 +82,19 @@ def file_history(manifest_data, filename):
             # file not in current state
             # stop_early = True
             continue
-        if not stop_early:
-           if current_filename in manifest_data[0].keys():
-              result.append(
-                  {"index": 0, "event": "added", "old": "", "new": current_filename}
+    if not stop_early:
+        if current_filename in manifest_data[0].keys():
+            result.append(
+                {"index": 0, "event": "added", "old": "", "new": current_filename}
+            )
     return result
 
 
 if __name__ == "__main__":
     manifest_data = read_all_manifests(manifests)
-    print("File history new.txt")
-    print(file_history(manifest_data, "new.txt"))
-    print("File history top.txt")
-    print(file_history(manifest_data, "top.txt"))
+    # print("File history new.txt")
+    # print(file_history(manifest_data, "new.txt"))
+    # print("File history top.txt")
+    # print(file_history(manifest_data, "top.txt"))
     print("File history renamed.txt")
     print(file_history(manifest_data, "renamed.txt"))
