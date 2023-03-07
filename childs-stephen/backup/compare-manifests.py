@@ -5,6 +5,7 @@ manifests = [
     Path("test", "0305.csv"),
     Path("test", "0306.csv"),
     Path("test", "0307.csv"),
+    Path("test", "0308.csv"),
 ]
 
 
@@ -17,5 +18,21 @@ def read_manifest(path):
     return contents
 
 
+def read_all_manifests(manifest_list):
+    return [read_manifest(p) for p in manifest_list]
+
+
+def contents_changed(old, new):
+    result = []
+    for i in old.keys():
+        new_contents = new.get(i, None)
+        if new_contents and old[i] != new_contents:
+            result.append(i)
+    return result
+
+
 if __name__ == "__main__":
-    print(read_manifest(manifests[0]))
+    manifest_data = read_all_manifests(manifests)
+    print(manifest_data[2])
+    print(manifest_data[3])
+    print(f"Contents Changed: {contents_changed(manifest_data[2], manifest_data[3])}")
