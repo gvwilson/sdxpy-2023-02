@@ -27,6 +27,7 @@ def file_history(manifest_data, filename):
     current_filename = filename
     num_manifiests = len(manifest_data)
     last_index = num_manifiests - 1
+    stop_early = False
     for i in range(last_index, 1, -1):
         if current_filename in manifest_data[i].keys():
             # in previous state
@@ -37,6 +38,7 @@ def file_history(manifest_data, filename):
                 if old_content != new_content:
                     result.append(
                         {
+                            "index": i,
                             "event": "contents changed",
                             "old": old_content,
                             "new": new_content,
@@ -44,18 +46,33 @@ def file_history(manifest_data, filename):
                     )
             else:
                 old_manifest = manifest_data[i - 1]
-                found = list(old_manifest.keys())[
-                    list(old_manifest.values()).index(new_content)
-                ]
+                try:
+                    found = list(old_manifest.keys())[
+                        list(old_manifest.values()).index(new_content)
+                    ]
+                except ValueError:
+                    found = False
                 if not found:
                     result.append(
-                        {"event": "added", "old": "", "new": current_filename}
+                        {
+                            "index": i,
+                            "event": "added",
+                            "old": "",
+                            "new": current_filename,
+                        }
                     )
                     # stop checking history
+                    if i > 1:
+                        stop_early = True
                     break
                 elif found != current_filename:
                     result.append(
-                        {"event": "rename", "old": found, "new": current_filename}
+                        {
+                            "index": i,
+                            "event": "rename",
+                            "old": found,
+                            "new": current_filename,
+                        }
                     )
                     current_filename = found
                 else:
@@ -63,10 +80,20 @@ def file_history(manifest_data, filename):
                     pass
         else:
             # file not in current state
-            break
+            # stop_early = True
+            continue
+        if not stop_early:
+           if current_filename in manifest_data[0].keys():
+              result.append(
+                  {"index": 0, "event": "added", "old": "", "new": current_filename}
     return result
 
 
 if __name__ == "__main__":
     manifest_data = read_all_manifests(manifests)
+    print("File history new.txt")
     print(file_history(manifest_data, "new.txt"))
+    print("File history top.txt")
+    print(file_history(manifest_data, "top.txt"))
+    print("File history renamed.txt")
+    print(file_history(manifest_data, "renamed.txt"))
