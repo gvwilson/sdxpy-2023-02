@@ -6,6 +6,7 @@ manifests = {
     "manifest2.csv": {}
 }
 
+# read the manifest and write data into the dictionary
 def read_manifest(manifest, my_dict):
     with open(f'{manifest}', 'r') as file:
         reader = csv.reader(file)
@@ -18,32 +19,32 @@ def read_manifest(manifest, my_dict):
 # Which files have the same names but different hashes
 # (i.e., their contents have changed).
 def show_hash_change(manifests):
-    hash_change_map = defaultdict(list)
+    hash_change_dict = defaultdict(list)
     for manifest in manifests.values():
         for file_name, hash_value in manifest.items():
-            hash_change_map[file_name].append(hash_value)
+            hash_change_dict[file_name].append(hash_value)
 
-    files_hash_changed = []
-    for file_name, hash_value in hash_change_map.items():
+    hash_changed_files = []
+    for file_name, hash_value in hash_change_dict.items():
         if len(hash_value) >= 2:
-            files_hash_changed.append(file_name)
+            hash_changed_files.append(file_name)
 
-    return files_hash_changed
+    return hash_changed_files
 
 # Which files have the same hashes but different names
 # (i.e., they have been renamed).
 def show_file_name_change(manifests):
-    name_change_map = defaultdict(list)
+    name_change_dict = defaultdict(list)
     for manifest in manifests.values():
         for file_name, hash_value in manifest.items():
-            name_change_map[hash_value].append(file_name)
+            name_change_dict[hash_value].append(file_name)
 
-    file_name_changed = []
-    for hash_value, file_name in name_change_map.items():
+    name_changed_files = []
+    for hash_value, file_name in name_change_dict.items():
         if len(file_name) >= 2:
-            file_name_changed.extend(file_name)
+            name_changed_files.extend(file_name)
 
-    return file_name_changed
+    return name_changed_files
 
 # Which files are in the first hash but neither their names nor their hashes are in the second
 # (i.e., they have been deleted).
