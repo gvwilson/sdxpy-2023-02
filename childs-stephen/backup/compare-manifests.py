@@ -40,6 +40,23 @@ def renamed_file(old, new):
     return result
 
 
+def deleted_file(old, new):
+    result = []
+    for i in old.keys():
+        if i not in new.keys():
+            try:
+                found = list(new.keys())[list(new.values()).index(old[i])]
+            except ValueError:
+                found = False
+            if not found:
+                result.append(i)
+    return result
+
+
+def new_file(old, new):
+    return deleted_file(new, old)
+
+
 if __name__ == "__main__":
     manifest_data = read_all_manifests(manifests)
     print(manifest_data[2])
@@ -48,3 +65,21 @@ if __name__ == "__main__":
     print(manifest_data[0])
     print(manifest_data[1])
     print(f"Files renamed: {renamed_file(manifest_data[0], manifest_data[1])}")
+    print(manifest_data[0])
+    print(manifest_data[1])
+    print(f"Files deleted: {deleted_file(manifest_data[0], manifest_data[1])}")
+    print(manifest_data[1])
+    print(manifest_data[2])
+    print(f"Files deleted: {deleted_file(manifest_data[1], manifest_data[2])}")
+    print(manifest_data[2])
+    print(manifest_data[3])
+    print(f"Files deleted: {deleted_file(manifest_data[2], manifest_data[3])}")
+    print(manifest_data[0])
+    print(manifest_data[1])
+    print(f"Files added: {new_file(manifest_data[0], manifest_data[1])}")
+    print(manifest_data[1])
+    print(manifest_data[2])
+    print(f"Files added: {new_file(manifest_data[1], manifest_data[2])}")
+    print(manifest_data[2])
+    print(manifest_data[3])
+    print(f"Files added: {new_file(manifest_data[2], manifest_data[3])}")
