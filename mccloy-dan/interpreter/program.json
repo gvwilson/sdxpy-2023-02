@@ -1,0 +1,17 @@
+[
+    "seq",
+    ["set", "my_arr", ["array", 3]],
+    ["set", "alpha", 1],
+    ["set", "beta", 2],
+    ["array_set", "my_arr", 0, 3],
+    ["array_set", "my_arr", 1, 4],
+    ["array_set", "my_arr", 2, 7],
+    ["add",
+     ["add", ["get", "alpha"], ["get", "beta"]],
+     ["mul", ["array_get", "my_arr", 0], ["array_get", "my_arr", 1]]
+    ],
+    ["while",
+     ["leq", ["array_get", "my_arr", 2], 9],
+     ["array_set", "my_arr", 2, ["add", ["array_get", "my_arr", 2], 1]]],
+    ["print", ["array_get", "my_arr", 2]]
+]
