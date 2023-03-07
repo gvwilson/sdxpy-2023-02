@@ -29,17 +29,19 @@ def file_history(manifest_data, filename):
     last_index = num_manifiests - 1
     for i in range(last_index, 1, -1):
         if current_filename in manifest_data[i].keys():
-            # contents changed
-            old_content = manifest_data[i - 1][current_filename]
-            new_content = manifest_data[i][current_filename]
-            if old_content != new_content:
-                result.append(
-                    {
-                        "event": "contents changed",
-                        "old": old_content,
-                        "new": new_content,
-                    }
-                )
+            # in previous state
+            if current_filename in manifest_data[i - 1].keys():
+                # contents changed
+                old_content = manifest_data[i - 1][current_filename]
+                new_content = manifest_data[i][current_filename]
+                if old_content != new_content:
+                    result.append(
+                        {
+                            "event": "contents changed",
+                            "old": old_content,
+                            "new": new_content,
+                        }
+                    )
             else:
                 old_manifest = manifest_data[i - 1]
                 found = list(old_manifest.keys())[
