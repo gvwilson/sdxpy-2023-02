@@ -88,6 +88,14 @@ def do_if(env, args):
     return do(env, choice)
 
 
+def do_leq(env, args):
+    """Less than or equal.
+    ["leq" A B] => A <= B
+    """
+    assert len(args) == 2
+    return do(env, args[0]) <= do(env, args[1])
+
+
 def do_mul(env, args):
     assert len(args) == 2
     left = do(env, args[0])
@@ -129,6 +137,17 @@ def do_set(env, args):
     value = do(env, args[1])
     env_set(env, name, value)
     return value
+
+
+def do_while(env, args):
+    """Repeat an action while a condition is satisfied."""
+    assert len(args) == 2
+    cond = do(env, args[0])
+    if cond:
+        _ = do(env, args[1])
+        return do_while(env, args)
+    else:
+        return None
 
 
 def do(env, expr):
