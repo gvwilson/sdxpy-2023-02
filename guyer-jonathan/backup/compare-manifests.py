@@ -16,37 +16,39 @@ def compare_manifests(fileA, fileB):
     reversedB = {}
     
     status = {
-        "changed": [],
-        "unchanged": [],
-        "renamed": [],
-        "deleted": [],
-        "added": []
+        "changed": {},
+        "unchanged": {},
+        "renamed": {},
+        "deleted": {},
+        "added": {}
     }
     
     for filehashA, filenameA in manifestA.items():
         if filehashA in manifestB:
             filenameB = manifestB.pop(filehashA)
             if filenameB == filenameA:
-                status["unchanged"].append([filehashA, filenameA])
+                status["unchanged"][filehashA] = filenameA
             else:
-                status["renamed"].append([filehashA, filenameA, filenameB])
+                status["renamed"][filehashA] = [filenameA, filenameB]
         else:
+            # not found, so set up for reverse lookup
             reversedA[filenameA] = filehashA
 
     for filehashB, filenameB in manifestB.items():
         if filenameB in reversedA:
             filehashA = reversedA.pop(filenameB)
-            status["changed"].append([filenameB, filehashA, filehashB])
+            status["changed"][filenameB] = [filehashA, filehashB]
         else:
+            # not found, so set up for reverse lookup
             reversedB[filenameB] = filehashB
             
     # anything not removed from reversedA must have been deleted
     for filenameA, filehashA in reversedA.items():
-        status["deleted"].append([filehashA, filenameA])
+        status["deleted"][filehashA] = filenameA
             
     # anything not removed from reversedB must have been added
     for filenameB, filehashB in reversedB.items():
-        status["added"].append([filehashB, filenameB])
+        status["added"][filehashB] = filenameB
 
     return status
 
@@ -67,12 +69,12 @@ def test_compare():
     status = compare_manifests("test/manifestA.csv", "test/manifestB.csv")
     
     expected = {
-        "changed": [["path/to/caffeine.py", "decafbad", "c0ffeeee"]],
-        "unchanged": [["deadc0de", "path/to/do/not/use.py"]],
-        "renamed": [["deadbeef", "path/to/t-bone.txt", "path/to/porterhouse.txt"],
-                    ["cafeb0ba", "path/to/boba/are_gross.txt", "path/to/boba/are_yum.txt"]],
-        "deleted": [["8badf00d", "path/to/do/not/feel/good.py"]],
-        "added": [["bbadbeef", "path/to/smells/bad.csv"]]
+        "changed": {"path/to/caffeine.py": ["decafbad", "c0ffeeee"]},
+        "unchanged": {"deadc0de": "path/to/do/not/use.py"},
+        "renamed": {"deadbeef": ["path/to/t-bone.txt", "path/to/porterhouse.txt"],
+                    "cafeb0ba": ["path/to/boba/are_gross.txt", "path/to/boba/are_yum.txt"]},
+        "deleted": {"8badf00d": "path/to/do/not/feel/good.py"},
+        "added": {"bbadbeef": "path/to/smells/bad.csv"}
     }
 
     assert status == expected
