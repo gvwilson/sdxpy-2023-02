@@ -12,9 +12,33 @@ def read_manifest(manifest_file):
 def compare_manifests(fileA, fileB):
     pass
 
+def test_read():
+    manifest = read_manifest("test/manifestA.csv")
+
+    expected = {
+        'deadbeef': 'path/to/t-bone.txt',
+        'cafeb0ba': 'path/to/boba/are_gross.txt',
+        'decafbad': 'path/to/caffeine.py',
+        '8badf00d': 'path/to/do/not/feel/good.py',
+        'deadc0de': 'path/to/do/not/use.py'
+    }
+
+    assert manifest == expected
+
+def test_compare():
+    status = compare_manifests("test/manifestA.csv", "test/manifestB.csv")
+    
+    expected = {
+        "changed": [["path/to/caffeine.py", "decafbad", "c0ffeeee"]],
+        "unchanged": [["deadc0de", "path/to/do/not/use.py"]],
+        "renamed": [["deadbeef", "path/to/t-bone.txt", "path/to/porterhouse.txt"],
+                    ["cafeb0ba", "path/to/boba/are_gross.txt", "path/to/boba/are_yum.txt"]],
+        "deleted": [["8badf00d", "path/to/do/not/feel/good.py"]],
+        "added": [["bbadbeef", "path/to/smells/bad.csv"]]
+    }
+
+    assert status == expected
+
 if __name__ == "__main__":
-    # compare_manifests(fileA, fileB)
-    manifestA = read_manifest("test/manifestA.csv")
-    print(manifestA)
-    manifestB = read_manifest("test/manifestB.csv")
-    print(manifestB)
+    test_read()
+    test_compare()
