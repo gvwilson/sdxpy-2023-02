@@ -54,11 +54,23 @@ def file_history(filename, repodir="test"):
                 filename = event[1]
 
         newer = manifest
-                
+
+    return log
+
+def report_history(log):
     for timestamp, event in log:
+        if event[0] == "changed":
+            message = f"File hash changed to {event[2]}"
+        if event[0] == "renamed":
+            message = f"File renamed from {event[1]}"
+        if event[0] == "deleted":
+            message = f"File deleted"
+        if event[0] == "added":
+            message = f"File added with hash {event[1]}"
+
         if event[0] != "unchanged":
-            print(timestamp, event)
+            print(timestamp, message)
 
 if __name__ == "__main__":
     filename = sys.argv[1]
-    file_history(filename)
+    report_history(file_history(filename))
