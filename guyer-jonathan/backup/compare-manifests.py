@@ -126,7 +126,7 @@ def report_comparison(fileA, fileB):
         print()
 
 def test_read():
-    manifest = read_manifest("test/manifestA.csv")
+    manifest = read_manifest("test/123456789.csv")
 
     expected = {
         'deadbeef': 'path/to/t-bone.txt',
@@ -139,7 +139,7 @@ def test_read():
     assert manifest == expected
 
 def test_compare():
-    status = compare_manifests("test/manifestA.csv", "test/manifestB.csv")
+    status = compare_manifests("test/123456789.csv", "test/1234567890.csv")
     
     expected = {
         "changed": {"path/to/caffeine.py": ["decafbad", "c0ffeeee"]},
@@ -194,4 +194,4 @@ def run_tests():
 if __name__ == "__main__":
     run_tests()
     
-    report_comparison("test/manifestA.csv", "test/manifestB.csv")
+    report_comparison("test/123456789.csv", "test/1234567890.csv")
