@@ -1,6 +1,19 @@
 import csv
 
 def read_manifest(manifest_file):
+    """
+    Read a manifest `.csv` file into a dictionary
+    
+    Parameters
+    ----------
+    manifest_file : str
+        Path to `.csv` manifest file
+
+    Returns
+    ----
+    manifest : dict
+        File hash keys with file path values
+    """
     manifest = {}
     with open(manifest_file, mode="r") as csvfile:
         manifest_reader = csv.reader(csvfile, delimiter=",")
@@ -10,6 +23,33 @@ def read_manifest(manifest_file):
     return manifest
 
 def compare_manifests(fileA, fileB):
+    """
+    Compare two manifest `.csv` files
+    
+    Parameters
+    ----------
+    fileA, fileB : str
+        Paths to `.csv` manifest files to compare
+
+    Returns
+    ----
+    status : dict
+        changed : dict
+            Files have the same names but different hashes
+            (file path keys with list of old and new hashes as values)
+        unchanged : dict
+            Files have the same hashes and the same names
+            (file hash keys with file path as value)
+        renamed : dict
+            Files have the same hashes but different names
+            (file hash keys with list of old and new paths as values)
+        deleted : dict
+            Files are in the first hash but neither their names nor their hashes are in the second
+            (file hash keys with file path as value)
+        added : dict
+            Files are in the second hash but neither their names nor their hashes are in the first
+            (file hash keys with file path as value)
+    """
     manifestA = read_manifest(fileA)
     manifestB = read_manifest(fileB)
     reversedA = {}
