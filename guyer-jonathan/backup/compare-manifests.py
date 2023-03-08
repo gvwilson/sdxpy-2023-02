@@ -92,6 +92,39 @@ def compare_manifests(fileA, fileB):
 
     return status
 
+def report_comparison(fileA, fileB):
+    status = compare_manifests(fileA, fileB)
+    
+    if len(status["unchanged"]) > 0:
+        print(f"{len(status['unchanged'])} files are unchanged:")
+        for filehash, filename in status["unchanged"].items():
+            print(f"\t{filehash}: {filename}")
+        print()
+        
+    if len(status["changed"]) > 0:
+        print(f"{len(status['changed'])} file contents are changed:")
+        for filename, [oldhash, newhash] in status["changed"].items():
+            print(f"\t{filename}: {oldhash} -> {newhash}")
+        print()
+
+    if len(status["renamed"]) > 0:
+        print(f"{len(status['renamed'])} files are renamed:")
+        for filehash, [oldname, newname] in status["renamed"].items():
+            print(f"\t{filehash}: {oldname} -> {newname}")
+        print()
+        
+    if len(status["deleted"]) > 0:
+        print(f"{len(status['deleted'])} files were deleted:")
+        for filehash, filename in status["deleted"].items():
+            print(f"\t{filehash}: {filename}")
+        print()
+        
+    if len(status["added"]) > 0:
+        print(f"{len(status['added'])} files were added:")
+        for filehash, filename in status["added"].items():
+            print(f"\t{filehash}: {filename}")
+        print()
+
 def test_read():
     manifest = read_manifest("test/manifestA.csv")
 
@@ -160,3 +193,5 @@ def run_tests():
 
 if __name__ == "__main__":
     run_tests()
+    
+    report_comparison("test/manifestA.csv", "test/manifestB.csv")
