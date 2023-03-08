@@ -1,6 +1,6 @@
 import csv
 
-def read_manifest(manifest_file):
+def read_manifest(manifest_file=None):
     """
     Read a manifest `.csv` file into a dictionary
     
@@ -15,10 +15,11 @@ def read_manifest(manifest_file):
         File hash keys with file path values
     """
     manifest = {}
-    with open(manifest_file, mode="r") as csvfile:
-        manifest_reader = csv.reader(csvfile, delimiter=",")
-        for filehash, filename in manifest_reader:
-            manifest[filehash] = filename
+    if manifest_file is not None:
+        with open(manifest_file, mode="r") as csvfile:
+            manifest_reader = csv.reader(csvfile, delimiter=",")
+            for filehash, filename in manifest_reader:
+                manifest[filehash] = filename
 
     return manifest
 
