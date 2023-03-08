@@ -10,7 +10,45 @@ def read_manifest(manifest_file):
     return manifest
 
 def compare_manifests(fileA, fileB):
-    pass
+    manifestA = read_manifest(fileA)
+    manifestB = read_manifest(fileB)
+    reversedA = {}
+    reversedB = {}
+    
+    status = {
+        "changed": [],
+        "unchanged": [],
+        "renamed": [],
+        "deleted": [],
+        "added": []
+    }
+    
+    for filehashA, filenameA in manifestA.items():
+        if filehashA in manifestB:
+            filenameB = manifestB.pop(filehashA)
+            if filenameB == filenameA:
+                status["unchanged"].append([filehashA, filenameA])
+            else:
+                status["renamed"].append([filehashA, filenameA, filenameB])
+        else:
+            reversedA[filenameA] = filehashA
+
+    for filehashB, filenameB in manifestB.items():
+        if filenameB in reversedA:
+            filehashA = reversedA.pop(filenameB)
+            status["changed"].append([filenameB, filehashA, filehashB])
+        else:
+            reversedB[filenameB] = filehashB
+            
+    # anything not removed from reversedA must have been deleted
+    for filenameA, filehashA in reversedA.items():
+        status["deleted"].append([filehashA, filenameA])
+            
+    # anything not removed from reversedB must have been added
+    for filenameB, filehashB in reversedB.items():
+        status["added"].append([filehashB, filenameB])
+
+    return status
 
 def test_read():
     manifest = read_manifest("test/manifestA.csv")
@@ -39,6 +77,44 @@ def test_compare():
 
     assert status == expected
 
+def run_tests():
+    skipped = []
+    passed = []
+    failed = []
+    errored = []
+
+    for (name, test) in globals().items():
+        if not name.startswith("test_"):
+            continue
+        if hasattr(test, "skip"):
+            print(f"skip: {name}")
+            skipped.append(name)
+            continue
+        try:
+            test()
+            print(f"pass: {name}")
+            passed.append(name)
+        except AssertionError as e:
+            print("docstring:", test.__doc__)
+            if test.__doc__ == "test:assert":
+                print(f"pass: {name}")
+                passed.append(name)
+            elif hasattr(test, "fail"):
+                print(f"pass (expected failure): {name}")
+                passed.append(name)
+            else:
+                print(f"fail: {name} {str(e)}")
+                failed.append(name)
+        except Exception as e:
+            print(f"error: {name} {str(e)}")
+            errored.append(name)
+
+    print(f"{len(skipped)} tests skipped: {skipped}")
+    print(f"{len(passed)} tests passed: {passed}")
+    print(f"{len(failed)} tests failed: {failed}")
+    print(f"{len(errored)} tests errored: {errored}")
+
+    return skipped, passed, failed, errored
+
 if __name__ == "__main__":
-    test_read()
-    test_compare()
+    run_tests()
