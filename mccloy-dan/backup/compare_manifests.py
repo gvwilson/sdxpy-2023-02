@@ -30,7 +30,8 @@ def compare_manifests(one, two):
         else:  # hash different, fname different (new file)
             output.append(f'created: {_fname}')
 
-    missing_hashes = set(state_one) - set(state_two)
+    # need to sort these for stable testing:
+    missing_hashes = sorted(set(state_one) - set(state_two))
     for _hash in missing_hashes:
         if state_one[_hash] not in state_two.values():  # wasn't content change
             output.append(f'deleted: {state_one[_hash]}')
