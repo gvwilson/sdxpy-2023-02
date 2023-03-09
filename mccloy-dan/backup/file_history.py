@@ -1,81 +1,59 @@
-import csv
-import sys
-
-from collections import ChainMap
+from copy import deepcopy
 from glob import glob
 from pathlib import Path
 
-
-# the filename whose history we want to trace
-fname = sys.argv[1]
-
-manifests = sorted(glob("./manifests/*.csv"))
-
-hash_dicts = list()  # where we'll store the manifests
-timestamps = list()  # extracted from the filenames
-history = list()  # the output messages
-
-# because these are sorted chronologically, we'll get a ChainMap with the
-# *oldest* manifest at the "top" / searched first
-for manifest in sorted(manifests):
-    hash_dict = dict()
-    with open(manifest, "r") as ff:
-        for line in csv.reader(ff):
-            assert len(line) == 2
-            _fname, _hash = line
-            assert _fname not in hash_dict, "duplicate fnames in one manifest"
-            hash_dict[_fname] = _hash
-    hash_dicts.append(hash_dict)
-    timestamp = Path(manifest).stem.split("-", maxsplit=1)[1]
-    timestamps.append(timestamp)
-
-hash_dicts = ChainMap(*hash_dicts)
-
+# why we need this absurdity is so beyond me
 try:
-    current_hash = hash_dicts[fname]
-except KeyError as e:
-    raise KeyError(f"filename '{fname}' not found in manifests") from e
+    from compare_manifests import compare_manifests
+except ImportError:
+    from .compare_manifests import compare_manifests
 
-current_fname = fname
 
-history = list()
+def parse_entry(entry):
+    entry = deepcopy(entry)
+    timestamp, record = entry.popitem()
+    involved_fnames, event = record[0].popitem()
+    return timestamp, involved_fnames, event
 
-# go forwards in time first
-attested_earlier = False
-for _map, _t in zip(hash_dicts.maps, timestamps):
-    # if the filename is found
-    if current_fname in _map:
-        found_hash = _map[current_fname]
-        if found_hash == current_hash:
-            if attested_earlier:
-                history.append(f"{_t}: unchanged")
+
+def file_history(fname):
+    """Trace the history of a file through the manifests."""
+
+    manifests = sorted(Path(p) for p in glob("./manifests/*.csv"))
+    history = list()
+    fnames = [fname] if isinstance(fname, (str, Path)) else fname
+
+    for older, newer in zip(manifests[:-1], manifests[1:]):
+        timestamp = newer.stem.split("-", maxsplit=1)[1]
+        comparisons = compare_manifests(older, newer)
+        record = list()
+        for comparison in comparisons:
+            # keys are always tuples: length 2 for renames, 1 otherwise
+            assert len(comparison) == 1
+            involved_fnames = list(comparison)[0]
+            if any(_name in involved_fnames for _name in fnames):
+                record.append(comparison)
+                fnames = list(involved_fnames)  # keep tracking under new fname
+        if len(record):
+            entry = {timestamp: record}
+            # check if this is our first hit. if it is, and it's a rename,
+            # we need to restart, looking for prior names too
+            _, involved_fnames, event = parse_entry(entry)
+            if not len(history) and event.startswith("rename"):
+                return file_history(involved_fnames)
             else:
-                history.append(f"{_t}: created")
-        else:
-            history.append(
-                f"{_t}: content changed (hash {current_hash} -> {found_hash})")
-            current_hash = found_hash
-        attested_earlier = True
-    # the filename wasn't found, look for a rename
-    elif current_hash in _map.values():
-        found_fname = [k for k, v in _map.items() if v == current_hash]
-        assert len(found_fname) == 1  # should be guaranteed by prior assert
-        if attested_earlier:
-            history.append(
-                f"{_t}: renamed ({current_fname} -> {found_fname[0]})")
-        else:
-            # we are lazy and don't log pre-history (before a rename) here
-            attested_earlier = True
-        current_fname = found_fname[0]
-    # not a rename, file doesn't exist yet or it was deleted
-    elif attested_earlier:
-        history.append(f"{_t}: deleted")
-        break
-    else:
-        pass  # don't print entries for file's pre-history
+                history.append(entry)
 
-# now go forwards in time, in case the requested filename was changed midway
+    if not len(history):
+        print(f"filename '{fname}' not found in manifests")
+    return history
 
 
-for step in history:
-    print(step)
+if __name__ == "__main__":
+    import sys
+    fname = sys.argv[1]  # the filename whose history we want to trace
+    output = file_history(fname)
+    for entry in output:
+        timestamp, involved_fnames, event = parse_entry(entry)
+        event = (event if event.startswith("renamed") else event.split(":")[0])
+        print(f"{timestamp}: {event}")

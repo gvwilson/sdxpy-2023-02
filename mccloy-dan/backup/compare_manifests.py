@@ -30,16 +30,16 @@ def compare_manifests(one, two):
                     {(old_fname, _fname): f'renamed: {old_fname} -> {_fname}'}
                 )
         elif _fname in state_one.values():  # hash different, fname same
-            output.append({_fname: f'changed: {_fname}'})
+            output.append({(_fname,): f'changed: {_fname}'})
         else:  # hash different, fname different (new file)
-            output.append({_fname: f'created: {_fname}'})
+            output.append({(_fname,): f'created: {_fname}'})
 
     # need to sort these for stable testing:
     missing_hashes = sorted(set(state_one) - set(state_two))
     for _hash in missing_hashes:
         _fname = state_one[_hash]
         if _fname not in state_two.values():  # wasn't a content change
-            output.append({_fname: f'deleted: {_fname}'})
+            output.append({(_fname,): f'deleted: {_fname}'})
     return output
 
 
@@ -48,5 +48,6 @@ if __name__ == "__main__":
     one = sys.argv[1]
     two = sys.argv[2]
     output = compare_manifests(one, two)
-    for key, line in output.items():
-        print(line)
+    for comparison in output:
+        for key, line in comparison.items():
+            print(line)
