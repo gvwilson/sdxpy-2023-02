@@ -1,4 +1,14 @@
-import csv
+def read_manifest_as_dict(fname):
+    import csv
+
+    _dict = dict()
+    with open(fname, 'r') as ff:
+        for line in csv.reader(ff):
+            assert len(line) == 2
+            _fname, _hash = line
+            assert _hash not in _dict
+            _dict[_hash] = _fname
+    return _dict
 
 
 def compare_manifests(one, two):
@@ -6,17 +16,9 @@ def compare_manifests(one, two):
 
     Output shows changes from manifest `one` to `two` (in that order).
     """
-    state_one = dict()
-    state_two = dict()
+    state_one = read_manifest_as_dict(one)
+    state_two = read_manifest_as_dict(two)
     output = list()
-
-    for _file, _dict in zip([one, two], [state_one, state_two]):
-        with open(_file, 'r') as ff:
-            for line in csv.reader(ff):
-                assert len(line) == 2
-                _fname, _hash = line
-                assert _hash not in _dict
-                _dict[_hash] = _fname
 
     for _hash, _fname in state_two.items():
         if _hash in state_one:
@@ -24,17 +26,20 @@ def compare_manifests(one, two):
             if old_fname == _fname:  # hash same, fname same
                 continue
             else:  # hash same, fname different
-                output.append(f'renamed: {old_fname} -> {_fname}')
+                output.append(
+                    {(old_fname, _fname): f'renamed: {old_fname} -> {_fname}'}
+                )
         elif _fname in state_one.values():  # hash different, fname same
-            output.append(f'changed: {_fname}')
+            output.append({_fname: f'changed: {_fname}'})
         else:  # hash different, fname different (new file)
-            output.append(f'created: {_fname}')
+            output.append({_fname: f'created: {_fname}'})
 
     # need to sort these for stable testing:
     missing_hashes = sorted(set(state_one) - set(state_two))
     for _hash in missing_hashes:
-        if state_one[_hash] not in state_two.values():  # wasn't content change
-            output.append(f'deleted: {state_one[_hash]}')
+        _fname = state_one[_hash]
+        if _fname not in state_two.values():  # wasn't a content change
+            output.append({_fname: f'deleted: {_fname}'})
     return output
 
 
@@ -43,5 +48,5 @@ if __name__ == "__main__":
     one = sys.argv[1]
     two = sys.argv[2]
     output = compare_manifests(one, two)
-    for line in output:
+    for key, line in output.items():
         print(line)

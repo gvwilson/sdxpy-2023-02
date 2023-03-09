@@ -10,6 +10,7 @@ def test_compare_manifests():
         'deleted: file-that-gets-deleted.txt',
         'deleted: another-file-that-gets-deleted.txt',
     ]
-    got = compare_manifests('manifests/manifest-2023-01-01.csv',
-                            'manifests/manifest-2023-01-02.csv')
+    output = compare_manifests('manifests/manifest-2023-01-01.csv',
+                               'manifests/manifest-2023-01-02.csv')
+    got = [entry[key] for entry in output for key in entry]
     assert want == got
