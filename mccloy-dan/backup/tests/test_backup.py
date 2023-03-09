@@ -1,4 +1,4 @@
-from .. import compare_manifests, file_history, parse_entry
+from .. import compare_manifests, file_history, parse_entry, find_duplicates
 
 
 def test_compare_manifests():
@@ -29,3 +29,16 @@ def test_file_history():
     assert want == got
     # these should match because they're renamings of each other:
     assert file_history('a.txt') == file_history('aaa.txt')
+
+
+def test_find_duplicates(fs):
+    unique_fname = 'unique.txt'
+    identical_fnames = [f'{stem}.txt' for stem in list('abcde')]
+    for fname in identical_fnames:
+        fs.create_file(fname, contents='test')
+    fs.create_file(unique_fname, contents='foobarbaz')
+
+    output = find_duplicates(identical_fnames + [unique_fname])
+    assert len(output) == 2
+    assert [unique_fname] in output.values()
+    assert identical_fnames in output.values()
