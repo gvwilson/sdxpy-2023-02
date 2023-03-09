@@ -3,4 +3,4 @@
 __version__ = '0.1'
 
 from .compare_manifests import compare_manifests
-# from .file_history import file_history
+from .file_history import file_history
