@@ -27,7 +27,7 @@ SAVE = {
 
 # changing this to use globals instead of SAVE
 # Why is this a bad idea?
-# I'm not sure, but I'm a little uncomfortable with the dynamic lookup. Can't come up with an example that would cause a problem though.
+# I'm not sure, but I'm a little uncomfortable with the dynamic lookup. Can't come up with an example that would cause a problem though. Could there be standard functions called things with save and load in some libraries? At least, I kind of loose control of what functions can be included.
 def save(writer, thing):
     typename = 'save_'+ type(thing).__name__
     assert typename in globals(), f"Unknown type {typename}"
