@@ -12,18 +12,15 @@ def save_list(writer, thing):
     for item in thing:
         save(writer, item)
 
+# modified save_str so that strings are saved as one string but with \n inserted instead of newlines 
+# note: this solution doesnt work if string contains literally '\\n'. escaping escaping escaping. 
 def save_str(writer, thing):
     assert isinstance(thing, str)
     lines = thing.split("\n")
     string_to_save = lines[0]
     for ln in lines[1:]:
-        string_to_save = string_to_save + '\n' + ln
-    #if thing[-1] == '\n':
-        #string_to_save = string_to_save[:-1]
-    print(f"str:{string_to_save}", file=writer)
-    #print(f"str:{len(lines)}", file=writer)
-    #for ln in lines:
-    #    print(ln, file=writer)
+        string_to_save = string_to_save + '\\n' + ln
+    print("str:",string_to_save, sep='', file=writer)
 
 SAVE = {
     "int": save_int,
@@ -44,11 +41,10 @@ def load_list(reader, value):
     num_items = int(value)
     return [load(reader) for _ in range(num_items)]
 
+# modified load_str to work with long string including newlines below
 def load_str(reader, value):
-    return str(value[:-1])
-    #num_lines = int(value)
-    #lines = [reader.readline().rstrip("\n") for _ in range(num_lines)]
-    #return "\n".join(lines)
+    lines = "\n".join(str(value.rstrip("\n")).split("\\n"))
+    return lines
 
 LOAD = {
     "int": load_int,
@@ -70,6 +66,7 @@ TESTS = [
     ("plain string", "hello"),
     ("multiline string", "hello\nthere\n"),
     ("everything", [17, "\nhello\n", ["there"]])
+    #    ("daniels dumma test", "hello\\nhello")
 ]
 
 for (name, fixture) in TESTS:
@@ -78,12 +75,5 @@ for (name, fixture) in TESTS:
     content = writer.getvalue()
     reader = io.StringIO(content)
     result = load(reader)
-    ####
-    print("result: ")
-    print(result)
-    print("\nfixture: ")
-    print(fixture)
-    print(result == fixture)
-    #####
     print(f"{name}\n{content}")
     assert result == fixture, f"Test failed: {name}"
