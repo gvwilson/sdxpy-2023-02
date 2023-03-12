@@ -8,6 +8,11 @@ def save_int(writer, thing):
     print(f"int:{thing}", file=writer)
 
 
+def save_float(writer, thing):
+    assert isinstance(thing, float)
+    print(f"float:{thing}", file=writer)
+
+
 def save_list(writer, thing):
     assert isinstance(thing, list)
     print(f"list:{len(thing)}", file=writer)
@@ -41,6 +46,10 @@ def load_int(reader, value):
     return int(value)
 
 
+def load_float(reader, value):
+    return float(value)
+
+
 def load_list(reader, value):
     num_items = int(value)
     return [load(reader) for _ in range(num_items)]
@@ -68,6 +77,7 @@ def load(reader):
 
 TESTS = [
     ("plain integer", 5),
+    ("plain float", 4.2),
     ("empty list", []),
     ("flat list", [88, 99, 100]),
     ("nested list", [17, 18, [19]]),
