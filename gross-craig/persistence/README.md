@@ -15,8 +15,26 @@ which can be used to look up everything defined at the top level of a program.
 
 ### Solution
 
-1. This is implemented by the `type_mapping` function in `persistence_globals.py` by looking through the `globals()` dict for functions starting with the specified prefix (`save_` or `load_`), removing the prefix for the type name, and constructing the specified mapping.
-2. 
+1. This is implemented by the `type_mapping` function in
+   `persistence_globals.py` by looking through the `globals()` dict for
+   functions starting with the specified prefix (`save_` or `load_`), removing
+   the prefix for the type name, and constructing the specified mapping.
+2. Any function in scope starting with `save_` or `load_` (which would be pretty
+   common function prefixes) would be registered with the global `save`/`load`
+   functions. In particular, an overzealous `from module import *` could result
+   in inadvertent, non-functioning save/load capabilities.
+
+   However, upon reflection, I'm not sure how likely this would be to cause
+   bugs. I'm having some trouble finding the answer to what "scope" is
+   considered in `globals`, but it's just the things defined/imported in the
+   file `persistence_globals.py` and nothing else (e.g., a file that imports
+   `persistence_globals` wouldn't pollute the persistence version of `globals`),
+   then this would theoretically be avoidable, so long as intra-file imports and
+   the titling of functions with `save_` and `load_` are carefully managed.
+
+   That said, it's still probably better to explicitly register functions so
+   that future contributors will be more alert to this and not add an errant
+   `save_*` helper function by mistake.
 
 ## Aliasing
 
