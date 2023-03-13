@@ -13,6 +13,11 @@ which can be used to look up everything defined at the top level of a program.
 
 1.  Why is this a bad idea?
 
+### Solution
+
+1. This is implemented by the `type_mapping` function in `persistence_globals.py` by looking through the `globals()` dict for functions starting with the specified prefix (`save_` or `load_`), removing the prefix for the type name, and constructing the specified mapping.
+2. 
+
 ## Aliasing
 
 1.  Read the section on aliasing (https://third-bit.com/sdxpy/persistence/#persistence-aliasing).
