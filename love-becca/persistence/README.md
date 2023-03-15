@@ -13,6 +13,8 @@ which can be used to look up everything defined at the top level of a program.
 
 1.  Why is this a bad idea?
 
+For several reasons: someone could use the modified framework to execute malicious code by calling it a name starting with "save" or "load"; if the modified framework looks for functions in globals in addition to using the existing LOAD and SAVE dictionaries, a function in globals could potentially clobber one of the existing functions; if the modified framework replaces the existing dictionaries and relies entirely on checking globals, you might not have defined all the functions you need for the various types of data you're trying to load and save; and, simply finding a relevant function in globals doesn't indicate the type of data it is intended to hold (though you could specify the intended type in the documentation and check for that if you insisted on going this route).
+
 ## Aliasing
 
 1.  Read the section on aliasing (https://third-bit.com/sdxpy/persistence/#persistence-aliasing).
