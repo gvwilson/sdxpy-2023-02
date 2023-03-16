@@ -1,4 +1,4 @@
-"""A very simple persistence framework."""
+"""A very simple persistence framework with added functions to handle aliases."""
 
 import io
 
@@ -42,14 +42,8 @@ def load_int(reader, thing_id, value):
     return int(value)
 
 def load_list(reader, thing_id, value):
-    # num_items = int(value)
-    # return [load(reader) for _ in range(num_items)]
-
-    result = []
-    load_seen[thing_id] = result
-    for _ in range(int(value)):
-        result.append(load(reader))
-    return result
+    num_items = int(value)
+    return [load(reader) for _ in range(num_items)]
 
 def load_str(reader, thing_id, value):
     num_lines = int(value)
@@ -81,9 +75,9 @@ def test_alias():
     fixture = [shared, shared]
     return fixture
 
-def test_alias_self():
-    fixture = []
-    fixture.append(fixture)
+def test_alias2():
+    shared = [1,2,3]
+    fixture = [shared, shared, 2]
     return fixture
 
 TESTS = [
@@ -95,7 +89,7 @@ TESTS = [
     ("multiline string", "hello\nthere\n"),
     ("everything", [17, "\nhello\n", ["there"]]),
     ("alias", test_alias()),
-    #("alias_self", test_alias_self())
+    ("alias2", test_alias2())
 ]
 
 for (name, fixture) in TESTS:
