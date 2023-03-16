@@ -85,3 +85,21 @@ for (name, fixture) in TESTS:
     result = load(reader)
     print(f"{name}\n{content}")
     assert result == fixture, f"Test failed: {name}"
+
+'''
+Why is this a bad idea?
+
+Answer:
+The method of looking for save_ and load_ functions using
+globals() may result in:
+- performance degradation if the search space is big (ie.
+many functions to iterate through find save_ and load_
+
+- there might be many other functions that could start with the same
+prefixes. This could result in finding variables or other functions
+named save_ and/or load_ that are not related to our persistence
+framework.
+
+However, I think if we manage the function naming well, I don't
+think this would necessarily be a bad idea.
+'''
