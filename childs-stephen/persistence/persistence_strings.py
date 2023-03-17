@@ -41,7 +41,8 @@ def load_list(reader, value):
 
 
 def load_str(reader, value):
-    return str(value)
+    fixed_string = str(value).replace(r"\n", "\n")
+    return fixed_string
 
 
 LOAD = {"int": load_int, "list": load_list, "str": load_str}
