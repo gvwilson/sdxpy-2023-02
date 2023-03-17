@@ -28,7 +28,7 @@ def save_str(writer, thing, seen):
 SAVE = {"int": save_int, "list": save_list, "str": save_str}
 
 
-def save(writer, thing, seen)):
+def save(writer, thing, seen):
     thing_id = id(thing)
     if thing_id in seen:
         print(f"alias:{thing_id}", file=writer)
@@ -77,7 +77,7 @@ TESTS = [
 
 for name, fixture in TESTS:
     writer = io.StringIO()
-    save(writer, fixture)
+    save(writer, fixture, seen)
     content = writer.getvalue()
     reader = io.StringIO(content)
     result = load(reader)
