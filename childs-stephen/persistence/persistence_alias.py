@@ -47,7 +47,7 @@ def load_int(reader, value, seen):
 
 def load_list(reader, value, seen):
     num_items = int(value)
-    return [load(reader) for _ in range(num_items)]
+    return [load(reader, seen) for _ in range(num_items)]
 
 
 def load_str(reader, value, seen):
@@ -62,11 +62,11 @@ LOAD = {"int": load_int, "list": load_list, "str": load_str}
 def load(reader, seen):
     kind, ident, value = reader.readline().split(":", maxsplit=2)
     if kind == "alias":
-        assert value in seen
+        assert ident in seen
         return seen[ident]
     assert kind in LOAD, f"Unknown kind {kind}"
     func = LOAD[kind]
-    result = func(reader, value)
+    result = func(reader, value, seen)
     seen[ident] = result
     return result
 
@@ -79,6 +79,7 @@ TESTS = [
     ("plain string", "hello"),
     ("multiline string", "hello\nthere\n"),
     ("everything", [17, "\nhello\n", ["there"]]),
+    ("same string twice", ["shared", "shared"]),
 ]
 
 for name, fixture in TESTS:
