@@ -1,41 +1,45 @@
-import hashlib
 import csv
+import glob
 
-def compare_manifests(manifest1 = r"C:\Users\Fraser\Desktop\Homework\a.csv", manifest2 = r"C:\Users\Fraser\Desktop\Homework\b.csv"):
-    # Setup
-    changes = {
-        'changed_contents': [],
-        'renamed': [],
-        'deleted': [],
-        'added': []
-    }
-    # Load the files
+# A bit of a mess but... Seemingly works... Basically the way I want it to...
+
+def file_history(file_name = "abc.txt", manifest_files = glob.glob(r"C:\Users\Fraser\Desktop\Homework\manifest*.csv")):
     manifests = []
-    for m in [manifest1, manifest2]:
-        with open(m, 'r') as f:
+    manifest_names = []
+
+    for file in manifest_files:
+        with open(file, 'r') as f:
             reader = csv.reader(f)
-            next(reader) # Skip the header row
-            manifest = dict(row for row in reader)
+            next(reader) # Skip header row
+            manifest = {}
+            for row in reader:
+                manifest[row[0]] = row[1]
             manifests.append(manifest)
-    # Check: files with the same names but different hashes
-    for i in set(manifests[0].keys()) & set(manifests[1].keys()):
-        if manifests[0][i] != manifests[1][i]:
-            changes['changed_contents'].append(i)
-    # Check: files with the same hashes but different names --- Apparently I can't use "hash" as a variable name... 
-    manifest_names1 = {}
-    for i, h in manifests[0].items():
-        manifest_names1[h] = i
-    manifest_names2 = {}
-    for i, h in manifests[1].items():
-        manifest_names2[h] = i
-    for h in set(manifests[0].values()) & set(manifests[1].values()):
-        if manifest_names1[h] != manifest_names2[h]:
-            changes['renamed'].append((manifest_names1[h], manifest_names2[h]))
-    # Check: deleted files (from first to second) - exclude renames
-    for i in set(manifests[0].keys()) - set(manifests[1].keys()) - set(*changes['renamed']):
-        changes['deleted'].append(i)
-    # Check: new files (in second but not first) - exclude renames
-    for i in set(manifests[1].keys()) - set(manifests[0].keys()) - set(*changes['renamed']):
-        changes['added'].append(i)    
-    # All done
-    return changes
+            manifest_names.append(file.split('\\')[-1])
+
+    # Find the first manifest where the file appears
+    first_manifest_index = None
+    for i, manifest in enumerate(manifests):
+        if file_name in manifest:
+            first_manifest_index = i
+            print(f"{file_name}: {manifest[file_name]} (from manifest {manifest_names[first_manifest_index]})")
+            break
+
+    # Traverse the remaining manifests and track changes
+    if first_manifest_index is not None:
+        hash_value = manifests[first_manifest_index][file_name]
+        deleted = False # Because it exists by default.
+        for i in range(first_manifest_index+1, len(manifests)):
+            manifest = manifests[i]
+            if file_name in manifest:
+                new_hash_value = manifest[file_name]
+                if new_hash_value != hash_value:
+                    print(f"{file_name}: {new_hash_value} (from manifest {manifest_names[i]})")
+                    hash_value = new_hash_value
+                deleted = False
+            elif not deleted:
+                print(f"{file_name} was deleted in manifest {manifest_names[i]}")
+                hash_value = "<Deleted>"
+                deleted = True
+    else:
+        print(f"{file_name} not found in any manifest")
