@@ -2,25 +2,26 @@
 
 import io
 
-seen = set()
-
 
 def save_int(writer, thing, seen):
     assert isinstance(thing, int)
-    print(f"int:{thing}", file=writer)
+    thing_id = id(thing)
+    print(f"int:{thing_id}:{thing}", file=writer)
 
 
 def save_list(writer, thing, seen):
     assert isinstance(thing, list)
-    print(f"list:{len(thing)}", file=writer)
+    thing_id = id(thing)
+    print(f"list:{thing_id}:{len(thing)}", file=writer)
     for item in thing:
         save(writer, item, seen)
 
 
 def save_str(writer, thing, seen):
     assert isinstance(thing, str)
+    thing_id = id(thing)
     lines = thing.split("\n")
-    print(f"str:{len(lines)}", file=writer)
+    print(f"str:{thing_id}:{len(lines)}", file=writer)
     for ln in lines:
         print(ln, file=writer)
 
@@ -31,7 +32,7 @@ SAVE = {"int": save_int, "list": save_list, "str": save_str}
 def save(writer, thing, seen):
     thing_id = id(thing)
     if thing_id in seen:
-        print(f"alias:{thing_id}", file=writer)
+        print(f"alias:{thing_id}:", file=writer)
         return
     seen.add(id(thing))
     typename = type(thing).__name__
@@ -40,16 +41,16 @@ def save(writer, thing, seen):
     func(writer, thing, seen)
 
 
-def load_int(reader, value):
+def load_int(reader, value, seen):
     return int(value)
 
 
-def load_list(reader, value):
+def load_list(reader, value, seen):
     num_items = int(value)
     return [load(reader) for _ in range(num_items)]
 
 
-def load_str(reader, value):
+def load_str(reader, value, seen):
     num_lines = int(value)
     lines = [reader.readline().rstrip("\n") for _ in range(num_lines)]
     return "\n".join(lines)
@@ -58,11 +59,16 @@ def load_str(reader, value):
 LOAD = {"int": load_int, "list": load_list, "str": load_str}
 
 
-def load(reader):
-    kind, value = reader.readline().split(":", maxsplit=1)
+def load(reader, seen):
+    kind, ident, value = reader.readline().split(":", maxsplit=2)
+    if kind == "alias":
+        assert value in seen
+        return seen[ident]
     assert kind in LOAD, f"Unknown kind {kind}"
     func = LOAD[kind]
-    return func(reader, value)
+    result = func(reader, value)
+    seen[ident] = result
+    return result
 
 
 TESTS = [
@@ -76,10 +82,12 @@ TESTS = [
 ]
 
 for name, fixture in TESTS:
+    save_seen = set()
+    load_seen = {}
     writer = io.StringIO()
-    save(writer, fixture, seen)
+    save(writer, fixture, save_seen)
     content = writer.getvalue()
     reader = io.StringIO(content)
-    result = load(reader)
+    result = load(reader, load_seen)
     print(f"{name}\n{content}")
     assert result == fixture, f"Test failed: {name}"
