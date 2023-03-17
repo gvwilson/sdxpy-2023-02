@@ -1,6 +1,7 @@
 """A very simple persistence framework."""
 
 import io
+import re
 
 
 def save_int(writer, thing):
@@ -41,7 +42,8 @@ def load_list(reader, value):
 
 
 def load_str(reader, value):
-    fixed_string = str(value).replace(r"\n", "\n")
+    strip_last_newline = re.sub("\n$", "", str(value))
+    fixed_string = strip_last_newline.replace(r"\n", "\n")
     return fixed_string
 
 
