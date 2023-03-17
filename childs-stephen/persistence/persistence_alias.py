@@ -71,6 +71,8 @@ def load(reader, seen):
     return result
 
 
+test_list = [17, 18, 19]
+
 TESTS = [
     ("plain integer", 5),
     ("empty list", []),
@@ -79,7 +81,9 @@ TESTS = [
     ("plain string", "hello"),
     ("multiline string", "hello\nthere\n"),
     ("everything", [17, "\nhello\n", ["there"]]),
+    ("same int twice", [17, 17, 18]),
     ("same string twice", ["shared", "shared"]),
+    ("same list twice", [test_list, test_list, [17, 18, 20]]),
 ]
 
 for name, fixture in TESTS:
