@@ -17,7 +17,8 @@ def save_list(writer, thing):
 
 def save_str(writer, thing):
     assert isinstance(thing, str)
-    print(f"str:{repr(thing)}", file=writer)
+    fixed_string = thing.replace("\n", r"\n")
+    print(f"str:{fixed_string}", file=writer)
 
 
 SAVE = {"int": save_int, "list": save_list, "str": save_str}
