@@ -1,9 +1,6 @@
 # Using Python's bitwise operators,
 # write a function that returns the binary representation of a non-negative integer.
 
-input = 9
-print(bin(input))
-
 
 def to_binary(input):
     output = ""
@@ -17,18 +14,6 @@ def to_binary(input):
 
 # Write another function that converts a string of 1's and 0's into an integer
 # (treating it as unsigned).
-
-input2 = "100101"
-print(0b100101)
-
-# bin just gives the binary REPRESENTAITON, still stored as an integer.
-print(f"first character as integer: {int(input2[0])}")
-print(f"first character as binary: {bin(int(input2[0]))}")
-
-
-# we don't actually need to do it in reverse
-for c in reversed(input2):
-    print(c)
 
 
 # we set the last bit using or
