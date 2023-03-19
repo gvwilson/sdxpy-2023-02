@@ -52,6 +52,7 @@ TESTS = [0, 8, 9, 100, 1001, 998, 9989, 2147483647, sixty_four, one_twenty_eight
 print("Decimal (represented as integer) roundtrip")
 for i in TESTS:
     print(f"decimal: {i}\nbinary:{to_binary(i)}\n")
+    assert to_binary(i) == bin(i)
     assert roundtrip1(i)
 
 print("Binary (represented as string) roundtrip")
