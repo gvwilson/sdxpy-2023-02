@@ -13,7 +13,7 @@ def png_check_file(filename):
         return is_png(contents)
 
 
-assert png_check_file("ZoomBG_Winter4.png"), "false negative"
+assert png_check_file("python-logo-only.png"), "false negative"
 assert png_check_file("README.md") == False, "false positive"
 
 files = sys.argv[1:]
