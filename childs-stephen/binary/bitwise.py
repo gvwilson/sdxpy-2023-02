@@ -5,6 +5,9 @@
 def to_binary(input):
     output = ""
 
+    if input == 0:
+        return "0b0"
+
     while input > 0:
         last_bit = input & 0b1
         output = str(last_bit) + output
