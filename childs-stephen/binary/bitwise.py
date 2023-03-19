@@ -40,12 +40,21 @@ def roundtrip2(string):
     return string == to_binary(to_integer(string))
 
 
-TESTS = [0, 8, 9, 100, 1001, 998, 9989, 2147483647]
+sixty_four = to_integer("0b1" + 63 * "0")
+one_twenty_eight = to_integer("0b1" + 127 * "0")
 
+print(sixty_four)
+print(one_twenty_eight)
+
+
+TESTS = [0, 8, 9, 100, 1001, 998, 9989, 2147483647, sixty_four, one_twenty_eight]
+
+print("Decimal (represented as integer) roundtrip")
 for i in TESTS:
-    print(f"decimal: {i}\t\tbinary:{to_binary(i)}")
+    print(f"decimal: {i}\nbinary:{to_binary(i)}\n")
     assert roundtrip1(i)
 
+print("Binary (represented as string) roundtrip")
 for i in TESTS:
     str_i = bin(i)
     print(f"binary: {str_i}\ndecimal:{to_integer(str_i)}\n")
