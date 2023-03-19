@@ -21,7 +21,7 @@ def to_binary(input):
 
 # we set the last bit using or
 def to_integer(input):
-    if input[0:1] == "0b":
+    if input[0:2] == "0b":
         input = input[2:]
     output = 0b0
     for c in input:
@@ -43,10 +43,10 @@ def roundtrip2(string):
 TESTS = [0, 8, 9, 100, 1001, 998, 9989]
 
 for i in TESTS:
-    print(f"decimal: {i}\t\t\tbinary:{to_binary(i)}")
+    print(f"decimal: {i}\t\t\t\t\tbinary:{to_binary(i)}")
     assert roundtrip1(i)
 
 for i in TESTS:
     str_i = bin(i)
-    print(f"binary: {str_i}\t\t\tdecimal:{to_integer(str_i)}")
+    print(f"binary: {str_i}\t\t\t\t\tdecimal:{to_integer(str_i)}")
     assert roundtrip2(str_i)
