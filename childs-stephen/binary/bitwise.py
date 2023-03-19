@@ -17,6 +17,7 @@ print(output)
 # (treating it as unsigned).
 
 input2 = "100101"
+print(0b100101)
 
 # bin just gives the binary REPRESENTAITON, still stored as an integer.
 print(f"first character as integer: {int(input2[0])}")
