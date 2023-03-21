@@ -1,21 +1,14 @@
-# Question 1
-def is_file_png(filepath):
-    with open(filepath, 'rb') as f:
-        header = f.read(8)
-    
-    bytes_list = []
-    
-    for h in header:
-        bytes_list.append(h)
-        
-    if bytes_list == [137, 80, 78, 71, 13, 10, 26, 10]:
-        print("file is a PNG image")
-    else:
-        print("file is not a PNG image")
+import re
 
-        
 # Question 2
 def int_to_bits(integer):
+    """Given a non-negative integer, 
+    return its binary representation.
+    """
+    # check if input is valid
+    assert isinstance(integer, int), f"input is not an integer"
+    assert integer >= 0, f"input is not a non-negative integer"
+    
     bits_list = []
     
     while integer > 0:
@@ -30,8 +23,14 @@ def int_to_bits(integer):
     
     return(binary_rep)
 
-# Question 3
 def bits_to_int(string):
+    """Convert a string of 1's and 0's (unsigned binary number)
+    into an integer.
+    """
+    # check if input is valid
+    pattern = "^[01]+$"
+    assert bool(re.match(pattern, string)), f"input is not a string of 1's and 0's"
+    
     acc = 0
 
     for i in range(len(string)):
