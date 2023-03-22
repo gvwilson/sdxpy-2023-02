@@ -13,6 +13,8 @@ which can be used to look up everything defined at the top level of a program.
 
 1.  Why is this a bad idea?
 
+**This approach finds everything starting with `save_` and `load_`, whether or not they're related to this task and whether or not they're even functions.**
+
 ## Aliasing
 
 1.  Read the section on aliasing (https://third-bit.com/sdxpy/persistence/#persistence-aliasing).
