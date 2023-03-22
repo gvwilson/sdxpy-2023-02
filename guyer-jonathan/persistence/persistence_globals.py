@@ -19,16 +19,11 @@ def save_str(writer, thing):
     for ln in lines:
         print(ln, file=writer)
 
-SAVE = {
-    "int": save_int,
-    "list": save_list,
-    "str": save_str
-}
-
 def save(writer, thing):
     typename = type(thing).__name__
-    assert typename in SAVE, f"Unknown type {typename}"
-    func = SAVE[typename]
+    func_name = f"save_{typename}"
+    assert func_name in globals(), f"Unknown type {typename}"
+    func = globals()[func_name]
     func(writer, thing)
 
 def load_int(reader, value):
@@ -43,16 +38,11 @@ def load_str(reader, value):
     lines = [reader.readline().rstrip("\n") for _ in range(num_lines)]
     return "\n".join(lines)
 
-LOAD = {
-    "int": load_int,
-    "list": load_list,
-    "str": load_str
-}
-
 def load(reader):
     kind, value = reader.readline().split(":", maxsplit=1)
-    assert kind in LOAD, f"Unknown kind {kind}"
-    func = LOAD[kind]
+    func_name = f"load_{kind}"
+    assert func_name in globals(), f"Unknown kind {kind}"
+    func = globals()[func_name]
     return func(reader, value)
 
 TESTS = [
