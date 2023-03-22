@@ -8,5 +8,5 @@ class Lit:
         if text[start:end] != self.chars:
             return False
         if self.rest:
-            return self.rest.match(txt, end)
+            return self.rest.match(text, end)
         return end == len(text)
