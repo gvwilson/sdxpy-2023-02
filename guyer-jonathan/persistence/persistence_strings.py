@@ -61,7 +61,11 @@ TESTS = [
     ("nested list", [17, 18, [19]]),
     ("plain string", "hello"),
     ("multiline string", "hello\nthere\n"),
-    ("everything", [17, "\nhello\n", ["there"]])
+    ("slashed string", "hello\\there\\"),
+    ("double-slashed string", "hello\\\\there\\\\"),
+    ("slashed multiline string", "hello\\nthere\\\n"),
+    ("literal slashes and ens string", r"hello\nthere\\n"),
+    ("everything", [17, "\nhello\\n", ["\\\nthere"]])
 ]
 
 for (name, fixture) in TESTS:
