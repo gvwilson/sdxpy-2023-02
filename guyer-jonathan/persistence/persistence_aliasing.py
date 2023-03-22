@@ -96,3 +96,21 @@ for (name, fixture) in TESTS:
     result = load(reader, loaded_seen)
     print(f"{name}\n{content}")
     assert result == fixture, f"Test failed: {name}"
+
+# manually test self-referential list
+
+saved_seen = set()
+loaded_seen = dict()
+
+name = "self-referential list"
+fixture = []
+fixture.append(fixture)
+
+writer = io.StringIO()
+save(writer, fixture, saved_seen)
+content = writer.getvalue()
+reader = io.StringIO(content)
+result = load(reader, loaded_seen)
+print(f"{name}\n{content}")
+# comparison of result to fixture results in recursion error
+assert id(result[0]) == id(result), f"Test failed: {name}"
