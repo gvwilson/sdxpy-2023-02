@@ -14,7 +14,8 @@ def save_list(writer, thing):
 
 def save_str(writer, thing):
     assert isinstance(thing, str)
-    escaped = thing.replace("\n", r"\n")
+    escaped = thing.replace("\\", "\\\\")
+    escaped = escaped.replace("\n", "\\n")
     print(f"str:{len(escaped)}", file=writer)
     print(escaped, file=writer)
 
@@ -40,7 +41,9 @@ def load_list(reader, value):
 def load_str(reader, value):
     num_chars = int(value)
     escaped = reader.read(num_chars)
-    return escaped.replace(r"\n", "\n")
+    parsed = escaped.replace("\\n", "\n")
+    parsed = parsed.replace("\\\\", "\\")
+    return parsed
 
 LOAD = {
     "int": load_int,
