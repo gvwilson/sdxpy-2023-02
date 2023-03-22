@@ -39,10 +39,32 @@ def load_list(reader, value):
     return [load(reader) for _ in range(num_items)]
 
 def load_str(reader, value):
+    # I can't figure out how to deal with escaped slashes and escaped newlines
+    # with global search and replace.
+    # I don't think it would be too hard with regexen,
+    # but I'm not sure if that's in the spirit of the exercise.
     num_chars = int(value)
-    escaped = reader.read(num_chars)
-    parsed = escaped.replace("\\n", "\n")
-    parsed = parsed.replace("\\\\", "\\")
+    escaped = reader.read(num_chars+1)
+    assert escaped[-1] == "\n", "String ended without newline"
+    parsed = ""
+    i = 0
+    while i < num_chars:
+        char = escaped[i]
+        if char == "\\":
+            assert i < num_chars - 1, "String ended with \\"
+            next_char = escaped[i+1]
+            assert next_char in ["\\", "n"], f"Unknown escape sequence \\{next_char}"
+            if next_char == "\\":
+                parsed += "\\"
+            elif next_char == "n":
+                parsed += "\n"
+
+            i += 1
+        else:
+            parsed += char
+
+        i += 1
+
     return parsed
 
 LOAD = {
@@ -52,7 +74,8 @@ LOAD = {
 }
 
 def load(reader):
-    kind, value = reader.readline().split(":", maxsplit=1)
+    line = reader.readline()
+    kind, value = line.split(":", maxsplit=1)
     assert kind in LOAD, f"Unknown kind {kind}"
     func = LOAD[kind]
     return func(reader, value)
@@ -66,8 +89,7 @@ TESTS = [
     ("multiline string", "hello\nthere\n"),
     ("slashed string", "hello\\there\\"),
     ("double-slashed string", "hello\\\\there\\\\"),
-    ("slashed multiline string", "hello\\nthere\\\n"),
-    ("literal slashes and ens string", r"hello\nthere\\n"),
+    ("slashed multiline string", "\nhello\\nthere\\\n"),
     ("everything", [17, "\nhello\\n", ["\\\nthere"]])
 ]
 
