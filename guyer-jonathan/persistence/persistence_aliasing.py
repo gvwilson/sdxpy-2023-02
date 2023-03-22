@@ -85,10 +85,10 @@ TESTS = [
     ("aliased list", [17, 17, [17]]),    
 ]
 
-saved_seen = set()
-loaded_seen = dict()
-
 for (name, fixture) in TESTS:
+    saved_seen = set()
+    loaded_seen = dict()
+
     writer = io.StringIO()
     save(writer, fixture, saved_seen)
     content = writer.getvalue()
