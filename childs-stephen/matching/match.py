@@ -36,18 +36,18 @@ class Not(Match):
         self.left = left
 
     def _match(self, text, start=0):
-        for pat in [self.left]:
-            end = pat._match(text, start)
-            if end is None:
-                # use length of pattern chars (if exists)
-                try:
-                    end = start + len(pat.chars)
-                    end = pat.rest._match(text, end)
-                except AttributeError:
-                    pass
-                end = self.rest._match(text, end)
-                if end == len(text):
-                    return end
+        pat = self.left
+        end = pat._match(text, start)
+        if end is None:
+            # use length of pattern chars (if exists)
+            try:
+                end = start + len(pat.chars)
+                end = pat.rest._match(text, end)
+            except AttributeError:
+                pass
+            end = self.rest._match(text, end)
+            if end == len(text):
+                return end
         return None
 
 
