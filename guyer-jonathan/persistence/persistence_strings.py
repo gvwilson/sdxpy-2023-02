@@ -1,6 +1,7 @@
 """A very simple persistence framework."""
 
 import io
+from itertools import islice
 
 def save_int(writer, thing):
     assert isinstance(thing, int)
@@ -46,24 +47,18 @@ def load_str(reader, value):
     num_chars = int(value)
     escaped = reader.read(num_chars+1)
     assert escaped[-1] == "\n", "String ended without newline"
+    char_iter = islice(escaped[:-1], None)
     parsed = ""
-    i = 0
-    while i < num_chars:
-        char = escaped[i]
+    for char in char_iter:
         if char == "\\":
-            assert i < num_chars - 1, "String ended with \\"
-            next_char = escaped[i+1]
+            next_char = next(char_iter)
             assert next_char in ["\\", "n"], f"Unknown escape sequence \\{next_char}"
             if next_char == "\\":
                 parsed += "\\"
             elif next_char == "n":
                 parsed += "\n"
-
-            i += 1
         else:
             parsed += char
-
-        i += 1
 
     return parsed
 
