@@ -87,3 +87,28 @@ def test_not_not_match():
 
 def test_not_match_then_match():
     assert Not(Lit("abc"), Lit("def")).match("xyzdef")
+
+
+def test_not_match_nested():
+    assert Not(Lit("abc", Lit("def"))).match("uvwxyz")
+
+
+def test_half_match_nested():
+    assert Not(Lit("abc", Lit("def"))).match("abcxyz")
+
+
+def test_not_any():
+    assert not Not(Any()).match("")
+    assert not Not(Any()).match("a")
+
+
+def test_not_any_matches_as_prefix():
+    assert not Not(Any(Lit("def"))).match("abcdef")
+
+
+def test_not_any_matches_as_suffix():
+    assert not Lit("abc", Not(Any())).match("abcdef")
+
+
+def test_not_any_matches_interior():
+    assert not Lit("a", Not(Any(Lit("c")))).match("abc")
