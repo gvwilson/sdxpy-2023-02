@@ -1,35 +1,55 @@
-class Lit:
-    def __init__(self, chars, rest=None):
-        self.chars = chars
-        self.rest = rest
+class Match:
+    def __init__(self, rest):
+        self.rest = rest if rest is not None else Null()
 
-    def match(self, text, start=0):
+    def match(self, text):
+        result = self._match(text, 0)
+        return result == len(text)
+
+
+class Null(Match):
+    def __init__(self, rest=None):
+        self.rest = None
+
+    def _match(self, text, start):
+        return start
+
+
+class Lit(Match):
+    def __init__(self, chars, rest=None):
+        super().__init__(rest)
+        self.chars = chars
+
+    def _match(self, text, start=0):
         end = start + len(self.chars)
         if text[start:end] != self.chars:
-            return False
-        if self.rest:
-            return self.rest.match(text, end)
-        return end == len(text)
+            return None
+        return self.rest._match(text, end)
 
 
-class Any:
+class Any(Match):
     def __init__(self, rest=None):
-        self.rest = rest
+        super().__init__(rest)
 
-    def match(self, text, start=0):
-        if self.rest is None:
-            return True
-        for i in range(start, len(text)):
-            if self.rest.match(text, i):
-                return True
-        return False
+    def _match(self, text, start=0):
+        for i in range(start, len(text) + 1):
+            end = self.rest._match(text, i)
+            if end == len(text):
+                return end
+        return None
 
 
-class Either:
+class Either(Match):
     def __init__(self, left, right, rest=None):
+        super().__init__(rest)
         self.left = left
         self.right = right
-        self.rest = rest
 
-    def match(self, text, start=0):
-        return self.left.match(text, start) or self.right.match(text, start)
+    def _match(self, text, start=0):
+        for pat in [self.left, self.right]:
+            end = pat._match(text, start)
+            if end is not None:
+                end = self.rest._match(text, end)
+                if end == len(text):
+                    return end
+        return None

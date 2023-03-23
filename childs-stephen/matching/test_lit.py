@@ -66,4 +66,4 @@ def test_either_followed_by_literal_match():
 
 
 def test_either_followed_by_literal_no_match():
-    assert not Either(Lit("a"), Lit("b"), Lit("x")).match("ax")
+    assert not Either(Lit("a"), Lit("b"), Lit("c")).match("ax")
