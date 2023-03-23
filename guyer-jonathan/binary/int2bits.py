@@ -6,6 +6,9 @@ def int2bits(integer):
             
         remainder >>= 1
         
+    if len(result) == 0:
+        result = "0"
+
     return result
 
 def bits2int(bits):
