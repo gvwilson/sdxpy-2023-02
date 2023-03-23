@@ -66,7 +66,7 @@ class Any(Match):
 class Either(Match):
     def __init__(self, *args, rest=None):
         super().__init__(rest)
-        patterns = args
+        self.patterns = args
 
     def _match(self, text, start=0):
         for pat in self.patterns:
