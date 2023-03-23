@@ -45,6 +45,15 @@ class Not(Match):
                 end = pat.rest._match(text, end)
             except AttributeError:
                 pass
+            try:
+                eitherpat = pat.patterns
+            except AttributeError:
+                eitherpat = []
+            for p in eitherpat:
+
+
+
+
             end = self.rest._match(text, end)
             if end == len(text):
                 return end
