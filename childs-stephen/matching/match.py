@@ -35,6 +35,17 @@ class Not(Match):
         super().__init__(rest)
         self.left = left
 
+    def _match(self, text, start=0):
+        for pat in [self.left]:
+            end = pat._match(text, start)
+            if end is None:
+                # use length of matching string
+                end = start + len(text)
+                end = self.rest._match(text, end)
+                if end == len(text):
+                    return end
+        return None
+
 
 class Any(Match):
     def __init__(self, rest=None):
