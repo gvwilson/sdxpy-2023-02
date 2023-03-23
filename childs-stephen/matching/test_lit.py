@@ -59,3 +59,11 @@ def test_either_two_literals_not_both():
 
 def test_either_after_any():
     assert Any(Either(Lit("x"), Lit("y"))).match("abcx")
+
+
+def test_either_followed_by_literal_match():
+    assert Either(Lit("a"), Lit("b"), Lit("c"))
+
+
+def test_either_followed_by_literal_no_match():
+    assert not Either(Lit("a"), Lit("b"), Lit("x")).match("ax")
