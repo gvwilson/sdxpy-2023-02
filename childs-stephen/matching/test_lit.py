@@ -1,4 +1,4 @@
-from match import Lit, Any, Either
+from match import Lit, Any, Either, Null
 
 
 def test_literal_match_entire_string():
@@ -67,3 +67,11 @@ def test_either_followed_by_literal_match():
 
 def test_either_followed_by_literal_no_match():
     assert not Either(Lit("a"), Lit("b"), Lit("c")).match("ax")
+
+
+def test_null_matches_nothing():
+    assert Null().match("")
+
+
+def test_null_does_not_match_anything():
+    assert not Null().match("a")
