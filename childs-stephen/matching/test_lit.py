@@ -1,4 +1,4 @@
-from match import Lit, Any
+from match import Lit, Any, Either
 
 
 def test_literal_match_entire_string():
@@ -39,3 +39,23 @@ def test_any_matches_as_suffix():
 
 def test_any_matches_interior():
     assert Lit("a", Any(Lit("c"))).match("abc")
+
+
+def test_either_two_literals_first():
+    assert Either(Lit("a"), Lit("b")).match("a")
+
+
+def test_either_two_literals_second():
+    assert Either(Lit("a"), Lit("b")).match("b")
+
+
+def test_either_two_literals_neither():
+    assert not Either(Lit("a"), Lit("b")).match("c")
+
+
+def test_either_two_literals_not_both():
+    assert not Either(Lit("a"), Lit("b")).match("ab")
+
+
+def test_either_after_any():
+    assert Any(Either(Lit("x"), Lit("y"))).match("abcx")
