@@ -90,11 +90,11 @@ def test_not_match_then_match():
 
 
 def test_not_match_nested():
-    assert Not(Lit("abc", Lit("def"))).match("uvwxyz")
+    assert Not(Lit("abc", Not(Lit("def")))).match("uvwxyz")
 
 
 def test_half_match_nested():
-    assert Not(Lit("abc", Lit("def"))).match("abcxyz")
+    assert Not(Lit("abc", Not(Lit("def")))).match("abcxyz")
 
 
 def test_not_any():
