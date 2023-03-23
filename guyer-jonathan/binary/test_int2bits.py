@@ -9,5 +9,11 @@ def test_0_2bits():
 def test_65535_2bits():
     assert int2bits(65535) == "1111111111111111"
 
-def test_bits2int():
-    pass
+def test_1010_2int():
+    assert bits2int("1010") == 10
+
+def test_0_2int():
+    assert bits2int("0") == 0
+
+def test_1111111111111111_2int():
+    assert bits2int("1111111111111111") == 65535
