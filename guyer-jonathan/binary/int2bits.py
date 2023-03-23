@@ -18,7 +18,6 @@ def bits2int(bits):
 
         assert bit in "01", f"Unrecognized bit: {bit}"
         
-        if bit == "1":
-            result |= 1
+        result |= (bit == "1")
 
     return result
