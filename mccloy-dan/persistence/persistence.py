@@ -19,7 +19,11 @@ def save_str(writer, thing):
     for ln in lines:
         print(ln, file=writer)
 
-SAVE = {n[5:]: func for n, func in globals().items() if n.startswith('save_')}
+SAVE = {
+    "int": save_int,
+    "list": save_list,
+    "str": save_str
+}
 
 def save(writer, thing):
     typename = type(thing).__name__
@@ -39,10 +43,11 @@ def load_str(reader, value):
     lines = [reader.readline().rstrip("\n") for _ in range(num_lines)]
     return "\n".join(lines)
 
-# this is a bad idea because load_ and save_ are super common prefixes so
-# you're very likely to capture functions you didn't write yourself into this
-# dict of "safe" functions.
-LOAD = {n[5:]: func for n, func in globals().items() if n.startswith('load_')}
+LOAD = {
+    "int": load_int,
+    "list": load_list,
+    "str": load_str
+}
 
 def load(reader):
     kind, value = reader.readline().split(":", maxsplit=1)
