@@ -6,6 +6,9 @@ class Match:
         result = self._match(text, 0)
         return result == len(text)
 
+    def _match(self, text, start=0):
+        raise "Must implement _match"
+
 
 class Null(Match):
     def __init__(self, rest=None):
@@ -25,6 +28,12 @@ class Lit(Match):
         if text[start:end] != self.chars:
             return None
         return self.rest._match(text, end)
+
+
+class Not(Match):
+    def __init__(self, left, rest=None):
+        super().__init__(rest)
+        self.left = left
 
 
 class Any(Match):
