@@ -42,6 +42,7 @@ class Not(Match):
                 # use length of pattern chars (if exists)
                 if pat.chars:
                     end = start + len(pat.chars)
+                    return not pat.rest._match(text, end)
                 end = self.rest._match(text, end)
                 if end == len(text):
                     return end
