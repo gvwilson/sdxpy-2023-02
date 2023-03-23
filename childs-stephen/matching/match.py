@@ -39,8 +39,9 @@ class Not(Match):
         for pat in [self.left]:
             end = pat._match(text, start)
             if end is None:
-                # use length of matching string
-                end = start + len(text)
+                # use length of pattern chars (if exists)
+                if pat.chars:
+                    end = start + len(pat.chars)
                 end = self.rest._match(text, end)
                 if end == len(text):
                     return end
