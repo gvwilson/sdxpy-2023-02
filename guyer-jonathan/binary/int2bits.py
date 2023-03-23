@@ -12,4 +12,13 @@ def int2bits(integer):
     return result
 
 def bits2int(bits):
-    pass
+    result = 0
+    for bit in bits:
+        result <<= 1
+
+        assert bit in "01", f"Unrecognized bit: {bit}"
+        
+        if bit == "1":
+            result |= 1
+
+    return result
