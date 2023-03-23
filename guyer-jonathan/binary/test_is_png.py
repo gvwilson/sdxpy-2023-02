@@ -1,4 +1,4 @@
-from check_png import is_png
+from is_png import is_png
 
 def test_is_png():
     assert is_png("data/PNG_transparency_demonstration_1.png")
