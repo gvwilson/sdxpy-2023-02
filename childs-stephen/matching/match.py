@@ -64,13 +64,12 @@ class Any(Match):
 
 
 class Either(Match):
-    def __init__(self, left, right, rest=None):
+    def __init__(self, *args, rest=None):
         super().__init__(rest)
-        self.left = left
-        self.right = right
+        patterns = args
 
     def _match(self, text, start=0):
-        for pat in [self.left, self.right]:
+        for pat in self.patterns:
             end = pat._match(text, start)
             if end is not None:
                 end = self.rest._match(text, end)
