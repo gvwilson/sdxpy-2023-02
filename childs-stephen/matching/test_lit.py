@@ -94,7 +94,11 @@ def test_not_match_nested():
 
 
 def test_half_match_nested():
-    assert Not(Lit("abc", Not(Lit("def")))).match("abcxyz")
+    assert Lit("abc", Not(Lit("def"))).match("abcxyz")
+
+
+def test_not_half_match_nested():
+    assert not Not(Lit("abc", Not(Lit("def")))).match("abcxyz")
 
 
 def test_not_any():
@@ -112,3 +116,7 @@ def test_not_any_matches_as_suffix():
 
 def test_not_any_matches_interior():
     assert not Lit("a", Not(Any(Lit("c")))).match("abc")
+
+
+def test_not_either_two_literals_first():
+    assert Not(Either(Lit("a"), Lit("b"))).match("c")

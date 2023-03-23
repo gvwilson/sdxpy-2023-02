@@ -40,9 +40,11 @@ class Not(Match):
             end = pat._match(text, start)
             if end is None:
                 # use length of pattern chars (if exists)
-                if pat.chars:
+                try:
                     end = start + len(pat.chars)
                     end = pat.rest._match(text, end)
+                except AttributeError:
+                    pass
                 end = self.rest._match(text, end)
                 if end == len(text):
                     return end
