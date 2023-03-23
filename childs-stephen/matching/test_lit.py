@@ -83,3 +83,7 @@ def test_not_match():
 
 def test_not_not_match():
     assert Not(Lit("abx")).match("xyz")
+
+
+def test_not_match_then_match():
+    assert Not(Lit("abc"), Lit("def")).match("xyzdef")
