@@ -12,12 +12,6 @@ def int_to_binary(num:int):
         return 0
 
     binary = []
-    # while num > 0:
-    #     binary.insert(0, str(num % 2))
-    #     num //=2
-
-    # print("".join(binary))
-
     while num > 0:
         bit = num & 1
         binary.insert(0, str(bit))
