@@ -92,3 +92,20 @@ class Not(RegexBase):
         if self.expr._match(text, start) is None:
             return start + 1
         return None
+
+
+class Range(RegexBase):
+    def __init__(self, start_char, end_char, rest=None):
+        super().__init__(rest)
+        self.start_char = start_char
+        self.end_char = end_char
+
+    def _match(self, text, start):
+        next_index = start + 1
+        if next_index > len(text):
+            return None
+        if text[start] < self.start_char or text[start] > self.end_char:
+            return None
+        if not self.rest:
+            return next_index
+        return self.rest._match(text, next_index)
