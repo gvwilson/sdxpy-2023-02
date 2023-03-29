@@ -44,4 +44,3 @@ def test_direct(params):
     pattern, text, expected, matcher = params
     actual = matcher.match(text)
     assert actual == expected, f"{pattern} vs {text}"
-
