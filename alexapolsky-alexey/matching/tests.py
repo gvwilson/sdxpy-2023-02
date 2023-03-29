@@ -23,16 +23,21 @@ TESTS = [
     ["ab*c", "abc", True, Lit("a", Any(Lit("b"), Lit("c")))],
     ["ab*c", "abbbc", True, Lit("a", Any(Lit("b"), Lit("c")))],
     ["ab*c", "abxc", False, Lit("a", Any(Lit("b"), Lit("c")))],
-    # ["ab|cd", "xaby", True, Alt(Lit("ab"), Lit("cd"))],
-    # ["ab|cd", "acdc", True, Alt(Lit("ab"), Lit("cd"))],
-    # ["a(b|c)d", "xabdy", True, Lit("a", Alt(Lit("b"), Lit("c")), Lit("d"))],
-    # ["a(b|c)d", "xabady", False, Lit("a", Alt(Lit("b"), Lit("c")), Lit("d"))],
+    ["ab|cd", "xaby", True, Alt([Lit("ab"), Lit("cd")])],
+    ["ab|cd", "acdc", True, Alt([Lit("ab"), Lit("cd")])],
+    ["a(b|c)d", "xabdy", True, Lit("a", Alt([Lit("b"), Lit("c", Lit("d"))]))],
+    ["a(b|c)d", "xabady", False, Lit("a", Alt([Lit("b", Lit("d")), Lit("c", Lit("d"))]))],
+    ["ab|cd|fg", "xfgy", True, Alt([Lit("ab"), Lit("cd"), Lit("fg")])],
     ["a", "a", True, Range("a", "z")],
     ["n", "n", True, Range("a", "z")],
     [">", ">", False, Range("a", "z")],
     ["[a-z]a", "8a", False, Range("a", "z", Lit("a"))],
-    ["8[a-z]", "8a", True, Lit("8", Range("a", "z"))]
+    ["8[a-z]", "8a", True, Lit("8", Range("a", "z"))],
+    ["|", "xaby", False, Alt([])],  # Lets see if no subpatterns for Alt()
+    ["[a-z]", "a", True, Range("a", "z")],  # Lets see if no subpatterns for Range()
+
 ]
+
 
 @pytest.mark.parametrize("params", TESTS)
 def test_direct(params):

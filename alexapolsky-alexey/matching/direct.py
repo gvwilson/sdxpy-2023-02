@@ -66,13 +66,12 @@ class Any(RegexBase):
 
 
 class Alt(RegexBase):
-    def __init__(self, left, right, rest=None):
+    def __init__(self, patterns, rest=None):
         super().__init__(rest=rest)
-        self.left = left
-        self.right = right
+        self.patterns = patterns
 
     def _match(self, text, start):
-        for pat in (self.left, self.right):
+        for pat in self.patterns:
             after_pat = pat._match(text, start)
             if after_pat is not None:
                 if not self.rest:
