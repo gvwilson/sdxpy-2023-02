@@ -9,6 +9,14 @@ object before looking in its class (and parent classes) so that if
 someone wants to override a method for a particular object (rather than
 for an entire class) they can do so.
 
+### Solution
+
+This is implemented in `object_override.py` by passing the object to `find`
+rather than the class of the object. Then `find` first searches the methods
+in the object. If the desired method is not found, `find` calls
+`find_in_class` to search the object's class (followed by the parent classes)
+for the method.
+
 ## Multiple Inheritance
 
 Modify the code so that a class can have any number of parents.  Create
