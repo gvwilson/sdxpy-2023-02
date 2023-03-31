@@ -23,6 +23,21 @@ Modify the code so that a class can have any number of parents.  Create
 a simple example to show that this works, either by modifying the code
 in start.py or by creating something new.
 
+### Solution
+
+This is implemented in `multiple.py`. The main change is that parent classes are stored in lists and those lists are iterated over in `find_internal` to find a method. This produces a "depth first" method resolution order, exhausting the first specified parent class's parents then moving to the next. Otherwise, everything is the same.
+
+There are some limitations due to an overall lack of scoping by parent class.
+Here, overrides are overrides and there's no accessing the parent-defined
+values of overridden methods or variables. Thus, if parent class B (called
+second in the constructor) overrides a variable needed by one of parent class
+A (called first in the constructor)'s methods, that method would stop working
+properly. This leaves it up to the programmer to ensure that multiple
+inheritance is "compatible."
+
+We test this by mixing `Square` objects and `Colorable` objects to produce `ColorableSquare`s. We check the method resolution order via an `equals` method implemented by `Shape`, `Square`, and `Colorable`. Since `Colorable` is specified first in `ColorableSquare`'s `_parent` property, it is the only way that equality is checked.
+
+
 ## Prototypes
 
 Some languages don't distinguish between objects and classes. Instead,
