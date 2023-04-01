@@ -14,13 +14,11 @@ def find(cls, method_name):
     """Find a method."""
     if cls is None:
         raise NotImplementedError("method_name")
-    # try class as an iterable
-    try:
+    if isinstance(cls, list):
         for c in cls:
             return find(c, method_name)
-    except TypeError:
-        if method_name in cls:
-            return cls[method_name]
+    if method_name in cls:
+        return cls[method_name]
 
     return find(cls["_parent"], method_name)
 
