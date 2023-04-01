@@ -156,7 +156,7 @@ for ex in examples:
 
 my_circle = examples[1]
 
-print(call(my_circle, "describe"))
+print(f"{my_circle['name']} says {call(my_circle, 'describe')}")
 
 # ----------------------------------------------------------------------
 # Override a square object to give me a triangle
