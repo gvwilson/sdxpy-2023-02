@@ -62,7 +62,7 @@ def test_either_after_any():
 
 
 def test_either_followed_by_literal_match():
-    assert Either(Lit("a"), Lit("b"), Lit("c"))
+    assert Either(Lit("a"), Lit("b"), rest=Lit("c")).match("bc")
 
 
 def test_either_followed_by_literal_no_match():
@@ -120,3 +120,11 @@ def test_not_any_matches_interior():
 
 def test_not_either_two_literals_first():
     assert Not(Either(Lit("a"), Lit("b"))).match("c")
+
+
+def test_either_three_patterns():
+    assert Either(Lit("a"), Lit("b"), Lit("c"), rest=None).match("b")
+
+
+def test_either_no_patterns():
+    assert Either(rest=Lit("a")).match("a")
