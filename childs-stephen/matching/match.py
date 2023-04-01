@@ -95,7 +95,7 @@ class Either(Match):
 
     def _match(self, text, start=0):
         if len(self.patterns) == 0:
-            end = self.rest._match(text, end)
+            end = self.rest._match(text, start)
             if end == len(text):
                 return end
 
