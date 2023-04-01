@@ -108,5 +108,16 @@ class Either(Match):
         return None
 
 
+def char_range(c1, c2):
+    for c in range(ord(c1), ord(c2) + 1):
+        yield chr(c)
+
+
+class Range(Either):
+    def __init__(self, start_char, end_char, rest=None):
+        super().__init__(rest=rest)
+        self.patterns = [Lit(c) for c in char_range(start_char, end_char)]
+
+
 assert Not(Lit("abc")).match("xyz")
 assert Not(Lit("abc"), Lit("def")).match("xyzdef")
