@@ -128,6 +128,7 @@ tri = make(Square, "tri", 3)
 print(f"Name: {tri['name']}")
 print(f"Original area: {call(tri, 'area')}")
 print(f"Original perimeter: {call(tri, 'perimeter')}")
+print(f"Original density: {call(tri, 'density', 5)}")
 
 
 def triangle_area(thing):
@@ -137,3 +138,11 @@ def triangle_area(thing):
 def triangle_perimeter(thing):
     hyp = math.sqrt((thing["side"] ** 2) * 2)
     return thing["side"] * 2 + hyp
+
+
+tri["area"] = triangle_area
+tri["perimeter"] = triangle_perimeter
+
+print(f"Triangle area: {call(tri, 'area')}")
+print(f"Triangle perimeter: {call(tri, 'perimeter')}")
+print(f"Triangle density: {call(tri, 'density', 5)}")
