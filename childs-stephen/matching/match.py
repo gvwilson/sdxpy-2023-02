@@ -45,6 +45,9 @@ class Not(Match):
                 if end == len(text):
                     return end
                 end = pat.rest._match(text, end)
+                end = self.rest._match(text, end)
+                if end == len(text):
+                    return end
             except AttributeError:
                 pass
             try:
@@ -101,3 +104,4 @@ class Either(Match):
 
 
 assert Not(Lit("abc")).match("xyz")
+assert Not(Lit("abc"), Lit("def")).match("xyzdef")
