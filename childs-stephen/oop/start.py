@@ -13,14 +13,21 @@ def make(cls, *args):
 def find(cls, method_name):
     """Find a method."""
     if cls is None:
-        raise NotImplementedError("method_name")
+        # raise NotImplementedError("method_name")
+        return None
     if isinstance(cls, list):
         for c in cls:
-            return find(c, method_name)
+            m = find(c, method_name)
+            if m:
+                return m
     if method_name in cls:
         return cls[method_name]
 
-    return find(cls["_parent"], method_name)
+    m = find(cls["_parent"], method_name)
+    if m:
+        return m
+
+    return None
 
 
 def call(thing, method_name, *args):
@@ -56,6 +63,28 @@ Shape = {
 }
 
 # ----------------------------------------------------------------------
+# The generic Canvas class.
+# ----------------------------------------------------------------------
+
+
+def canvas_new(colour):
+    """Build a generic canvas."""
+    return {"colour": colour, "_class": Canvas}
+
+
+def canvas_describe(thing):
+    return f"The object is {thing['colour']}."
+
+
+# Properties of the Canvas 'class'.
+Canvas = {
+    "describe": canvas_describe,
+    "_classname": "Canvas",
+    "_parent": None,
+    "_new": canvas_new,
+}
+
+# ----------------------------------------------------------------------
 # The Square class (derived from Shape).
 # ----------------------------------------------------------------------
 
@@ -85,7 +114,7 @@ Square = {
 }
 
 # ----------------------------------------------------------------------
-# The Square class (derived from Shape).
+# The Circle class (derived from Shape and Canvas).
 # ----------------------------------------------------------------------
 
 
@@ -99,9 +128,11 @@ def circle_area(thing):
     return math.pi * thing["radius"] ** 2
 
 
-def circle_new(name, radius):
+def circle_new(name, radius, colour):
     """Construct a circle (a Shape with extra/overridden properties)."""
-    return make(Shape, name) | {"radius": radius, "_class": Circle}
+    return (
+        make(Shape, name) | make(Canvas, colour) | {"radius": radius, "_class": Circle}
+    )
 
 
 # Properties of the Circle 'class'.
@@ -109,7 +140,7 @@ Circle = {
     "perimeter": circle_perimeter,
     "area": circle_area,
     "_classname": "Circle",
-    "_parent": Shape,
+    "_parent": [Shape, Canvas],
     "_new": circle_new,
 }
 
@@ -117,11 +148,15 @@ Circle = {
 # Examples of all of this in action.
 # ----------------------------------------------------------------------
 
-examples = [make(Square, "sq", 3), make(Circle, "ci", 2)]
+examples = [make(Square, "sq", 3), make(Circle, "ci", 2, "red")]
 for ex in examples:
     n = ex["name"]
     d = call(ex, "density", 5)
     print(f"{n}: {d:.2f}")
+
+my_circle = examples[1]
+
+print(call(my_circle, "describe"))
 
 # ----------------------------------------------------------------------
 # Override a square object to give me a triangle
