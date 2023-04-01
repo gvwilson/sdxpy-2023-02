@@ -1,4 +1,4 @@
-from match import Lit, Any, Either, Null, Not
+from match import Lit, Any, Either, Null, Not, Range
 
 
 def test_literal_match_entire_string():
@@ -128,3 +128,31 @@ def test_either_three_patterns():
 
 def test_either_no_patterns():
     assert Either(rest=Lit("a")).match("a")
+
+
+def test_either_one_pattern():
+    assert Either(Lit("a")).match("a")
+
+
+def test_in_range():
+    assert Range("a", "h").match("d")
+
+
+def test_start_of_range():
+    assert Range("a", "h").match("a")
+
+
+def test_end_of_range():
+    assert Range("a", "h").match("h")
+
+
+def test_outside_of_range():
+    assert not Range("a", "h").match("s")
+
+
+def test_not_range():
+    assert Not(Range("a", "h")).match("j")
+
+
+def test_not_range_rest():
+    assert Not(Range("a", "h"), Lit("s")).match("js")
