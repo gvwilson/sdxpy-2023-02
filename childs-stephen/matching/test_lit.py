@@ -146,6 +146,10 @@ def test_end_of_range():
     assert Range("a", "h").match("h")
 
 
+def test_range_case():
+    assert not Range("a", "z").match("A")
+
+
 def test_outside_of_range():
     assert not Range("a", "h").match("s")
 
