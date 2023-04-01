@@ -160,3 +160,11 @@ def test_not_range():
 
 def test_not_range_rest():
     assert Not(Range("a", "h"), Lit("s")).match("js")
+
+
+def test_empty_either():
+    assert Either().match("")
+
+
+def test_empty_either_match_something():
+    assert not Either().match("s")
