@@ -42,6 +42,8 @@ class Not(Match):
             # use length of pattern chars (if exists)
             try:
                 end = start + len(pat.chars)
+                if end == len(text):
+                    return end
                 end = pat.rest._match(text, end)
             except AttributeError:
                 pass
