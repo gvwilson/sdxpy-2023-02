@@ -94,6 +94,11 @@ class Either(Match):
         self.patterns = args
 
     def _match(self, text, start=0):
+        if len(self.patterns) == 0:
+            end = self.rest._match(text, end)
+            if end == len(text):
+                return end
+
         for pat in self.patterns:
             end = pat._match(text, start)
             if end is not None:
