@@ -49,12 +49,23 @@ class Not(Match):
                 eitherpat = pat.patterns
             except AttributeError:
                 eitherpat = []
+            # Have to not match ALL patterns
+            # Once you match -- then it's not a match
+            same_end = None
             for p in eitherpat:
-
-
-
-
-            end = self.rest._match(text, end)
+                end = p._match(text, start)
+                if end is None:
+                    p_end = start + len(p.chars)
+                    p_end = pat.rest._match(text, p_end)
+                    if same_end:
+                        # lengths of the either patterns
+                        # must be the same
+                        assert p_end == same_end
+                    else:
+                        same_end = p_end
+                else:
+                    return None
+            end = self.rest._match(text, same_end)
             if end == len(text):
                 return end
         return None
