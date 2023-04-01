@@ -118,3 +118,22 @@ for ex in examples:
     n = ex["name"]
     d = call(ex, "density", 5)
     print(f"{n}: {d:.2f}")
+
+# ----------------------------------------------------------------------
+# Override a square object to give me a triangle
+# ----------------------------------------------------------------------
+
+tri = make(Square, "tri", 3)
+
+print(f"Name: {tri['name']}")
+print(f"Original area: {call(tri, 'area')}")
+print(f"Original perimeter: {call(tri, 'perimeter')}")
+
+
+def triangle_area(thing):
+    return thing["side"] ** 2 / 2
+
+
+def triangle_perimeter(thing):
+    hyp = math.sqrt((thing["side"] ** 2) * 2)
+    return thing["side"] * 2 + hyp
