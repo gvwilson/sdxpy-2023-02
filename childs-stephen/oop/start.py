@@ -36,6 +36,8 @@ def call(thing, method_name, *args):
         method = thing[method_name]
     else:
         method = find(thing["_class"], method_name)
+    if not method:
+        raise NotImplementedError("method_name")
     return method(thing, *args)
 
 
