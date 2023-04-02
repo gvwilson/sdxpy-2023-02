@@ -6,7 +6,7 @@ def find(thing, method_name):
     if thing is None:
         raise NotImplementedError("method_name")
     if method_name in thing:
-        return thing["method_name"]
+        return thing[method_name]
     return find(thing["_parent"], method_name)
 
 
