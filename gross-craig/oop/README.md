@@ -47,3 +47,21 @@ when we look up a method, we look at the chain of clones instead of the
 chain of classes. Create a new file prototype.py and write functions
 clone(), find(), and call() that do this. Do you find prototypes easier
 or harder to understand than classes?
+
+### Solution
+
+This is implemented in `prototype.py`. I think that prototypes are generally
+easier to understand and work with on the back-end than classes. There's less
+going on in the inner workings and no need to track common class data, but
+I do feel like this leads to more book-keeping on the front-end. 
+
+For example, creating the `sq` and `ci` prototypes is kind of messy, and in
+practice, my first instinct was to write a constructor for them. I'm sure
+that there's a more effective, prototype-y way to do this, but I feel like
+I would just end up re-implementing a class-based design by hand. 
+
+I learned OOP using Java, so the free-flowing nature of prototyping here goes
+against my very safety-oriented, statically-typed nature. I imagine that the
+more templated nature of classes would help me better organize my thoughts as
+well, but again, this is probably because I'm more used to class-based
+design.
