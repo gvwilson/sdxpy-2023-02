@@ -16,10 +16,23 @@ def find(cls, method_name):
         return cls[method_name]
     return find(cls["_parent"], method_name)
 
+# def call(thing, method_name, *args):
+#    """Call a method."""
+#    method = find(thing["_class"], method_name)
+#    return method(thing, *args)
+# --------» Fraser's new attempt
+
 def call(thing, method_name, *args):
-    """Call a method."""
-    method = find(thing["_class"], method_name)
-    return method(thing, *args)
+    if method_name in list(thing.keys()): # Is it in the object's base dictionary?
+        if callable(thing[method_name]): # Is it a function?
+            method = thing[method_name]
+            return method(*args) # Call it
+        else: # Otherwise...
+            return thing[method_name] # Show the value
+    else:
+        method = find(thing["_class"], method_name) # Otherwise, look up from the classes, as before.
+        return method(thing, *args)
+
 
 # ----------------------------------------------------------------------
 # The generic Shape class.
