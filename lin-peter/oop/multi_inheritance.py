@@ -34,7 +34,7 @@ def shape_new(name):
 
 def shape_density(thing, weight):
     """Calculate the density of a generic shape."""
-    return weight / call(thing, "volume") if "volume" in thing else weight / call(thing, "area")
+    return weight / call(thing, "volume") if "volume" in thing["_class"] else weight / call(thing, "area")
 
 # Properties of the Shape 'class'.
 Shape = {
