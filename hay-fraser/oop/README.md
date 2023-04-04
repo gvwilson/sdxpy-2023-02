@@ -30,4 +30,5 @@ clone(), find(), and call() that do this. Do you find prototypes easier
 or harder to understand than classes?
 
 > Not enough time, bowwing out for now. 🙇‍♂️
+
 > Obviously new clones would need to carry a historical record of where they came from. I don't know whether this should be a list that keeps getting bigger or something else. But I'm probably close to it with the idea of parents being a list of objects in itself. I guess we'd just make the list get bigger referencing each object that came before it.
