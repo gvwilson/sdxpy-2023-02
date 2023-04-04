@@ -14,25 +14,25 @@ def find(cls, method_name):
         raise NotImplementedError("method_name")
     if method_name in cls:
         return cls[method_name]
-    return find(cls["_parent"], method_name)
-
-# def call(thing, method_name, *args):
-#    """Call a method."""
-#    method = find(thing["_class"], method_name)
-#    return method(thing, *args)
-# --------» Fraser's new attempt
+    for parent in cls["_parents"]:
+        method = find(parent, method_name)
+        if method is not None:
+            return method
+    return None
 
 def call(thing, method_name, *args):
-    if method_name in list(thing.keys()): # Is it in the object's base dictionary?
-        if callable(thing[method_name]): # Is it a function?
+    """Call a method."""
+    if method_name in list(thing.keys()):
+        if callable(thing[method_name]):
             method = thing[method_name]
-            return method(*args) # Call it
-        else: # Otherwise...
-            return thing[method_name] # Show the value
+            return method(*args)
+        else:
+            return thing[method_name]
     else:
-        method = find(thing["_class"], method_name) # Otherwise, look up from the classes, as before.
+        method = find(thing["_class"], method_name)
+        if method is None:
+            raise NotImplementedError(method_name)
         return method(thing, *args)
-
 
 # ----------------------------------------------------------------------
 # The generic Shape class.
@@ -53,7 +53,7 @@ def shape_density(thing, weight):
 Shape = {
     "density": shape_density,
     "_classname": "Shape",
-    "_parent": None,
+    "_parents": None,
     "_new": shape_new
 }
 
@@ -81,7 +81,7 @@ Square = {
     "perimeter": square_perimeter,
     "area": square_area,
     "_classname": "Square",
-    "_parent": Shape,
+    "_parents": [Shape],
     "_new": square_new
 }
 
@@ -104,21 +104,47 @@ def circle_new(name, radius):
         "_class": Circle
     }
 
+def square_opinion(thing):
+    """An opinion."""
+    return "It's hip to be square."
+
 # Properties of the Circle 'class'.
 Circle = {
     "perimeter": circle_perimeter,
     "area": circle_area,
     "_classname": "Circle",
-    "_parent": Shape,
-    "_new": circle_new
+    "_parents": [Shape],
+    "_new": circle_new,
+    "opinion": square_opinion
+}
+
+# ----------------------------------------------------------------------
+# The Amorphus Blob class (derived from Shape, but parented by both Circle and Square).
+# ----------------------------------------------------------------------
+
+def amorphus_blob_new(name, radius, side):
+    return make(Shape, name) | {
+        "_class": Amorphus_Blob,
+        "radius": radius,
+        "side": side
+        }
+
+Amorphus_Blob = {
+    "_classname": "Blob",
+    "_new": amorphus_blob_new,
+    "_parents": [Circle, Square]
 }
 
 # ----------------------------------------------------------------------
 # Examples of all of this in action.
 # ----------------------------------------------------------------------
 
-examples = [make(Square, "sq", 3), make(Circle, "ci", 2)]
+examples = [make(Square, "sq", 3), make(Circle, "ci", 2), make(Amorphus_Blob, "Bob", 6, 7)]
 for ex in examples:
     n = ex["name"]
     d = call(ex, "density", 5)
     print(f"{n}: {d:.2f}")
+
+call(examples[2], "perimeter") # Seems to use Circle...
+call(examples[2], "area") # Also seems to use Circle... I guess it's because it's the first one it finds?
+call(examples[2], "opinion") # I made a new class specific to Square and it finds it. Good enough!
