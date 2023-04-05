@@ -25,5 +25,5 @@ def find(obj, method_name):
 def call(obj, method_name, *args):
     """Call a method."""
     method = find(obj, method_name)
-    return method(thing, *args)
+    return method(obj, *args)
 
