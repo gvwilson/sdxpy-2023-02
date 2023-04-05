@@ -15,10 +15,15 @@ def find(thing, method_name):
 
     cls = thing["_class"]
     if cls is None:
-        raise NotImplementedError("method_name")
+        raise NotImplementedError(method_name)
     if method_name in cls:
         return cls[method_name]
-    return find(cls["_parent"], method_name)
+    for parent in cls["_parent"]:
+        try:
+            return find(parent, method_name)
+        except NotImplementedError:
+            pass
+    raise NotImplementedError(method_name)
 
 def call(thing, method_name, *args):
     """Call a method."""
@@ -44,7 +49,7 @@ def shape_density(thing, weight):
 Shape = {
     "density": shape_density,
     "_classname": "Shape",
-    "_parent": None,
+    "_parent": [None],
     "_new": shape_new
 }
 
@@ -72,7 +77,7 @@ Square = {
     "perimeter": square_perimeter,
     "area": square_area,
     "_classname": "Square",
-    "_parent": Shape,
+    "_parent": [Shape],
     "_new": square_new
 }
 
@@ -100,7 +105,7 @@ Circle = {
     "perimeter": circle_perimeter,
     "area": circle_area,
     "_classname": "Circle",
-    "_parent": Shape,
+    "_parent": [Shape],
     "_new": circle_new
 }
 
