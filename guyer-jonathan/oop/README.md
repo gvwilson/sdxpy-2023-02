@@ -24,3 +24,5 @@ when we look up a method, we look at the chain of clones instead of the
 chain of classes. Create a new file prototype.py and write functions
 clone(), find(), and call() that do this. Do you find prototypes easier
 or harder to understand than classes?
+
+**I find prototypes not so much harder to understand, but I feel like I have to keep track of more to make sure I don't get unintentional divergences.**
