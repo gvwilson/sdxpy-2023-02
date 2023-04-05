@@ -30,6 +30,48 @@ def call(thing, method_name, *args):
     return method(thing, *args)
 
 # ----------------------------------------------------------------------
+# The generic Wristwatch class.
+# ----------------------------------------------------------------------
+
+def wristwatch_new(name):
+    """Build a generic wristwatch."""
+    return {
+        "name": name,
+        "_class": Wristwatch
+    }
+
+def wristwatch_time(thing):
+    return "2 pm"
+    
+# Properties of the Wristwatch 'class'.
+Wristwatch = {
+    "time": wristwatch_time,
+    "_classname": "Wristwatch",
+    "_parent": [None],
+    "_new": wristwatch_new
+}
+
+def digitalwristwatch_time(thing):
+    return "14:00"
+
+# Properties of the DigitalWristwatch 'class'.
+DigitalWristwatch = {
+    "time": digitalwristwatch_time,
+    "_classname": "DigitalWristwatch",
+    "_parent": [Wristwatch]
+}
+
+def analogwristwatch_time(thing):
+    return "🕑"
+
+# Properties of the AnalogWristwatch 'class'.
+AnalogWristwatch = {
+    "time": analogwristwatch_time,
+    "_classname": "AnalogWristwatch",
+    "_parent": [Wristwatch]
+}
+
+# ----------------------------------------------------------------------
 # The generic Shape class.
 # ----------------------------------------------------------------------
 
@@ -76,7 +118,7 @@ Square = {
     "perimeter": square_perimeter,
     "area": square_area,
     "_classname": "Square",
-    "_parent": [Shape],
+    "_parent": [Shape, DigitalWristwatch],
     "_new": square_new
 }
 
@@ -104,7 +146,7 @@ Circle = {
     "perimeter": circle_perimeter,
     "area": circle_area,
     "_classname": "Circle",
-    "_parent": [Shape],
+    "_parent": [Shape, AnalogWristwatch],
     "_new": circle_new
 }
 
@@ -120,6 +162,8 @@ examples = [make(Square, "sq", 3), make(Circle, "ci", 3), make(Circle, "ci", 3)]
 examples[1]["density"] = surface_density
 
 for ex in examples:
+    # print(ex)
     n = ex["name"]
     d = call(ex, "density", 5)
-    print(f"{n}: {d:.2f}")
+    t = call(ex, "time")
+    print(f"{n}: {d:.2f} @ {t}")
