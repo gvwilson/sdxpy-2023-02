@@ -33,10 +33,9 @@ def call(thing, method_name, *args):
 # The generic Wristwatch class.
 # ----------------------------------------------------------------------
 
-def wristwatch_new(name):
+def wristwatch_new():
     """Build a generic wristwatch."""
     return {
-        "name": name,
         "_class": Wristwatch
     }
 
@@ -51,6 +50,10 @@ Wristwatch = {
     "_new": wristwatch_new
 }
 
+def digitalwristwatch_new():
+    """Construct a DigitalWristwatch (no overridden properties)."""
+    return make(Wristwatch)
+
 def digitalwristwatch_time(thing):
     return "14:00"
 
@@ -58,8 +61,13 @@ def digitalwristwatch_time(thing):
 DigitalWristwatch = {
     "time": digitalwristwatch_time,
     "_classname": "DigitalWristwatch",
-    "_parent": [Wristwatch]
+    "_parent": [Wristwatch],
+    "_new": digitalwristwatch_new
 }
+
+def analogwristwatch_new():
+    """Construct a AnalogWristwatch (no overridden properties)."""
+    return make(Wristwatch)
 
 def analogwristwatch_time(thing):
     return "🕑"
@@ -68,7 +76,8 @@ def analogwristwatch_time(thing):
 AnalogWristwatch = {
     "time": analogwristwatch_time,
     "_classname": "AnalogWristwatch",
-    "_parent": [Wristwatch]
+    "_parent": [Wristwatch],
+    "_new": analogwristwatch_new
 }
 
 # ----------------------------------------------------------------------
@@ -108,10 +117,12 @@ def square_area(thing):
 
 def square_new(name, side):
     """Construct a square (a Shape with extra/overridden properties)."""
-    return make(Shape, name) | {
-        "side": side,
-        "_class": Square
-    }
+    return (make(Shape, name)
+            | make(DigitalWristwatch)
+            | {
+                "side": side,
+                "_class": Square
+            })
 
 # Properties of the Square 'class'.
 Square = {
@@ -136,10 +147,12 @@ def circle_area(thing):
 
 def circle_new(name, radius):
     """Construct a circle (a Shape with extra/overridden properties)."""
-    return make(Shape, name) | {
-        "radius": radius,
-        "_class": Circle
-    }
+    return (make(Shape, name)
+            | make(AnalogWristwatch)
+            | {
+                "radius": radius,
+                "_class": Circle
+            })
 
 # Properties of the Circle 'class'.
 Circle = {
