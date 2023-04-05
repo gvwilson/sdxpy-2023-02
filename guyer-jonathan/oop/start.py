@@ -171,7 +171,7 @@ def surface_density(thing, weight):
     """Calculate the density of a generic shape."""
     return weight / call(thing, "perimeter")
 
-examples = [make(Square, "sq", 3), make(Circle, "ci", 3), make(Circle, "ci", 3)]
+examples = [make(Square, "sq", 3), make(Circle, "ci1", 3), make(Circle, "ci2", 3)]
 examples[1]["density"] = surface_density
 
 for ex in examples:
