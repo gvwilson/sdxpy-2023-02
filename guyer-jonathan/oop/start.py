@@ -8,8 +8,12 @@ def make(cls, *args):
     """Make an 'instance' of a 'class'."""
     return cls["_new"](*args)
 
-def find(cls, method_name):
+def find(thing, method_name):
     """Find a method."""
+    if method_name in thing:
+        return thing[method_name]
+
+    cls = thing["_class"]
     if cls is None:
         raise NotImplementedError("method_name")
     if method_name in cls:
@@ -18,7 +22,7 @@ def find(cls, method_name):
 
 def call(thing, method_name, *args):
     """Call a method."""
-    method = find(thing["_class"], method_name)
+    method = find(thing, method_name)
     return method(thing, *args)
 
 # ----------------------------------------------------------------------
