@@ -14,16 +14,24 @@ def find(thing, method_name):
         raise NotImplementedError("method_name")
     if method_name in thing:
         return thing[method_name]
-    cls = thing["_class"]
+    cls = thing.get("_class", None)
     if cls is None:
-        raise NotImplementedError("method_name")
+        #raise NotImplementedError(method_name)
+        return None
     if method_name in cls:
         return cls[method_name]
-    return find(cls["_parent"], method_name)
+    parents = [cls["_parent"]] if type(cls["_parent"]) is dict else cls["_parent"]
+    for parent in parents:
+        method = find(parent, method_name)
+        if method:
+            return method
+    raise NotImplementedError("method_name not found in neither parents")
 
 def call(thing, method_name, *args):
     """Call a method."""
     method = find(thing, method_name)
+    if not callable(method):
+        return method
     return method(thing, *args)
 
 # ----------------------------------------------------------------------
