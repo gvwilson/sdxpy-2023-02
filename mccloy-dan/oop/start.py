@@ -11,7 +11,7 @@ def make(cls, *args):
 def find(cls, method_name):
     """Find a method."""
     if cls is None:
-        raise NotImplementedError("method_name")
+        raise NotImplementedError(method_name)
     if method_name in cls:
         return cls[method_name]
     return find(cls["_parent"], method_name)
@@ -73,7 +73,7 @@ Square = {
 }
 
 # ----------------------------------------------------------------------
-# The Square class (derived from Shape).
+# The Circle class (derived from Shape).
 # ----------------------------------------------------------------------
 
 def circle_perimeter(thing):
