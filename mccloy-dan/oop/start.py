@@ -104,7 +104,10 @@ Circle = {
 # Examples of all of this in action.
 # ----------------------------------------------------------------------
 
-examples = [make(Square, "sq", 3), make(Circle, "ci", 2)]
+zero_density_square = make(Square, "sq", 5)
+zero_density_square["density"] = lambda thing, weight: 0
+
+examples = [zero_density_square, make(Square, "sq", 3), make(Circle, "ci", 2)]
 for ex in examples:
     n = ex["name"]
     d = call(ex, "density", 5)
