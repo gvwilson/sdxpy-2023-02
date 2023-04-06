@@ -1,12 +1,25 @@
 import math
+import operator
+
+from functools import reduce
+from inspect import signature
 
 # ----------------------------------------------------------------------
 # Functions implementing the object system.
 # ----------------------------------------------------------------------
 
-def make(cls, *args):
+def make(cls, **kwargs):
     """Make an 'instance' of a 'class'."""
-    return cls["_new"](*args)
+    if "_new" in cls:
+        return cls["_new"](**kwargs)
+    # use parent(s) constructor(s)
+    result = []
+    for parent in cls["_parent"]:
+        constructor = find(parent, "_new")
+        parent_keys = set(kwargs) & set(signature(constructor).parameters)
+        parent_kwargs = {k: kwargs[k] for k in parent_keys}
+        result.append(make(parent, **parent_kwargs))
+    return reduce(operator.or_, reversed(result))
 
 def find(thing, method_name):
     """Find a method."""
@@ -18,7 +31,12 @@ def find(thing, method_name):
         raise NotImplementedError(method_name)
     if method_name in cls:
         return cls[method_name]
-    return find(cls["_parent"], method_name)
+    # NB: earlier parents clobber later parents!! This is avoided in one case
+    # (namely "_new") by logic in the make() function, where the constructors
+    # act more like a ChainMap
+    if not len(cls["_parent"]):
+        raise NotImplementedError(method_name)
+    return find(cls["_parent"][0], method_name)
 
 def call(thing, method_name, *args):
     """Call a method."""
@@ -44,7 +62,7 @@ def shape_density(thing, weight):
 Shape = {
     "density": shape_density,
     "_classname": "Shape",
-    "_parent": None,
+    "_parent": [],
     "_new": shape_new
 }
 
@@ -62,7 +80,7 @@ def square_area(thing):
 
 def square_new(name, side):
     """Construct a square (a Shape with extra/overridden properties)."""
-    return make(Shape, name) | {
+    return make(Shape, name=name) | {
         "side": side,
         "_class": Square
     }
@@ -72,7 +90,7 @@ Square = {
     "perimeter": square_perimeter,
     "area": square_area,
     "_classname": "Square",
-    "_parent": Shape,
+    "_parent": [Shape],
     "_new": square_new
 }
 
@@ -90,7 +108,7 @@ def circle_area(thing):
 
 def circle_new(name, radius):
     """Construct a circle (a Shape with extra/overridden properties)."""
-    return make(Shape, name) | {
+    return make(Shape, name=name) | {
         "radius": radius,
         "_class": Circle
     }
@@ -118,7 +136,7 @@ def color_new(name, color):
 # Properties of the Color 'class'.
 Color = {
     "_classname": "Color",
-    "_parent": None,
+    "_parent": [],
     "_new": color_new,
 }
 
