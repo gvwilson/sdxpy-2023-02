@@ -100,19 +100,51 @@ Circle = {
     "perimeter": circle_perimeter,
     "area": circle_area,
     "_classname": "Circle",
-    "_parent": Shape,
+    "_parent": [Shape],
     "_new": circle_new
+}
+
+# ----------------------------------------------------------------------
+# The Color class.
+# ----------------------------------------------------------------------
+
+def color_new(name, color):
+    return {
+        "name": name,
+        "_class": Color,
+        "color": color,
+    }
+
+# Properties of the Color 'class'.
+Color = {
+    "_classname": "Color",
+    "_parent": None,
+    "_new": color_new,
+}
+
+# ----------------------------------------------------------------------
+# The ColoredSquare class (derived from Square and Color).
+# ----------------------------------------------------------------------
+
+ColoredSquare = {
+    "_classname": "ColoredSquare",
+    "_parent": [Square, Color],
 }
 
 # ----------------------------------------------------------------------
 # Examples of all of this in action.
 # ----------------------------------------------------------------------
 
-zero_density_square = make(Square, "sq", 5)
+zero_density_square = make(Square, name="sq", side=5)
 zero_density_square["density"] = lambda thing, weight: 0
+multi_parent_object = make(ColoredSquare, name="csq", side=5, color="red")
 
-examples = [zero_density_square, make(Square, "sq", 3), make(Circle, "ci", 2)]
+examples = [zero_density_square,
+            make(Square, name="sq", side=3),
+            make(Circle, name="ci", radius=2),
+            multi_parent_object]
 for ex in examples:
     n = ex["name"]
     d = call(ex, "density", 5)
-    print(f"{n}: {d:.2f}")
+    c = ex["color"] if "color" in ex else "colorless"
+    print(f"{n}: {d:.2f}, {c}")
