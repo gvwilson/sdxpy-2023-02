@@ -24,3 +24,10 @@ when we look up a method, we look at the chain of clones instead of the
 chain of classes. Create a new file prototype.py and write functions
 clone(), find(), and call() that do this. Do you find prototypes easier
 or harder to understand than classes?
+
+### Answer:
+Prototypes is easier to understand to me. But the disadvantages are obvious:
+
+1, Every object has its own properties which take much more memory. 
+2, Some useless properties which are cloned from previous object are a waste of memory.
+3, Campare to object-class, it is not easy to modify the same properties of different objects which are cloned from the same parent. The code would be inefficient and diffcult to debug and maintain. 
