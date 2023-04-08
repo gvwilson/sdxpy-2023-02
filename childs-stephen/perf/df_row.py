@@ -33,7 +33,7 @@ class DfRow(DataFrame):
     def select(self, *names):
         """FIXME: rewrite this using loops."""
         for n in names:
-            assert n in self.data[0]
+            assert n in self._data[0]
         rows = []
         for r in self._data:
             row = {}
