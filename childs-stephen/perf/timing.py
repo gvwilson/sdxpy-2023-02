@@ -3,30 +3,49 @@ import sys
 import time
 
 from df_col import DfCol
+from df_col2 import DfCol2
 from df_row import DfRow
 
 RANGE = 10
 
+
 def make_col(nrow, ncol):
     """Make a column-wise dataframe for profiling."""
+
     def _col(n, start):
         return [((start + i) % RANGE) for i in range(n)]
+
     fill = {f"label_{c}": _col(nrow, c) for c in range(ncol)}
     return DfCol(**fill)
+
+
+def make_col2(nrow, ncol):
+    """Make a column-wise dataframe for profiling."""
+
+    def _col(n, start):
+        return [((start + i) % RANGE) for i in range(n)]
+
+    fill = {f"label_{c}": _col(nrow, c) for c in range(ncol)}
+    return DfCol2(**fill)
+
 
 def make_row(nrow, ncol):
     """Make a row-wise dataframe for profiling."""
     labels = [f"label_{c}" for c in range(ncol)]
+
     def _row(r):
-        return {
-            c: ((r + i) % RANGE) for (i, c) in enumerate(labels)
-        }
+        return {c: ((r + i) % RANGE) for (i, c) in enumerate(labels)}
+
     fill = [_row(r) for r in range(nrow)]
     return DfRow(fill)
 
+
 FILTER = 2
+
+
 def time_filter(df):
     """Time how long it takes to select every n'th row."""
+
     def f(label_0, **args):
         return label_0 % FILTER == 1
 
@@ -34,7 +53,10 @@ def time_filter(df):
     df.filter(f)
     return time.time() - start
 
+
 SELECT = 3
+
+
 def time_select(df):
     """Time how long it takes to select every n'th column."""
     indices = [i for i in range(df.ncol()) if ((i % SELECT) == 0)]
@@ -43,17 +65,21 @@ def time_select(df):
     df.select(*labels)
     return time.time() - start
 
+
 def sweep(sizes):
     """Filter and select row- and column-oriented dataframes.
 
     `sizes` must be a list of (nrow, ncol) pairs."""
     result = []
-    for (nrow, ncol) in sizes:
+    for nrow, ncol in sizes:
         df_col = make_col(nrow, ncol)
+        df_col2 = make_col2(nrow, ncol)
         df_row = make_row(nrow, ncol)
         times = [
             time_filter(df_col),
             time_select(df_col),
+            time_filter(df_col2),
+            time_select(df_col2),
             time_filter(df_row),
             time_select(df_row),
         ]
@@ -71,7 +97,16 @@ def report(result):
     """Write timing results as CSV for analysis."""
     writer = csv.writer(sys.stdout)
     writer.writerow(
-        ["nrow", "ncol", "filter_col", "select_col", "filter_row", "select_row"]
+        [
+            "nrow",
+            "ncol",
+            "filter_col",
+            "select_col",
+            "filter_col2",
+            "select_col2",
+            "filter_row",
+            "select_row",
+        ]
     )
     for row in result:
         writer.writerow(row)
