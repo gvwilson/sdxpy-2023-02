@@ -4,6 +4,11 @@ from df_base import DataFrame
 from util import all_eq
 from df_row import DfRow
 
+class DfRow2(DfRow):
+
+    def _convert(self):
+        return DfCol2({k: [d[k]] for d in self._data] for k in self._data[0]})
+
 
 class DfCol2(DataFrame):
     """A column-oriented dataframe."""
@@ -35,7 +40,7 @@ class DfCol2(DataFrame):
         return self._data[col][row]
 
     def _convert(self):
-        return DfRow([dict(zip(self._data, t)) for t in zip(*self._data.values())])
+        return DfRow2([dict(zip(self._data, t)) for t in zip(*self._data.values())])
 
     def select(self, *names):
         for n in names:
