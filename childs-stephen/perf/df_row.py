@@ -3,6 +3,7 @@ import inspect
 from df_base import DataFrame
 from util import dict_match
 
+
 class DfRow(DataFrame):
     """A row-oriented dataframe."""
 
@@ -31,7 +32,8 @@ class DfRow(DataFrame):
 
     def select(self, *names):
         """FIXME: rewrite this using loops."""
-        assert all(n in self._data[0] for n in names)
+        for n in names:
+            assert n in self.data[0]
         rows = [{key: r[key] for key in names} for r in self._data]
         return DfRow(rows)
 
