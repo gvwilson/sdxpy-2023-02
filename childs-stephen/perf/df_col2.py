@@ -35,8 +35,7 @@ class DfCol2(DataFrame):
         return self._data[col][row]
 
     def _convert(self):
-        return DfRow([dict(zip(self._data,t)) for t in zip(*self._data.values())])
-
+        return DfRow([dict(zip(self._data, t)) for t in zip(*self._data.values())])
 
     def select(self, *names):
         for n in names:
@@ -54,7 +53,8 @@ class DfCol2(DataFrame):
         for i in range(self.nrow()):
             args = {}
             for n in self._data:
-                args[n] = self._data[n][i]
+                if n in params:
+                    args[n] = self._data[n][i]
             if func(**args):
                 for n in self._data:
                     result[n].append(self._data[n][i])
