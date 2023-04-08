@@ -31,7 +31,6 @@ class DfRow(DataFrame):
         return self._data[row][col]
 
     def select(self, *names):
-        """FIXME: rewrite this using loops."""
         for n in names:
             assert n in self._data[0]
         rows = []
@@ -43,7 +42,9 @@ class DfRow(DataFrame):
         return DfRow(rows)
 
     def filter(self, func):
-        """FIXME: rewrite this using loops."""
         params = list(inspect.signature(func).parameters.keys())
-        result = [r for r in self._data if func(**r)]
+        result = []
+        for r in self._data:
+            if func(**r):
+                result.append(r)
         return DfRow(result)
