@@ -34,7 +34,12 @@ class DfRow(DataFrame):
         """FIXME: rewrite this using loops."""
         for n in names:
             assert n in self.data[0]
-        rows = [{key: r[key] for key in names} for r in self._data]
+        rows = []
+        for r in self._data:
+            row = {}
+            for key in names:
+                row[key] = r[key]
+            rows.append(row)
         return DfRow(rows)
 
     def filter(self, func):
