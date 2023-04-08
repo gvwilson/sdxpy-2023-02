@@ -51,6 +51,9 @@ class DfCol2(DataFrame):
         return DfCol2(**cols)
 
     def filter(self, func):
+        if self.nrow() > 4999:
+            rowv = self._convert()
+            return rowv.filter(func)._convert()
         params = list(inspect.signature(func).parameters.keys())
         result = {}
         for n in self._data:
