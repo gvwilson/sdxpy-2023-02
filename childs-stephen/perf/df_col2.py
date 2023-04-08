@@ -2,6 +2,7 @@ import inspect
 
 from df_base import DataFrame
 from util import all_eq
+from df_row import DfRow
 
 
 class DfCol2(DataFrame):
@@ -32,6 +33,10 @@ class DfCol2(DataFrame):
         assert col in self._data
         assert 0 <= row < len(self._data[col])
         return self._data[col][row]
+
+    def _convert(self):
+        return DfRow([dict(zip(self._data,t)) for t in zip(*self._data.values())])
+
 
     def select(self, *names):
         for n in names:
