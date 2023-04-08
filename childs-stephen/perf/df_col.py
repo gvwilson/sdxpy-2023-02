@@ -35,7 +35,7 @@ class DfCol(DataFrame):
 
     def select(self, *names):
         for n in names:
-            assert n in self._data[0]
+            assert n in self._data
         cols = {}
         for n in names:
             cols[n] = self._data[n]
