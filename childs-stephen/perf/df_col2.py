@@ -4,10 +4,10 @@ from df_base import DataFrame
 from util import all_eq
 from df_row import DfRow
 
-class DfRow2(DfRow):
 
+class DfRow2(DfRow):
     def _convert(self):
-        return DfCol2({k: [d[k]] for d in self._data] for k in self._data[0]})
+        return DfCol2({k: [d[k] for d in self._data] for k in self._data[0]})
 
 
 class DfCol2(DataFrame):
