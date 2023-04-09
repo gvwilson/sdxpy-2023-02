@@ -41,7 +41,7 @@ class DfCol(DataFrame):
         result = {}
         for n in names:
             result[n] = self._data[n]
-        return DfCol(result)
+        return DfCol(**result)
 
     def filter(self, func):
         """FIXME: rewrite this using loops."""
