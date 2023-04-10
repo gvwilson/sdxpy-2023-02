@@ -27,4 +27,4 @@ or harder to understand than classes?
 
 > I find the programming languages such as JavaScript that
 > uses prototypes more difficult to understand 
-> because I find classes useful when I try to make a high-level change.
+> because I find classes useful when I try to make a high-level change. 
