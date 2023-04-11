@@ -13,6 +13,7 @@ which can be used to look up everything defined at the top level of a program.
 
 1.  Why is this a bad idea?
 
+If we use `globals`, we could only define `save_` and `load_` functions in `globals` rather than class. Campared to defining them in class, it is not easy to extend and inherit.
 ## Aliasing
 
 1.  Read the section on aliasing (https://third-bit.com/sdxpy/persistence/#persistence-aliasing).

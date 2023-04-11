@@ -11,7 +11,11 @@ which can be used to look up everything defined at the top level of a program.
 
 1.  Modify the persistence framework so that it looks for `save_` and `load_` functions using `globals`.
 
+- Modifications are in `persistence-globals.py`
+
 1.  Why is this a bad idea?
+
+- Using `globals()` violates the open-closed principle of object-oriented programming
 
 ## Aliasing
 
@@ -21,7 +25,11 @@ which can be used to look up everything defined at the top level of a program.
     (You may need to give the `save_*` and `load_*` functions another parameter
     to keep track of the objects seen so far.)
 
+- Need some extra time to work on this question 
+
 ## Strings
 
 Modify the framework so that strings are stored using escape characters like `\n`
 instead of being split across several lines.
+
+- Modifications are in `persistence-str.py`
