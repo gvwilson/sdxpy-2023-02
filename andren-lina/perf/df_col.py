@@ -34,16 +34,32 @@ class DfCol(DataFrame):
 
     def select(self, *names):
         """FIXME: rewrite this using loops."""
-        assert all(n in self._data for n in names)
-        return DfCol(**{n: self._data[n] for n in names})
+        #assert all(n in self._data for n in names)
+        # i can probably redo it with loops in at least three other ways that would look better but this is a minimal change that should still work. 
+        lista = list()
+        for n in names:
+            lista.append(n in self._data)
+        assert all(lista)
+        #return DfCol(**{n: self._data[n] for n in names})
+        my_dict = {}
+        for n in names:
+            my_dict[n] = self._data[n]
+        return DfCol(**my_dict)
 
     def filter(self, func):
         """FIXME: rewrite this using loops."""
         params = list(inspect.signature(func).parameters.keys())
-        result = {n: [] for n in self._data}
+        #result = {n: [] for n in self._data}
+        result = {}
+        for n in self._data:
+            result[n] = []
         for i in range(self.nrow()):
-            args = {n: self._data[n][i] for n in self._data}
+            #args = {n: self._data[n][i] for n in self._data}
+            args = {}
+            for n in self._data:
+                args[n] = self._data[n][i]  
             if func(**args):
                 for n in self._data:
                     result[n].append(self._data[n][i])
         return DfCol(**result)
+    # those are all extremely automatic rewrites. I'm far to tired right now to even try to understand what the code is doing, but I believe I can still do the rewrites on autopilot. i'm a mathematician by training and my first programing language was Haskell so i suppose i'm just weird :)
