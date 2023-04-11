@@ -4,6 +4,7 @@ import time
 
 from df_col import DfCol
 from df_row import DfRow
+from df_row_new import DfRowNew
 
 RANGE = 10
 
@@ -23,6 +24,16 @@ def make_row(nrow, ncol):
         }
     fill = [_row(r) for r in range(nrow)]
     return DfRow(fill)
+
+def make_row_new(nrow, ncol):
+    """Make a row-wise dataframe for profiling."""
+    labels = [f"label_{c}" for c in range(ncol)]
+    def _row(r):
+        return {
+            c: ((r + i) % RANGE) for (i, c) in enumerate(labels)
+        }
+    fill = [_row(r) for r in range(nrow)]
+    return DfRowNew(fill)
 
 FILTER = 2
 def time_filter(df):
@@ -51,11 +62,14 @@ def sweep(sizes):
     for (nrow, ncol) in sizes:
         df_col = make_col(nrow, ncol)
         df_row = make_row(nrow, ncol)
+        df_row_new = make_row_new(nrow, ncol)
         times = [
             time_filter(df_col),
             time_select(df_col),
             time_filter(df_row),
             time_select(df_row),
+            time_filter(df_row_new),
+            time_select(df_row_new)
         ]
         result.append([nrow, ncol, *times])
     return result
@@ -71,7 +85,7 @@ def report(result):
     """Write timing results as CSV for analysis."""
     writer = csv.writer(sys.stdout)
     writer.writerow(
-        ["nrow", "ncol", "filter_col", "select_col", "filter_row", "select_row"]
+        ["nrow", "ncol", "filter_col", "select_col", "filter_row", "select_row", "filter_row_new", "select_row_new"]
     )
     for row in result:
         writer.writerow(row)

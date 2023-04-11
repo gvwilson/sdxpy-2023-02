@@ -3,7 +3,7 @@ import inspect
 from df_base import DataFrame
 from util import dict_match
 
-class DfRow(DataFrame):
+class DfRowNew(DataFrame):
     """A row-oriented dataframe."""
 
     def __init__(self, rows):
@@ -41,14 +41,14 @@ class DfRow(DataFrame):
         for r in self._data:
             for key in names:
                 rows[key].append(r[key])   
-        return DfRow([rows])
+        return DfRowNew([rows])
 
     def filter(self, func):
         """FIXME: rewrite this using loops."""
-        params = list(inspect.signature(func).parameters.keys())
+        #params = list(inspect.signature(func).parameters.keys()) # only modification I'm making for exercise 2
         #result = [r for r in self._data if func(**r)]
         result = []
         for r in self._data:
             if func(**r):
                 result.append(r)
-        return DfRow(result)
+        return DfRowNew(result)
