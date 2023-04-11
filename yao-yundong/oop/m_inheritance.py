@@ -1,4 +1,5 @@
 import math
+
 # ----------------------------------------------------------------------
 # Functions implementing the object system.
 # ----------------------------------------------------------------------
@@ -9,18 +10,19 @@ def make(cls, *args):
 
 def find(cls, method_name):
     """Find a method."""
-    if cls is None:
-        raise NotImplementedError("method_name")
     if method_name in cls:
         return cls[method_name]
-    return find(cls["_parent"], method_name)
+    elif cls["_parent"]:
+        for p in cls["_parent"]:
+            method = find(p, method_name)
+            if method:
+                return method
+    return None
+
 
 def call(thing, method_name, *args):
     """Call a method."""
-    if method_name in thing:
-        method = thing[method_name]
-    else:
-        method = find(thing["_class"], method_name)
+    method = find(thing["_class"], method_name)
     return method(thing, *args)
 
 # ----------------------------------------------------------------------
@@ -46,6 +48,24 @@ Shape = {
     "_new": shape_new
 }
 
+def get_color(thing):
+    return thing["color"]
+
+def color_new(name, color):
+    """Build a generic color."""
+    return {
+        "name": name,
+        "color": color,
+        "_class": Color,
+    }
+
+Color = {
+    "color": get_color,
+    "_classname": "Color",
+    "_parent": None,
+    "_new": color_new
+}
+
 # ----------------------------------------------------------------------
 # The Square class (derived from Shape).
 # ----------------------------------------------------------------------
@@ -58,10 +78,9 @@ def square_area(thing):
     """Area of a square."""
     return thing["side"] ** 2
 
-def square_new(name, side):
+def square_new(name, side, color):
     """Construct a square (a Shape with extra/overridden properties)."""
-    new_methods = {k:v for k,v in Square.items() if not k.startswith("_") }
-    return make(Shape, name) | new_methods |  {
+    return make(Shape, name) | make(Color, name, color) | {
         "side": side,
         "_class": Square
     }
@@ -71,7 +90,7 @@ Square = {
     "perimeter": square_perimeter,
     "area": square_area,
     "_classname": "Square",
-    "_parent": Shape,
+    "_parent": [Shape, Color],
     "_new": square_new
 }
 
@@ -87,10 +106,9 @@ def circle_area(thing):
     """Area of a circle."""
     return math.pi * thing["radius"] ** 2
 
-def circle_new(name, radius):
+def circle_new(name, radius, color):
     """Construct a circle (a Shape with extra/overridden properties)."""
-    new_methods = {k:v for k,v in Circle.items() if not k.startswith("_") }
-    return make(Shape, name) | new_methods | {
+    return make(Shape, name) | make(Color, name, color) | {
         "radius": radius,
         "_class": Circle
     }
@@ -100,7 +118,7 @@ Circle = {
     "perimeter": circle_perimeter,
     "area": circle_area,
     "_classname": "Circle",
-    "_parent": Shape,
+    "_parent": [Shape, Color],
     "_new": circle_new
 }
 
@@ -108,8 +126,9 @@ Circle = {
 # Examples of all of this in action.
 # ----------------------------------------------------------------------
 
-examples = [make(Square, "sq", 3), make(Circle, "ci", 2)]
+examples = [make(Square, "sq", 3,"red"), make(Circle, "ci", 2, "yellow")]
 for ex in examples:
     n = ex["name"]
     d = call(ex, "density", 5)
-    print(f"{n}: {d:.2f}")
+    c = call(ex, "color")
+    print(f"{n}: {d:.2f}, {c}")
