@@ -1,6 +1,7 @@
 import csv
 import sys
 import time
+import datetime
 
 from df_col import DfCol
 from df_row import DfRow
@@ -69,12 +70,16 @@ def setup(spec):
 
 def report(result):
     """Write timing results as CSV for analysis."""
-    writer = csv.writer(sys.stdout)
-    writer.writerow(
-        ["nrow", "ncol", "filter_col", "select_col", "filter_row", "select_row"]
-    )
-    for row in result:
-        writer.writerow(row)
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"report_{timestamp}.csv"
+    with open(filename, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(
+            ["nrow", "ncol", "filter_col", "select_col", "filter_row", "select_row"]
+        )
+        for row in result:
+            writer.writerow(row)
+    print(f"Results saved to {filename}.")
 
 
 def main():

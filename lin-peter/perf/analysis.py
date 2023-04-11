@@ -2,6 +2,7 @@
 
 import pandas as pd
 import plotly.express as px
+import datetime
 
 df = pd.read_csv("timing.csv")
 df["ncell"] = df["nrow"] * df["ncol"]
@@ -27,4 +28,5 @@ fig = px.line(temp, x="percentage", y="ratio",
                   "percentage": "percentage of filter operations (vs. select)",
                   "ratio": "ratio of column-wise time to row-wise time"
               })
-fig.write_image("analysis.png", width="800", height="400")
+timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+fig.write_image(f"analysis_{timestamp}.png", width="800", height="400")
