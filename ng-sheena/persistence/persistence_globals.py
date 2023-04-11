@@ -19,10 +19,16 @@ def save_str(writer, thing):
     for ln in lines:
         print(ln, file=writer)
 
+# SAVE = {
+#     "int": save_int,
+#     "list": save_list,
+#     "str": save_str
+# }
+
 SAVE = {
-    "int": save_int,
-    "list": save_list,
-    "str": save_str
+    name.replace("save_", ""): func
+    for (name, func) in globals().items()
+    if name.startswith("save_")
 }
 
 def save(writer, thing):
@@ -43,10 +49,16 @@ def load_str(reader, value):
     lines = [reader.readline().rstrip("\n") for _ in range(num_lines)]
     return "\n".join(lines)
 
+# LOAD = {
+#     "int": load_int,
+#     "list": load_list,
+#     "str": load_str
+# }
+
 LOAD = {
-    "int": load_int,
-    "list": load_list,
-    "str": load_str
+    name.replace("load_", ""): func
+    for (name, func) in globals().items()
+    if name.startswith("load_")
 }
 
 def load(reader):
@@ -73,3 +85,21 @@ for (name, fixture) in TESTS:
     result = load(reader)
     print(f"{name}\n{content}")
     assert result == fixture, f"Test failed: {name}"
+
+'''
+Why is this a bad idea?
+
+Answer:
+The method of looking for save_ and load_ functions using
+globals() may result in:
+- performance degradation if the search space is big (ie.
+many functions to iterate through find save_ and load_
+
+- there might be many other functions that could start with the same
+prefixes. This could result in finding variables or other functions
+named save_ and/or load_ that are not related to our persistence
+framework.
+
+However, I think if we manage the function naming well, I don't
+think this would necessarily be a bad idea.
+'''
