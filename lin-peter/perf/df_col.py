@@ -34,15 +34,28 @@ class DfCol(DataFrame):
 
     def select(self, *names):
         """FIXME: rewrite this using loops."""
-        assert all(n in self._data for n in names)
-        return DfCol(**{n: self._data[n] for n in names})
+        for n in names:
+            assert n in self._data
+        # assert all(n in self._data for n in names)
+        selected_data = {}
+        for n in names:
+            selected_data[n] = self._data[n]
+        # return DfCol(**{n: self._data[n] for n in names})
+        return DfCol(**selected_data)
 
     def filter(self, func):
         """FIXME: rewrite this using loops."""
         params = list(inspect.signature(func).parameters.keys())
-        result = {n: [] for n in self._data}
+        # result = {n: [] for n in self._data}
+        result = {}
+        for n in self._data:
+            result[n] = []
+
         for i in range(self.nrow()):
-            args = {n: self._data[n][i] for n in self._data}
+            args = {}
+            for n in self._data:
+                args[n] = self._data[n][i]
+            # args = {n: self._data[n][i] for n in self._data}
             if func(**args):
                 for n in self._data:
                     result[n].append(self._data[n][i])
