@@ -31,12 +31,26 @@ class DfRow(DataFrame):
 
     def select(self, *names):
         """FIXME: rewrite this using loops."""
-        assert all(n in self._data[0] for n in names)
-        rows = [{key: r[key] for key in names} for r in self._data]
+        #assert all(n in self._data[0] for n in names)
+        bval = True
+        for n in names:
+            bval = bval and (n in self._data[0])
+        assert bval
+        #rows = [{key: r[key] for key in names} for r in self._data]
+        rows = []
+        for r in self._data:
+            rows_dict = {}
+            for key in names:
+                rows_dict[key]=r[key]
+            rows.append(rows_dict)
         return DfRow(rows)
 
     def filter(self, func):
         """FIXME: rewrite this using loops."""
         params = list(inspect.signature(func).parameters.keys())
-        result = [r for r in self._data if func(**r)]
+        #result = [r for r in self._data if func(**r)]
+        result = []
+        for r in self._data:
+            if func(**r):
+                result.append(r)
         return DfRow(result)
