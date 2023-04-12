@@ -1,0 +1,6 @@
+[
+    "seq",
+    ["set", "alpha", 5],
+    ["set", "alpha", ["leq", ["get", "alpha"], 10]],
+    ["print", "alpha"]
+]

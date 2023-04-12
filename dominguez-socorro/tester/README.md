@@ -19,10 +19,18 @@ for name in globals():
 
 Why?
 
+First, before running any `for` loop, I would like to take a look at what `globals()` is. `globals()` returns a dictionary with all the available variables. 
+
+When you define `name` as None, you are basically doing:
+globals()[name] = None, so you are appending that new variable into your `globals()` dictionary. Because of this, the for loop can run. 
+
+When you run the `for` loop, without having defined `name=None`, you are grabing the `globals` dictionary and checking its length before iterating over it. Then, you proceed to print the name of each key. However, because you are creating a new "temporary" variable called `name` that is appended directly to `globals()[name]` in the first call, you are modifying the dictionary `globals()` and so, are not iterating over the "same" globals where your first iteration happened. 
+
+Even if you did `name=None`, if you reran the `for` loop but now did `name2` instead of `name`, you would face the same problem.
+
 ## Counting Results
 
-1.  Modify the test framework so that it reports which tests passed, failed, or had errors
-    and also reports a summary of how many tests produced each result.
+1.  Modify the test framework so that it reports which tests passed, failed, or had errors and also reports a summary of how many tests produced each result.
 
 2.  Write unit tests to check that your answer to part 1 works correctly.
 

@@ -9,6 +9,8 @@ for name in globals():
     print(name)
 ```
 
+Answer: You get a `RuntimeError` that the dictionary changed size during iteration. Because `name` is a global that gets added.
+
 What happens if you run:
 
 ```python
@@ -17,7 +19,11 @@ for name in globals():
     print(name)
 ```
 
+Answer: It prints out the list of global variables.
+
 Why?
+
+Because name is already defined before the loop, so it's not changing the length of the globals dictionary.
 
 ## Counting Results
 
@@ -28,6 +34,14 @@ Why?
 
 3.  Think of another plausible way to interpret part 1
     that *wouldn't* pass the tests you wrote for part 2.
+
+Answer: The tests I wrote are dependant on the responses being 
+displayed in a particular way, so doing it in another way would
+be an easy way to make those tests fail.
+
+To prevent this, we could separate the testing from the output
+and test separately. The tester could return the results as JSON
+in a standardized format.
 
 ## Failing on Purpose
 
