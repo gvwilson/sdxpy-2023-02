@@ -63,6 +63,8 @@ class DfCol2(DataFrame):
         #    rowv = self._convert()
         #    return rowv.filter(func)
         params = list(inspect.signature(func).parameters.keys())
+        for n in params:
+            assert n in self._data.keys()
         result = {}
         for n in self._data:
             result[n] = []
