@@ -1,5 +1,4 @@
 import math
-
 # ----------------------------------------------------------------------
 # Functions implementing the object system.
 # ----------------------------------------------------------------------
@@ -18,7 +17,10 @@ def find(cls, method_name):
 
 def call(thing, method_name, *args):
     """Call a method."""
-    method = find(thing["_class"], method_name)
+    if method_name in thing:
+        method = thing[method_name]
+    else:
+        method = find(thing["_class"], method_name)
     return method(thing, *args)
 
 # ----------------------------------------------------------------------
@@ -58,7 +60,8 @@ def square_area(thing):
 
 def square_new(name, side):
     """Construct a square (a Shape with extra/overridden properties)."""
-    return make(Shape, name) | {
+    new_methods = {k:v for k,v in Square.items() if not k.startswith("_") }
+    return make(Shape, name) | new_methods |  {
         "side": side,
         "_class": Square
     }
@@ -86,7 +89,8 @@ def circle_area(thing):
 
 def circle_new(name, radius):
     """Construct a circle (a Shape with extra/overridden properties)."""
-    return make(Shape, name) | {
+    new_methods = {k:v for k,v in Circle.items() if not k.startswith("_") }
+    return make(Shape, name) | new_methods | {
         "radius": radius,
         "_class": Circle
     }
