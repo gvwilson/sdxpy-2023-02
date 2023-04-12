@@ -1,12 +1,16 @@
 import inspect
 
 # [top]
+from functools import cache
+import numpy
+
 from df_base import DataFrame
 from util import all_eq
 
 class DfCol(DataFrame):
     def __init__(self, **kwargs):
         assert len(kwargs) > 0
+        kwargs = {k:numpy.array(kwargs[k]) for k in kwargs}
         assert all_eq(len(kwargs[k]) for k in kwargs)
         for k in kwargs:
             assert all_eq(type(v) for v in kwargs[k])
@@ -52,11 +56,19 @@ class DfCol(DataFrame):
 
     # [filter]
     def filter(self, func):
+
+        @cache
+        def cache_func(**r):
+            return func(**r)
+
         params = list(inspect.signature(func).parameters.keys())
         result = {n: [] for n in self._data}
         for i in range(self.nrow()):
-            args = {n: self._data[n][i] for n in self._data}
-            if func(**args):
+            # args = {n: self._data[n][i] for n in self._data}
+            args = {}
+            for n in self._data:
+                args[n] = self._data[n][i]
+            if cache_func(**args):
                 for n in self._data:
                     result[n].append(self._data[n][i])
         return DfCol(**result)

@@ -1,6 +1,8 @@
 import inspect
-
+import numpy
 # [top]
+from functools import cache
+
 from df_base import DataFrame
 from util import dict_match
 
@@ -8,7 +10,7 @@ class DfRow(DataFrame):
     def __init__(self, rows):
         assert len(rows) > 0
         assert all(dict_match(r, rows[0]) for r in rows)
-        self._data = rows
+        self._data = numpy.array(rows)
     # [/top]
 
     # [simple]
@@ -44,14 +46,29 @@ class DfRow(DataFrame):
     # [select]
     def select(self, *names):
         assert all(n in self._data[0] for n in names)
-        rows = [{key: r[key] for key in names} for r in self._data]
+        # rows = [{key: r[key] for key in names} for r in self._data]
+        rows = []
+        for r in self._data:
+            new_r = {}
+            for key in names:
+                new_r[key] = r[key]
+            rows.append(new_r)
         return DfRow(rows)
     # [/select]
 
     # [filter]
     def filter(self, func):
         params = list(inspect.signature(func).parameters.keys())
-        result = [r for r in self._data if func(**r)]
+        # result = [r for r in self._data if func(**r)]
+        result = []
+
+        @cache
+        def cache_func(**r):
+            return func(**r)
+
+        for r in self._data:
+            if cache_func(**r):
+                result.append(r)
         return DfRow(result)
     # [/filter]
 
