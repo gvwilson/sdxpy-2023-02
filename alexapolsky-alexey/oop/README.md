@@ -24,3 +24,6 @@ when we look up a method, we look at the chain of clones instead of the
 chain of classes. Create a new file prototype.py and write functions
 clone(), find(), and call() that do this. Do you find prototypes easier
 or harder to understand than classes?
+
+Answer: Prototypes take up more memory and can cause syncronization problems.
+E.g. it's easier to change some parent class dynamically in regular OO, not with prototypes.
