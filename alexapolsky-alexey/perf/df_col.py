@@ -1,22 +1,23 @@
 import inspect
 
+# [top]
+from functools import cache
+import numpy
+
 from df_base import DataFrame
 from util import all_eq
 
 class DfCol(DataFrame):
-    """A column-oriented dataframe."""
-
     def __init__(self, **kwargs):
-        """Construct dataframe from a dictionary of lists."""
         assert len(kwargs) > 0
+        kwargs = {k:numpy.array(kwargs[k]) for k in kwargs}
         assert all_eq(len(kwargs[k]) for k in kwargs)
         for k in kwargs:
             assert all_eq(type(v) for v in kwargs[k])
         self._data = kwargs
+    # [/top]
 
-    def __str__(self):
-        return str(self._data)
-
+    # [simple]
     def ncol(self):
         return len(self._data)
 
@@ -26,24 +27,52 @@ class DfCol(DataFrame):
 
     def cols(self):
         return set(self._data.keys())
+    # [/simple]
 
+    # [eq]
+    def eq(self, other):
+        assert isinstance(other, DataFrame)
+        for n in self._data:
+            if n not in other.cols():
+                return False
+            for i in range(len(self._data[n])):
+                if self.get(n, i) != other.get(n, i):
+                    return False
+        return True
+    # [/eq]
+
+    # [get]
     def get(self, col, row):
         assert col in self._data
         assert 0 <= row < len(self._data[col])
         return self._data[col][row]
+    # [/get]
 
+    # [select]
     def select(self, *names):
-        """FIXME: rewrite this using loops."""
         assert all(n in self._data for n in names)
         return DfCol(**{n: self._data[n] for n in names})
+    # [/select]
 
+    # [filter]
     def filter(self, func):
-        """FIXME: rewrite this using loops."""
+
+        @cache
+        def cache_func(**r):
+            return func(**r)
+
         params = list(inspect.signature(func).parameters.keys())
         result = {n: [] for n in self._data}
         for i in range(self.nrow()):
-            args = {n: self._data[n][i] for n in self._data}
-            if func(**args):
+            # args = {n: self._data[n][i] for n in self._data}
+            args = {}
+            for n in self._data:
+                args[n] = self._data[n][i]
+            if cache_func(**args):
                 for n in self._data:
                     result[n].append(self._data[n][i])
         return DfCol(**result)
+    # [/filter]
+
+    def __str__(self):
+        return str(self._data)

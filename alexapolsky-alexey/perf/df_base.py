@@ -1,4 +1,5 @@
 class DataFrame:
+
     """Generic base class for dataframes."""
 
     def ncol(self):

@@ -4,6 +4,7 @@ def test_construct_with_single_value():
     df = DfCol(a=[1])
     assert df.get("a", 0) == 1
 
+
 def test_construct_with_two_pairs():
     df = DfCol(a=[1, 2], b=[3, 4])
     assert df.get("a", 0) == 1
@@ -32,9 +33,13 @@ def test_select():
     selected = df.select("a")
     assert selected.eq(DfCol(a=[1, 2]))
 
+
+# [test_filter]
 def test_filter():
     def odd(a, b):
         return (a % 2) == 1
 
     df = DfCol(a=[1, 2], b=[3, 4])
     assert df.filter(odd).eq(DfCol(a=[1], b=[3]))
+# [/test_filter]
+

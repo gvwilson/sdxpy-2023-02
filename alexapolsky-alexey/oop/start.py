@@ -8,17 +8,30 @@ def make(cls, *args):
     """Make an 'instance' of a 'class'."""
     return cls["_new"](*args)
 
-def find(cls, method_name):
+def find(thing, method_name):
     """Find a method."""
-    if cls is None:
+    if thing is None:
         raise NotImplementedError("method_name")
+    if method_name in thing:
+        return thing[method_name]
+    cls = thing.get("_class", None)
+    if cls is None:
+        #raise NotImplementedError(method_name)
+        return None
     if method_name in cls:
         return cls[method_name]
-    return find(cls["_parent"], method_name)
+    parents = [cls["_parent"]] if type(cls["_parent"]) is dict else cls["_parent"]
+    for parent in parents:
+        method = find(parent, method_name)
+        if method:
+            return method
+    raise NotImplementedError("method_name not found in neither parents")
 
 def call(thing, method_name, *args):
     """Call a method."""
-    method = find(thing["_class"], method_name)
+    method = find(thing, method_name)
+    if not callable(method):
+        return method
     return method(thing, *args)
 
 # ----------------------------------------------------------------------
@@ -103,9 +116,9 @@ Circle = {
 # ----------------------------------------------------------------------
 # Examples of all of this in action.
 # ----------------------------------------------------------------------
-
-examples = [make(Square, "sq", 3), make(Circle, "ci", 2)]
-for ex in examples:
-    n = ex["name"]
-    d = call(ex, "density", 5)
-    print(f"{n}: {d:.2f}")
+if __name__ == '__main__':
+    examples = [make(Square, "sq", 3), make(Circle, "ci", 2)]
+    for ex in examples:
+        n = ex["name"]
+        d = call(ex, "density", 5)
+        print(f"{n}: {d:.2f}")

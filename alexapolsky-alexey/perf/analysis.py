@@ -1,5 +1,3 @@
-"""Utility script to plot timing results."""
-
 import pandas as pd
 import plotly.express as px
 
