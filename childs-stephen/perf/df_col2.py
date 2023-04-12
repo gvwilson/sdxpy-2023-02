@@ -68,9 +68,8 @@ class DfCol2(DataFrame):
             result[n] = []
         for i in range(self.nrow()):
             args = {}
-            for n in self._data:
-                if n in params:
-                    args[n] = self._data[n][i]
+            for n in params:
+                args[n] = self._data[n][i]
             if func(**args):
                 for n in self._data:
                     result[n].append(self._data[n][i])
