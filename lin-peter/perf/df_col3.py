@@ -3,7 +3,9 @@ import inspect
 from df_base import DataFrame
 from util import all_eq
 
-class DfCol2(DataFrame):
+import multiprocessing as mp
+
+class DfCol3(DataFrame):
     """A column-oriented dataframe."""
 
     def __init__(self, **kwargs):
@@ -32,16 +34,26 @@ class DfCol2(DataFrame):
         assert 0 <= row < len(self._data[col])
         return self._data[col][row]
 
+    def check_column(self, name, data):
+        assert name in data
+        return (name, data[name])
+
     def select(self, *names):
-        """FIXME: rewrite this using loops."""
-        for n in names:
-            assert n in self._data
-        # assert all(n in self._data for n in names)
         selected_data = {}
-        for n in names:
-            selected_data[n] = self._data[n]
-        # return DfCol(**{n: self._data[n] for n in names})
-        return DfCol2(**selected_data)
+        with mp.Pool() as pool:
+            results = []
+            for n in names:
+                result = pool.apply_async(
+                    self.check_column,
+                    args=(n, self._data)
+                )
+                results.append(result)
+            for result in results:
+                # unpack result object
+                col_name, col_data = result.get()
+                selected_data[col_name] = col_data
+
+        return DfCol3(**selected_data)
 
     def filter(self, func):
         """FIXME: rewrite this using loops."""
@@ -59,4 +71,4 @@ class DfCol2(DataFrame):
             if func(**args):
                 for n in self._data:
                     result[n].append(self._data[n][i])
-        return DfCol2(**result)
+        return DfCol3(**result)
