@@ -1,8 +1,11 @@
 import csv
 import sys
 import time
+import datetime
 
 from df_col import DfCol
+from df_col2 import DfCol2
+from df_col3 import DfCol3
 from df_row import DfRow
 
 RANGE = 10
@@ -13,6 +16,20 @@ def make_col(nrow, ncol):
         return [((start + i) % RANGE) for i in range(n)]
     fill = {f"label_{c}": _col(nrow, c) for c in range(ncol)}
     return DfCol(**fill)
+
+def make_col2(nrow, ncol):
+    """Make a column-wise dataframe ver2 for profiling."""
+    def _col(n, start):
+        return [((start + i) % RANGE) for i in range(n)]
+    fill = {f"label_{c}": _col(nrow, c) for c in range(ncol)}
+    return DfCol2(**fill)
+
+def make_col3(nrow, ncol):
+    """Make a column-wise dataframe ver2 for profiling."""
+    def _col(n, start):
+        return [((start + i) % RANGE) for i in range(n)]
+    fill = {f"label_{c}": _col(nrow, c) for c in range(ncol)}
+    return DfCol3(**fill)
 
 def make_row(nrow, ncol):
     """Make a row-wise dataframe for profiling."""
@@ -50,10 +67,16 @@ def sweep(sizes):
     result = []
     for (nrow, ncol) in sizes:
         df_col = make_col(nrow, ncol)
+        df_col2 = make_col2(nrow, ncol)
+        df_col3 = make_col3(nrow, ncol)
         df_row = make_row(nrow, ncol)
         times = [
             time_filter(df_col),
+            time_filter(df_col2),
+            time_filter(df_col3),
             time_select(df_col),
+            time_select(df_col2),
+            time_select(df_col3),
             time_filter(df_row),
             time_select(df_row),
         ]
@@ -69,12 +92,17 @@ def setup(spec):
 
 def report(result):
     """Write timing results as CSV for analysis."""
-    writer = csv.writer(sys.stdout)
-    writer.writerow(
-        ["nrow", "ncol", "filter_col", "select_col", "filter_row", "select_row"]
-    )
-    for row in result:
-        writer.writerow(row)
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"report_{timestamp}.csv"
+    with open(filename, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(
+            ["nrow", "ncol", "filter_col", "filter_col2", "filter_col3", "select_col", "select_col2", "select_col3",
+             "filter_row", "select_row"]
+        )
+        for row in result:
+            writer.writerow(row)
+    print(f"Results saved to {filename}.")
 
 
 def main():

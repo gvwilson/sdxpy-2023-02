@@ -3,7 +3,7 @@ import inspect
 from df_base import DataFrame
 from util import all_eq
 
-class DfCol(DataFrame):
+class DfCol2(DataFrame):
     """A column-oriented dataframe."""
 
     def __init__(self, **kwargs):
@@ -41,7 +41,7 @@ class DfCol(DataFrame):
         for n in names:
             selected_data[n] = self._data[n]
         # return DfCol(**{n: self._data[n] for n in names})
-        return DfCol(**selected_data)
+        return DfCol2(**selected_data)
 
     def filter(self, func):
         """FIXME: rewrite this using loops."""
@@ -59,4 +59,4 @@ class DfCol(DataFrame):
             if func(**args):
                 for n in self._data:
                     result[n].append(self._data[n][i])
-        return DfCol(**result)
+        return DfCol2(**result)

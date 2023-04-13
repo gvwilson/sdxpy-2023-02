@@ -11,3 +11,8 @@ Exercises for Dataframe Performance
     it in the `sweep` function. Remember, the profiler is your friend:
     `profile.sh` shows how to call it for `timing.py` and some sample
     dataframe sizes.
+
+> DfCol2 has a minor improvement on "select" to make it slightly faster.
+> DfCol3 uses multiprocessing library to make it faster but it turns out to be slower 
+probably because the data size is small so the overhead of parallelization does not outweigh
+the benefit in this test case.
