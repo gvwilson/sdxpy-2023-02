@@ -2,9 +2,23 @@ import inspect
 
 from df_base import DataFrame
 from util import all_eq
+from df_row import DfRow
 
 
-class DfCol(DataFrame):
+class DfRow2(DfRow):
+    def _convert(self):
+        return DfCol2(**{k: [d[k] for d in self._data] for k in self._data[0]})
+
+    def filter(self, func):
+        params = list(inspect.signature(func).parameters.keys())
+        result = []
+        for r in self._data:
+            if func(**r):
+                result.append(r)
+        return DfRow2(result)
+
+
+class DfCol2(DataFrame):
     """A column-oriented dataframe."""
 
     def __init__(self, **kwargs):
@@ -33,24 +47,36 @@ class DfCol(DataFrame):
         assert 0 <= row < len(self._data[col])
         return self._data[col][row]
 
+    def _convert(self):
+        return DfRow2([dict(zip(self._data, t)) for t in zip(*self._data.values())])
+
     def select(self, *names):
         for n in names:
             assert n in self._data
         cols = {}
         for n in names:
             cols[n] = self._data[n]
-        return DfCol(**cols)
+        return DfCol2(**cols)
 
     def filter(self, func):
+        # if self.nrow() > 4999:
+        #    rowv = self._convert()
+        #    return rowv.filter(func)
         params = list(inspect.signature(func).parameters.keys())
+        try:
+            params.remove("args")
+        except ValueError:
+            pass
+        for n in params:
+            assert n in list(self._data.keys())
         result = {}
         for n in self._data:
             result[n] = []
         for i in range(self.nrow()):
             args = {}
-            for n in self._data:
+            for n in params:
                 args[n] = self._data[n][i]
             if func(**args):
                 for n in self._data:
                     result[n].append(self._data[n][i])
-        return DfCol(**result)
+        return DfCol2(**result)
