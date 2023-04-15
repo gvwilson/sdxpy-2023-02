@@ -63,7 +63,10 @@ class DfCol2(DataFrame):
         #    rowv = self._convert()
         #    return rowv.filter(func)
         params = list(inspect.signature(func).parameters.keys())
-        params.remove("args")
+        try:
+            params.remove("args")
+        except ValueError:
+            pass
         for n in params:
             assert n in list(self._data.keys())
         result = {}
